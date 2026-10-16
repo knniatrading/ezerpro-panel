@@ -5,7 +5,10 @@ import { useRouter } from "next/navigation";
 import { useSession } from "./session";
 import { Logo } from "./brand";
 import { IconEye, IconEyeOff } from "./icons";
-import { ApiError } from "@/lib/api";
+import { api, ApiError } from "@/lib/api";
+import { TenantBrand } from "./tenant-brand";
+import { brandStyle } from "@/lib/brand";
+import type { PublicTenant } from "@/lib/types";
 
 export function LoginView() {
   const { state, login } = useSession();
@@ -15,6 +18,14 @@ export function LoginView() {
   const [show, setShow] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [tenant, setTenant] = useState<PublicTenant | null>(null);
+
+  // En la dirección de un negocio, el inicio de sesión lleva su marca y no la de EzerPro.
+  useEffect(() => {
+    const host = window.location.hostname;
+    if (host.startsWith("panel.")) return;
+    api<PublicTenant>(`/public/tenant?host=${encodeURIComponent(host)}`).then(setTenant).catch(() => undefined);
+  }, []);
 
   useEffect(() => {
     if (state.status === "in") router.replace("/");
@@ -51,11 +62,11 @@ export function LoginView() {
   }
 
   return (
-    <div className="auth">
+    <div className="auth" style={brandStyle(tenant?.brandColor)}>
       <main className="auth__panel">
         <div className="auth__form">
           <div className="auth__logo-mobile">
-            <Logo tone="light" />
+            {tenant ? <TenantBrand name={tenant.name} logo={tenant.logo} tone="light" /> : <Logo tone="light" />}
           </div>
           <h1>Iniciar sesión</h1>
           <p className="lede">Entra con el correo y la contraseña de tu cuenta.</p>
@@ -115,21 +126,32 @@ export function LoginView() {
       </main>
 
       <aside className="auth__brand">
-        <Logo tone="dark" />
-        <div className="auth__pitch">
-          <h2>Distribuidores y clientes, cada uno bajo su propia marca.</h2>
-          <div className="tiers" aria-hidden="true">
-            <div className="tier tier--0">
-              <span className="tier__title">Plataforma EzerPro</span>
+        {tenant ? (
+          <>
+            <TenantBrand name={tenant.name} logo={tenant.logo} tone="dark" />
+            <div className="auth__pitch">
+              <h2>Bienvenido a {tenant.name}.</h2>
             </div>
-            <div className="tier tier--1">
-              <span className="tier__title">Distribuidores</span>
+          </>
+        ) : (
+          <>
+            <Logo tone="dark" />
+            <div className="auth__pitch">
+              <h2>Distribuidores y clientes, cada uno bajo su propia marca.</h2>
+              <div className="tiers" aria-hidden="true">
+                <div className="tier tier--0">
+                  <span className="tier__title">Plataforma EzerPro</span>
+                </div>
+                <div className="tier tier--1">
+                  <span className="tier__title">Distribuidores</span>
+                </div>
+                <div className="tier tier--2">
+                  <span className="tier__title">Clientes y sus negocios</span>
+                </div>
+              </div>
             </div>
-            <div className="tier tier--2">
-              <span className="tier__title">Clientes y sus negocios</span>
-            </div>
-          </div>
-        </div>
+          </>
+        )}
       </aside>
     </div>
   );

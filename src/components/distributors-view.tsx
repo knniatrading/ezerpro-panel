@@ -6,6 +6,9 @@ import { useSession } from "./session";
 import { StatusBadge } from "./status-badge";
 import { NewDistributorDialog } from "./new-distributor-dialog";
 import { StatusDialog, type StatusTarget } from "./status-dialog";
+import { PaymentDialog, distributorTarget } from "./payment-dialog";
+import { PaymentHistoryDialog } from "./payment-history-dialog";
+import { PayCell } from "./pay-cell";
 import { IconPlus, IconRefresh } from "./icons";
 import { useResource } from "@/lib/use-resource";
 import { formatDate } from "@/lib/format";
@@ -17,6 +20,8 @@ export function DistributorsView() {
   const isSuper = state.status === "in" && state.user.role === "SUPER_ADMIN";
   const [open, setOpen] = useState(false);
   const [statusTarget, setStatusTarget] = useState<StatusTarget | null>(null);
+  const [payFor, setPayFor] = useState<Distributor | null>(null);
+  const [historyFor, setHistoryFor] = useState<Distributor | null>(null);
 
   useEffect(() => {
     if (state.status === "in" && state.user.role !== "SUPER_ADMIN") router.replace("/");
@@ -79,6 +84,7 @@ export function DistributorsView() {
                   Clientes
                 </th>
                 <th scope="col">Estado</th>
+                <th scope="col">Pago a EzerPro</th>
                 <th scope="col">Creado</th>
                 <th scope="col">Acciones</th>
               </tr>
@@ -98,8 +104,26 @@ export function DistributorsView() {
                       <span className="sub-reason">{d.suspendedReason}</span>
                     ) : null}
                   </td>
+                  <td>
+                    <PayCell paidUntil={d.paidUntil} />
+                  </td>
                   <td className="nowrap">{formatDate(d.createdAt)}</td>
                   <td>
+                    <div className="actions-cell">
+                    <button
+                      type="button"
+                      className="btn btn--secondary btn--sm"
+                      onClick={() => setPayFor(d)}
+                    >
+                      Registrar pago
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn--secondary btn--sm"
+                      onClick={() => setHistoryFor(d)}
+                    >
+                      Pagos
+                    </button>
                     {d.status === "suspended" ? (
                       <button
                         type="button"
@@ -131,6 +155,7 @@ export function DistributorsView() {
                         Suspender
                       </button>
                     )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -140,6 +165,8 @@ export function DistributorsView() {
       ) : null}
 
       <NewDistributorDialog open={open} onClose={() => setOpen(false)} onCreated={reload} />
+      <PaymentDialog target={payFor && distributorTarget(payFor)} onClose={() => setPayFor(null)} onDone={reload} />
+      <PaymentHistoryDialog target={historyFor && distributorTarget(historyFor)} onClose={() => setHistoryFor(null)} />
       <StatusDialog target={statusTarget} onClose={() => setStatusTarget(null)} onDone={reload} />
     </div>
   );

@@ -3,22 +3,59 @@
 import Link from "next/link";
 import { useSession } from "./session";
 import { ComingSoon } from "./coming-soon";
+import { TenantHome } from "./tenant-home";
 import { StatusBadge } from "./status-badge";
 import { IconRefresh } from "./icons";
 import { useResource } from "@/lib/use-resource";
 import { formatDate, formatMoney, payStatus } from "@/lib/format";
-import type { Distributor, PaymentsResponse, Tenant } from "@/lib/types";
+import type {
+  Distributor,
+  DistributorPaymentsResponse,
+  PaymentsResponse,
+  Tenant,
+} from "@/lib/types";
 
-function MoneyKpis({ tenants, payments }: { tenants: Tenant[]; payments: PaymentsResponse | null }) {
+function MoneyKpis({
+  tenants,
+  payments,
+  distributors,
+  distPayments,
+}: {
+  tenants: Tenant[];
+  payments: PaymentsResponse | null;
+  distributors?: Distributor[];
+  distPayments?: DistributorPaymentsResponse | null;
+}) {
+  const distOverdue = (distributors ?? []).filter(
+    (d) => d.status !== "suspended" && payStatus(d.paidUntil).overdue,
+  ).length;
   const overdue = tenants.filter(
     (t) => t.status !== "suspended" && payStatus(t.paidUntil).overdue,
   ).length;
   const suspended = tenants.filter((t) => t.status === "suspended").length;
   return (
     <section className="kpis" aria-label="Cobros">
+      {distributors ? (
+        <>
+          <div className="kpi">
+            <span className="kpi__value">
+              {distPayments ? formatMoney(distPayments.monthTotal) : "–"}
+            </span>
+            <span className="kpi__label">Cobrado a distribuidores este mes</span>
+          </div>
+          <div className={`kpi${distOverdue > 0 ? " kpi--danger" : ""}`}>
+            <span className="kpi__value">{distOverdue}</span>
+            <span className="kpi__label">
+              {distOverdue === 1 ? "distribuidor vencido" : "distribuidores vencidos"}
+            </span>
+          </div>
+        </>
+      ) : null}
       <div className="kpi">
         <span className="kpi__value">{payments ? formatMoney(payments.monthTotal) : "–"}</span>
-        <span className="kpi__label">Recibido este mes</span>
+        <span className="kpi__label">
+          {distributors ? "Recibido por distribuidores este mes" : "Recibido este mes"}
+        </span>
       </div>
       <div className={`kpi${overdue > 0 ? " kpi--danger" : ""}`}>
         <span className="kpi__value">{overdue}</span>
@@ -62,6 +99,7 @@ function SuperOverview() {
   const dist = useResource<Distributor[]>("/distributors");
   const ten = useResource<Tenant[]>("/tenants");
   const pay = useResource<PaymentsResponse>("/payments");
+  const distPay = useResource<DistributorPaymentsResponse>("/distributor-payments");
   const loading = dist.loading || ten.loading;
   const error = dist.error ?? ten.error;
   const distributors = dist.data ?? [];
@@ -120,7 +158,14 @@ function SuperOverview() {
         <Tier level={2} value={ready ? tenants.length : null} title="Clientes" note={tenNote} />
       </section>
 
-      {ready && tenants.length > 0 ? <MoneyKpis tenants={tenants} payments={pay.data} /> : null}
+      {ready && pay.data && distPay.data && distributors.length > 0 ? (
+        <MoneyKpis
+          tenants={tenants}
+          payments={pay.data}
+          distributors={distributors}
+          distPayments={distPay.data}
+        />
+      ) : null}
 
       {ready && distributors.length === 0 ? (
         <section className="note">
@@ -177,7 +222,16 @@ function SuperOverview() {
   );
 }
 
-function DistributorOverview({ companyName, domain }: { companyName: string; domain: string }) {
+function DistributorOverview({
+  companyName,
+  domain,
+  paidUntil,
+}: {
+  companyName: string;
+  domain: string;
+  paidUntil: string | null;
+}) {
+  const account = payStatus(paidUntil);
   const ten = useResource<Tenant[]>("/tenants");
   const pay = useResource<PaymentsResponse>("/payments");
   const tenants = ten.data ?? [];
@@ -196,6 +250,18 @@ function DistributorOverview({ companyName, domain }: { companyName: string; dom
           </p>
         </div>
       </header>
+
+      {paidUntil || account.overdue ? (
+        <p
+          className={account.overdue ? "banner banner--error" : "callout"}
+          role="status"
+        >
+          <span>
+            <strong>Tu cuenta con EzerPro:</strong> {account.label.toLowerCase()} · {account.detail}.{" "}
+            <Link href="/pagos">Ver mis pagos</Link>
+          </span>
+        </p>
+      ) : null}
 
       {ten.error ? (
         <div className="banner banner--error" role="alert">
@@ -222,7 +288,9 @@ function DistributorOverview({ companyName, domain }: { companyName: string; dom
         />
       </section>
 
-      {ready && tenants.length > 0 ? <MoneyKpis tenants={tenants} payments={pay.data} /> : null}
+      {ready && pay.data && tenants.length > 0 ? (
+        <MoneyKpis tenants={tenants} payments={pay.data} />
+      ) : null}
 
       {ready && tenants.length === 0 ? (
         <section className="note">
@@ -291,9 +359,11 @@ export function OverviewView() {
       <DistributorOverview
         companyName={state.user.distributor.companyName}
         domain={state.user.distributor.domain}
+        paidUntil={state.user.distributor.paidUntil ?? null}
       />
     );
   }
+  if (state.user.tenant?.modules?.includes("pedidos")) return <TenantHome />;
   if (state.user.role !== "SUPER_ADMIN") return <ComingSoon user={state.user} />;
   return <SuperOverview />;
 }

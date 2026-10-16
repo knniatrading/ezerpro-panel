@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { api, ApiError } from "@/lib/api";
 import { Logo } from "./brand";
 import type { PublicTenant } from "@/lib/types";
+import { Storefront } from "./storefront";
 
 type View =
   | { kind: "loading" }
@@ -42,6 +43,18 @@ export function TenantLanding() {
         <Logo tone="light" />
         <span className="boot__text">Cargando…</span>
       </div>
+    );
+  }
+
+  if (
+    view.kind === "ok" &&
+    view.tenant.status !== "suspended" &&
+    view.tenant.modules?.includes("menu")
+  ) {
+    return (
+      <main id="contenido">
+        <Storefront tenant={view.tenant} />
+      </main>
     );
   }
 

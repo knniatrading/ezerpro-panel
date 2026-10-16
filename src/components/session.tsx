@@ -21,6 +21,7 @@ interface SessionValue {
   state: State;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  reloadUser: () => Promise<void>;
 }
 
 const SessionContext = createContext<SessionValue | null>(null);
@@ -67,7 +68,19 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setState({ status: "out" });
   }, []);
 
-  const value = useMemo(() => ({ state, login, logout }), [state, login, logout]);
+  const reloadUser = useCallback(async () => {
+    try {
+      const user = await api<Me>("/auth/me");
+      setState({ status: "in", user });
+    } catch {
+      /* si falla, se queda con lo que había */
+    }
+  }, []);
+
+  const value = useMemo(
+    () => ({ state, login, logout, reloadUser }),
+    [state, login, logout, reloadUser],
+  );
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 }
 

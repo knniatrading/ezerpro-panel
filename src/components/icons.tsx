@@ -98,3 +98,61 @@ export const IconCard = (p: SVGProps<SVGSVGElement>) => (
     <path d="M3 10h18M7 15h4" />
   </Icon>
 );
+
+export const IconUser = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <circle cx="12" cy="8" r="4" />
+    <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
+  </Icon>
+);
+
+export const IconBag = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <path d="M5 8h14l-1 12H6L5 8Z" />
+    <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+  </Icon>
+);
+
+export const IconMenu = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10" />
+    <path d="M17 3c-2 2-3 4.5-3 7h3v11" />
+  </Icon>
+);
+
+export const IconTeam = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <circle cx="9" cy="8" r="3.5" />
+    <path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6" />
+    <path d="M16 4.7a3.5 3.5 0 0 1 0 6.6M18 14.3c2 .7 3.5 2.5 3.5 5.7" />
+  </Icon>
+);
+
+export const IconPalette = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-.5-.2-.9-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1 .8-1.8 1.8-1.8H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3Z" />
+    <circle cx="7.5" cy="11" r="1" /><circle cx="10.5" cy="7" r="1" /><circle cx="15" cy="7.5" r="1" />
+  </Icon>
+);
+
+export const IconPos = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <rect x="4" y="3" width="16" height="6" rx="1.5" />
+    <path d="M6 9v11h12V9M9 13h6M9 16.5h6" />
+  </Icon>
+);
+
+export const IconTable = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <rect x="3" y="5" width="18" height="4" rx="1" />
+    <path d="M6 9v10M18 9v10M3 19h18" />
+  </Icon>
+);
+
+export const IconBike = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <circle cx="6" cy="17" r="3" />
+    <circle cx="18" cy="17" r="3" />
+    <path d="M6 17l4-8h5l3 8M10 9L9 6H7" />
+  </Icon>
+);

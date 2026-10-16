@@ -3,15 +3,34 @@ export type Role =
   | "DISTRIBUTOR_ADMIN"
   | "TENANT_ADMIN"
   | "EMPLOYEE"
+  | "CASHIER"
+  | "WAITER"
+  | "DRIVER"
   | "CUSTOMER";
 
 export interface Me {
   id: string;
   email: string;
+  name?: string | null;
   role: Role;
   status: string;
-  tenant: { id: string; name: string; slug: string; status: string } | null;
-  distributor: { id: string; companyName: string; domain: string; status?: string } | null;
+  tenant: {
+    id: string;
+    name: string;
+    slug: string;
+    status: string;
+    modules?: string[];
+    host?: string;
+    brandColor?: string | null;
+    logo?: string | null;
+  } | null;
+  distributor: {
+    id: string;
+    companyName: string;
+    domain: string;
+    status?: string;
+    paidUntil?: string | null;
+  } | null;
 }
 
 export interface Distributor {
@@ -23,6 +42,7 @@ export interface Distributor {
   createdAt: string;
   user: { email: string };
   _count: { tenants: number };
+  paidUntil: string | null;
   suspendedAt: string | null;
   suspendedReason: string | null;
 }
@@ -43,6 +63,9 @@ export interface Tenant {
 }
 
 export interface PublicTenant {
+  modules?: string[];
+  brandColor?: string | null;
+  logo?: string | null;
   name: string;
   slug: string;
   status: string;
@@ -79,4 +102,169 @@ export interface PaymentsResponse {
 export interface RegisterPaymentResult {
   payment: Payment;
   tenant: { id: string; status: string; paidUntil: string };
+}
+
+export interface DistributorPaymentWithDistributor extends Payment {
+  distributor: { companyName: string; domain: string };
+}
+
+export interface DistributorPaymentsResponse {
+  items: DistributorPaymentWithDistributor[];
+  monthTotal: number;
+  monthCount: number;
+  currency: string;
+}
+
+// A quién se le registra o consulta un pago: un Cliente o un Distribuidor.
+export interface PayTarget {
+  kind: "tenant" | "distributor";
+  id: string;
+  name: string;
+  subtitle: string;
+  status: string;
+  paidUntil: string | null;
+}
+
+export interface MenuCategory {
+  id: string;
+  name: string;
+  position: number;
+  active: boolean;
+}
+
+export interface MenuItem {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  active: boolean;
+  categoryId: string | null;
+}
+
+export interface MenuResponse {
+  acceptingOrders: boolean;
+  deliveryFee: number;
+  categories: MenuCategory[];
+  items: MenuItem[];
+}
+
+export interface OrderLine {
+  id: string;
+  name: string;
+  unitPrice: number;
+  quantity: number;
+}
+
+export interface Order {
+  id: string;
+  number: number;
+  customerName: string;
+  phone: string | null;
+  type: "domicilio" | "recoger" | "mesa";
+  source: "web" | "mesa" | "pos";
+  tableName: string | null;
+  paymentStatus: "pendiente" | "pagado";
+  paymentMethod: string | null;
+  address: string | null;
+  note: string | null;
+  total: number;
+  status: "nuevo" | "preparando" | "listo" | "en_camino" | "entregado" | "cancelado";
+  deliveryFee: number;
+  driverId: string | null;
+  driverName: string | null;
+  assignedAt: string | null;
+  readyAt: string | null;
+  dispatchedAt: string | null;
+  deliveredAt: string | null;
+  createdAt: string;
+  items: OrderLine[];
+}
+
+export interface OrdersResponse {
+  items: Order[];
+  counts: Record<string, number>;
+}
+
+export interface PublicMenu {
+  available: boolean;
+  acceptingOrders: boolean;
+  deliveryFee?: number;
+  categories: { id: string; name: string; items: { id: string; name: string; description: string | null; price: number }[] }[];
+}
+
+export interface Employee {
+  id: string;
+  name: string | null;
+  email: string;
+  phone: string | null;
+  role: Role;
+  status: string;
+  createdAt: string;
+}
+
+export interface Brand {
+  brandColor: string | null;
+  logo: string | null;
+}
+
+export interface DiningTable {
+  id: string;
+  name: string;
+  code: string;
+  active: boolean;
+  position: number;
+  openOrders: number;
+}
+
+export interface CashSummary {
+  byMethod: Record<string, number>;
+  total: number;
+  count: number;
+}
+
+export interface CashCurrent {
+  open: boolean;
+  shift?: { id: string; openedAt: string; openingAmount: number };
+  summary?: CashSummary;
+  expectedCash?: number;
+}
+
+export interface CashClosed {
+  id: string;
+  openedAt: string;
+  closedAt: string;
+  openingAmount: number;
+  expectedAmount: number | null;
+  countedAmount: number | null;
+  difference: number;
+  note: string | null;
+  total: number;
+  count: number;
+  byMethod: Record<string, number>;
+}
+
+export interface Driver {
+  id: string;
+  name: string | null;
+  email: string;
+  phone: string | null;
+  openDeliveries: number;
+}
+
+export interface MyDelivery {
+  id: string;
+  number: number;
+  customerName: string;
+  phone: string | null;
+  address: string | null;
+  note: string | null;
+  total: number;
+  deliveryFee: number;
+  status: Order["status"];
+  paymentStatus: "pendiente" | "pagado";
+  createdAt: string;
+  assignedAt: string | null;
+  readyAt: string | null;
+  dispatchedAt: string | null;
+  items: { id: string; name: string; quantity: number }[];
 }

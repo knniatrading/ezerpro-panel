@@ -36,6 +36,12 @@ export function roleLabel(role: Role): string {
       return "Administrador de negocio";
     case "EMPLOYEE":
       return "Empleado";
+    case "CASHIER":
+      return "Cajero";
+    case "WAITER":
+      return "Mesero";
+    case "DRIVER":
+      return "Domiciliario";
     default:
       return "Cliente";
   }
@@ -161,4 +167,17 @@ export function payStatus(
     };
   }
   return { label: "Al día", detail: `Pagado hasta el ${until}`, tone: "ok", overdue: false };
+}
+
+export const PAY_LABEL: Record<string, string> = {
+  efectivo: "Efectivo",
+  tarjeta: "Tarjeta",
+  transferencia: "Transferencia",
+  otro: "Otro",
+};
+
+/** Convierte lo que se escribe ("12.500", "12500") en pesos enteros; 0 si está vacío. */
+export function parsePesos(text: string): number {
+  const digits = text.replace(/[^0-9]/g, "");
+  return digits ? Number(digits) : 0;
 }

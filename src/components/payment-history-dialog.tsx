@@ -3,17 +3,17 @@
 import { Modal } from "./modal";
 import { useResource } from "@/lib/use-resource";
 import { formatDateUTC, formatMoney } from "@/lib/format";
-import type { Payment, Tenant } from "@/lib/types";
+import type { PayTarget, Payment } from "@/lib/types";
 
 export function PaymentHistoryDialog({
-  tenant,
+  target: tenant,
   onClose,
 }: {
-  tenant: Tenant | null;
+  target: PayTarget | null;
   onClose: () => void;
 }) {
   const { data, error, loading } = useResource<Payment[]>(
-    tenant ? `/tenants/${tenant.id}/payments` : null,
+    tenant ? `/${tenant.kind === "tenant" ? "tenants" : "distributors"}/${tenant.id}/payments` : null,
   );
   const list = data ?? [];
 
@@ -24,7 +24,7 @@ export function PaymentHistoryDialog({
           <h2 id="dlg-title" tabIndex={-1}>
             Pagos de {tenant.name}
           </h2>
-          <p className="lede">{tenant.address}</p>
+          <p className="lede">{tenant.subtitle}</p>
 
           {error ? (
             <p className="form-error" role="alert">
@@ -33,7 +33,7 @@ export function PaymentHistoryDialog({
           ) : null}
           {loading && !data ? <p className="muted">Cargando pagos…</p> : null}
           {!loading && !error && list.length === 0 ? (
-            <p className="muted">Este cliente todavía no tiene pagos registrados.</p>
+            <p className="muted">Todavía no hay pagos registrados.</p>
           ) : null}
 
           {list.length > 0 ? (
@@ -54,7 +54,7 @@ export function PaymentHistoryDialog({
                   {list.map((p) => (
                     <tr key={p.id}>
                       <td className="nowrap">{formatDateUTC(p.paidAt)}</td>
-                      <td className="num-r strong">{formatMoney(p.amount)}</td>
+                      <td className="num-r">{formatMoney(p.amount)}</td>
                       <td>
                         {p.method}
                         {p.reference ? <span className="sub">Ref. {p.reference}</span> : null}

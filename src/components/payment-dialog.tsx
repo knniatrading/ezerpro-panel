@@ -8,9 +8,31 @@ import {
   formatMoney,
   todayISO,
 } from "@/lib/format";
-import type { RegisterPaymentResult, Tenant } from "@/lib/types";
+import type { Distributor, PayTarget, RegisterPaymentResult, Tenant } from "@/lib/types";
 import { Modal } from "./modal";
 import { StatusBadge } from "./status-badge";
+
+export function tenantTarget(t: Tenant): PayTarget {
+  return {
+    kind: "tenant",
+    id: t.id,
+    name: t.name,
+    subtitle: t.address,
+    status: t.status,
+    paidUntil: t.paidUntil,
+  };
+}
+
+export function distributorTarget(d: Distributor): PayTarget {
+  return {
+    kind: "distributor",
+    id: d.id,
+    name: d.companyName,
+    subtitle: d.domain,
+    status: d.status,
+    paidUntil: d.paidUntil,
+  };
+}
 
 const METHODS = ["Efectivo", "Transferencia", "Nequi", "Daviplata", "Tarjeta", "Consignación"];
 const MONTHS = [1, 2, 3, 6, 12];
@@ -22,11 +44,11 @@ interface Errors {
 }
 
 export function PaymentDialog({
-  tenant,
+  target: tenant,
   onClose,
   onDone,
 }: {
-  tenant: Tenant | null;
+  target: PayTarget | null;
   onClose: () => void;
   onDone: () => void;
 }) {
@@ -86,7 +108,7 @@ export function PaymentDialog({
 
     setBusy(true);
     try {
-      const result = await api<RegisterPaymentResult>(`/tenants/${tenant.id}/payments`, {
+      const result = await api<RegisterPaymentResult>(`/${tenant.kind === "tenant" ? "tenants" : "distributors"}/${tenant.id}/payments`, {
         method: "POST",
         body: JSON.stringify({
           amount: amountNumber,
@@ -141,7 +163,7 @@ export function PaymentDialog({
             Registrar pago
           </h2>
           <p className="lede">
-            {tenant.name} · {tenant.address}
+            {tenant.name} · {tenant.subtitle}
           </p>
 
           <div className="field-row">
@@ -271,7 +293,11 @@ export function PaymentDialog({
                 checked={reactivate}
                 onChange={(e) => setReactivate(e.target.checked)}
               />
-              <span>Reactivar el servicio de este cliente al registrar el pago.</span>
+              <span>
+                {tenant.kind === "tenant"
+                  ? "Reactivar el servicio de este cliente al registrar el pago."
+                  : "Reactivar a este distribuidor (y a sus clientes) al registrar el pago."}
+              </span>
             </label>
           ) : null}
 

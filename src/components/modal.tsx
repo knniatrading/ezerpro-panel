@@ -16,6 +16,8 @@ export function Modal({
   children: ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const openRef = useRef(open);
+  openRef.current = open;
 
   useEffect(() => {
     const dialog = ref.current;
@@ -34,7 +36,10 @@ export function Modal({
       ref={ref}
       className={`dialog${wide ? " dialog--wide" : ""}`}
       aria-labelledby="dlg-title"
-      onClose={onClose}
+      // Solo cuenta el cierre hecho por la persona (Esc o clic afuera); el cierre por código no.
+      onClose={() => {
+        if (openRef.current) onClose();
+      }}
       onClick={(e) => {
         if (e.target === ref.current) onClose();
       }}

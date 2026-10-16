@@ -5,23 +5,13 @@ import { useRouter } from "next/navigation";
 import { useSession } from "./session";
 import { StatusBadge } from "./status-badge";
 import { NewTenantDialog } from "./new-tenant-dialog";
-import { PaymentDialog } from "./payment-dialog";
+import { PaymentDialog, tenantTarget } from "./payment-dialog";
+import { PayCell } from "./pay-cell";
 import { PaymentHistoryDialog } from "./payment-history-dialog";
 import { StatusDialog, type StatusTarget } from "./status-dialog";
 import { IconPlus, IconRefresh } from "./icons";
 import { useResource } from "@/lib/use-resource";
-import { payStatus } from "@/lib/format";
 import type { Tenant } from "@/lib/types";
-
-export function PayCell({ paidUntil }: { paidUntil: string | null }) {
-  const pay = payStatus(paidUntil);
-  return (
-    <span className="pay">
-      <span className={`pay__label pay__label--${pay.tone}`}>{pay.label}</span>
-      <span className="pay__detail">{pay.detail}</span>
-    </span>
-  );
-}
 
 export function TenantsView() {
   const { state } = useSession();
@@ -195,8 +185,8 @@ export function TenantsView() {
         </div>
       ) : null}
 
-      <PaymentDialog tenant={payFor} onClose={() => setPayFor(null)} onDone={reload} />
-      <PaymentHistoryDialog tenant={historyFor} onClose={() => setHistoryFor(null)} />
+      <PaymentDialog target={payFor && tenantTarget(payFor)} onClose={() => setPayFor(null)} onDone={reload} />
+      <PaymentHistoryDialog target={historyFor && tenantTarget(historyFor)} onClose={() => setHistoryFor(null)} />
       <StatusDialog target={statusTarget} onClose={() => setStatusTarget(null)} onDone={reload} />
 
       {isDist ? (
