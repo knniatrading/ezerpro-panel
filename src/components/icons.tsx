@@ -91,3 +91,10 @@ export const IconRefresh = (p: SVGProps<SVGSVGElement>) => (
     <path d="M5.5 3v4h4M18.5 21v-4h-4" />
   </Icon>
 );
+
+export const IconCard = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <rect x="3" y="5" width="18" height="14" rx="2" />
+    <path d="M3 10h18M7 15h4" />
+  </Icon>
+);

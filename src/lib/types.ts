@@ -11,7 +11,7 @@ export interface Me {
   role: Role;
   status: string;
   tenant: { id: string; name: string; slug: string; status: string } | null;
-  distributor: { id: string; companyName: string; domain: string } | null;
+  distributor: { id: string; companyName: string; domain: string; status?: string } | null;
 }
 
 export interface Distributor {
@@ -23,6 +23,8 @@ export interface Distributor {
   createdAt: string;
   user: { email: string };
   _count: { tenants: number };
+  suspendedAt: string | null;
+  suspendedReason: string | null;
 }
 
 export interface Tenant {
@@ -35,6 +37,9 @@ export interface Tenant {
   address: string;
   distributor: { domain: string; companyName: string };
   _count: { users: number };
+  paidUntil: string | null;
+  suspendedAt: string | null;
+  suspendedReason: string | null;
 }
 
 export interface PublicTenant {
@@ -42,4 +47,36 @@ export interface PublicTenant {
   slug: string;
   status: string;
   distributor: { companyName: string };
+}
+
+export interface Payment {
+  id: string;
+  tenantId: string;
+  amount: number;
+  currency: string;
+  method: string;
+  reference: string | null;
+  note: string | null;
+  months: number;
+  paidAt: string;
+  periodStart: string;
+  periodEnd: string;
+  createdAt: string;
+  recordedBy: { email: string };
+}
+
+export interface PaymentWithTenant extends Payment {
+  tenant: { name: string; slug: string; distributor: { companyName: string } };
+}
+
+export interface PaymentsResponse {
+  items: PaymentWithTenant[];
+  monthTotal: number;
+  monthCount: number;
+  currency: string;
+}
+
+export interface RegisterPaymentResult {
+  payment: Payment;
+  tenant: { id: string; status: string; paidUntil: string };
 }

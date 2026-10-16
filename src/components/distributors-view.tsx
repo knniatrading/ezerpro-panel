@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "./session";
 import { StatusBadge } from "./status-badge";
 import { NewDistributorDialog } from "./new-distributor-dialog";
+import { StatusDialog, type StatusTarget } from "./status-dialog";
 import { IconPlus, IconRefresh } from "./icons";
 import { useResource } from "@/lib/use-resource";
 import { formatDate } from "@/lib/format";
@@ -15,6 +16,7 @@ export function DistributorsView() {
   const router = useRouter();
   const isSuper = state.status === "in" && state.user.role === "SUPER_ADMIN";
   const [open, setOpen] = useState(false);
+  const [statusTarget, setStatusTarget] = useState<StatusTarget | null>(null);
 
   useEffect(() => {
     if (state.status === "in" && state.user.role !== "SUPER_ADMIN") router.replace("/");
@@ -78,6 +80,7 @@ export function DistributorsView() {
                 </th>
                 <th scope="col">Estado</th>
                 <th scope="col">Creado</th>
+                <th scope="col">Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -91,8 +94,44 @@ export function DistributorsView() {
                   <td className="num">{d._count.tenants}</td>
                   <td>
                     <StatusBadge status={d.status} />
+                    {d.status === "suspended" && d.suspendedReason ? (
+                      <span className="sub-reason">{d.suspendedReason}</span>
+                    ) : null}
                   </td>
                   <td className="nowrap">{formatDate(d.createdAt)}</td>
+                  <td>
+                    {d.status === "suspended" ? (
+                      <button
+                        type="button"
+                        className="btn btn--secondary btn--sm"
+                        onClick={() =>
+                          setStatusTarget({
+                            kind: "distributor",
+                            id: d.id,
+                            name: d.companyName,
+                            next: "active",
+                          })
+                        }
+                      >
+                        Reactivar
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="btn btn--danger-ghost btn--sm"
+                        onClick={() =>
+                          setStatusTarget({
+                            kind: "distributor",
+                            id: d.id,
+                            name: d.companyName,
+                            next: "suspended",
+                          })
+                        }
+                      >
+                        Suspender
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -101,6 +140,7 @@ export function DistributorsView() {
       ) : null}
 
       <NewDistributorDialog open={open} onClose={() => setOpen(false)} onCreated={reload} />
+      <StatusDialog target={statusTarget} onClose={() => setStatusTarget(null)} onDone={reload} />
     </div>
   );
 }

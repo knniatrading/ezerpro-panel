@@ -85,3 +85,80 @@ export function slugify(input: string): string {
 }
 
 export const SLUG_RE = /^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$/;
+
+const moneyFmt = new Intl.NumberFormat("es-CO", {
+  style: "currency",
+  currency: "COP",
+  maximumFractionDigits: 0,
+});
+
+export function formatMoney(amount: number): string {
+  return moneyFmt.format(amount);
+}
+
+// Fecha de hoy en la zona del navegador, como AAAA-MM-DD (para el campo de fecha).
+export function todayISO(): string {
+  const d = new Date();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+
+// Suma meses de calendario en UTC (31 ene + 1 mes = 28/29 feb). Igual que el servidor.
+export function addMonthsUTC(date: Date, months: number): Date {
+  const r = new Date(date.getTime());
+  const day = r.getUTCDate();
+  r.setUTCDate(1);
+  r.setUTCMonth(r.getUTCMonth() + months);
+  const last = new Date(Date.UTC(r.getUTCFullYear(), r.getUTCMonth() + 1, 0)).getUTCDate();
+  r.setUTCDate(Math.min(day, last));
+  return r;
+}
+
+// Fechas de pago/vencimiento: el servidor las guarda a mediodía UTC, así que se muestran en UTC.
+const dateUtcFmt = new Intl.DateTimeFormat("es-CO", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+export function formatDateUTC(iso: string | Date): string {
+  const d = typeof iso === "string" ? new Date(iso) : iso;
+  return Number.isNaN(d.getTime()) ? "" : dateUtcFmt.format(d);
+}
+
+export type PayTone = "ok" | "warn" | "danger" | "muted";
+
+/** Estado de pago de un cliente según hasta cuándo está pagado. */
+export function payStatus(
+  paidUntil: string | null,
+  now: Date = new Date(),
+): { label: string; detail: string; tone: PayTone; overdue: boolean } {
+  if (!paidUntil) {
+    return { label: "Sin pagos", detail: "Aún no registra pagos", tone: "muted", overdue: false };
+  }
+  const end = new Date(paidUntil);
+  const todayUtc = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const endDay = Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate());
+  const diff = Math.round((endDay - todayUtc) / 86400000);
+  const until = formatDateUTC(end);
+  if (diff < 0) {
+    const n = -diff;
+    return {
+      label: "Vencido",
+      detail: `Venció el ${until} (hace ${n} ${n === 1 ? "día" : "días"})`,
+      tone: "danger",
+      overdue: true,
+    };
+  }
+  if (diff <= 7) {
+    return {
+      label: "Vence pronto",
+      detail: `Pagado hasta el ${until} (${diff === 0 ? "vence hoy" : `en ${diff} ${diff === 1 ? "día" : "días"}`})`,
+      tone: "warn",
+      overdue: false,
+    };
+  }
+  return { label: "Al día", detail: `Pagado hasta el ${until}`, tone: "ok", overdue: false };
+}

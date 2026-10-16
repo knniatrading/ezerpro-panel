@@ -6,8 +6,31 @@ import { ComingSoon } from "./coming-soon";
 import { StatusBadge } from "./status-badge";
 import { IconRefresh } from "./icons";
 import { useResource } from "@/lib/use-resource";
-import { formatDate } from "@/lib/format";
-import type { Distributor, Tenant } from "@/lib/types";
+import { formatDate, formatMoney, payStatus } from "@/lib/format";
+import type { Distributor, PaymentsResponse, Tenant } from "@/lib/types";
+
+function MoneyKpis({ tenants, payments }: { tenants: Tenant[]; payments: PaymentsResponse | null }) {
+  const overdue = tenants.filter(
+    (t) => t.status !== "suspended" && payStatus(t.paidUntil).overdue,
+  ).length;
+  const suspended = tenants.filter((t) => t.status === "suspended").length;
+  return (
+    <section className="kpis" aria-label="Cobros">
+      <div className="kpi">
+        <span className="kpi__value">{payments ? formatMoney(payments.monthTotal) : "–"}</span>
+        <span className="kpi__label">Recibido este mes</span>
+      </div>
+      <div className={`kpi${overdue > 0 ? " kpi--danger" : ""}`}>
+        <span className="kpi__value">{overdue}</span>
+        <span className="kpi__label">{overdue === 1 ? "cliente vencido" : "clientes vencidos"}</span>
+      </div>
+      <div className="kpi">
+        <span className="kpi__value">{suspended}</span>
+        <span className="kpi__label">{suspended === 1 ? "cliente suspendido" : "clientes suspendidos"}</span>
+      </div>
+    </section>
+  );
+}
 
 function plural(n: number, one: string, many: string) {
   return `${n} ${n === 1 ? one : many}`;
@@ -38,6 +61,7 @@ function Tier({
 function SuperOverview() {
   const dist = useResource<Distributor[]>("/distributors");
   const ten = useResource<Tenant[]>("/tenants");
+  const pay = useResource<PaymentsResponse>("/payments");
   const loading = dist.loading || ten.loading;
   const error = dist.error ?? ten.error;
   const distributors = dist.data ?? [];
@@ -96,6 +120,8 @@ function SuperOverview() {
         <Tier level={2} value={ready ? tenants.length : null} title="Clientes" note={tenNote} />
       </section>
 
+      {ready && tenants.length > 0 ? <MoneyKpis tenants={tenants} payments={pay.data} /> : null}
+
       {ready && distributors.length === 0 ? (
         <section className="note">
           <h2>Empieza creando tu primer distribuidor</h2>
@@ -153,6 +179,7 @@ function SuperOverview() {
 
 function DistributorOverview({ companyName, domain }: { companyName: string; domain: string }) {
   const ten = useResource<Tenant[]>("/tenants");
+  const pay = useResource<PaymentsResponse>("/payments");
   const tenants = ten.data ?? [];
   const ready = !ten.loading && !ten.error;
   const trial = tenants.filter((t) => t.status === "trial").length;
@@ -194,6 +221,8 @@ function DistributorOverview({ companyName, domain }: { companyName: string; dom
           }
         />
       </section>
+
+      {ready && tenants.length > 0 ? <MoneyKpis tenants={tenants} payments={pay.data} /> : null}
 
       {ready && tenants.length === 0 ? (
         <section className="note">

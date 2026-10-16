@@ -33,7 +33,12 @@ export function LoginView() {
       await login(email.trim(), password);
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
-        setError("El correo o la contraseña no son correctos.");
+        // Si el servidor explica un motivo (cuenta suspendida), se muestra tal cual.
+        setError(
+          err.message && err.message !== "Credenciales inválidas" && err.message !== "Unauthorized"
+            ? err.message
+            : "El correo o la contraseña no son correctos.",
+        );
       } else if (err instanceof ApiError && err.status === 429) {
         setError("Demasiados intentos. Espera un minuto e inténtalo de nuevo.");
       } else if (err instanceof ApiError) {

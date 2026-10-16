@@ -6,17 +6,19 @@ import { useEffect, type ReactNode } from "react";
 import { useSession } from "./session";
 import { Logo } from "./brand";
 import { TenantLanding } from "./tenant-landing";
-import { IconLogout, IconNetwork, IconOverview, IconStore } from "./icons";
+import { IconCard, IconLogout, IconNetwork, IconOverview, IconStore } from "./icons";
 import { roleLabel } from "@/lib/format";
 
 const SUPER_NAV = [
   { href: "/", label: "Resumen", icon: IconOverview },
   { href: "/distribuidores", label: "Distribuidores", icon: IconNetwork },
   { href: "/clientes", label: "Clientes", icon: IconStore },
+  { href: "/pagos", label: "Pagos", icon: IconCard },
 ];
 const DIST_NAV = [
   { href: "/", label: "Resumen", icon: IconOverview },
   { href: "/clientes", label: "Mis clientes", icon: IconStore },
+  { href: "/pagos", label: "Pagos", icon: IconCard },
 ];
 const BASIC_NAV = [{ href: "/", label: "Inicio", icon: IconOverview }];
 

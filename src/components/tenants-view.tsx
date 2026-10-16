@@ -5,10 +5,23 @@ import { useRouter } from "next/navigation";
 import { useSession } from "./session";
 import { StatusBadge } from "./status-badge";
 import { NewTenantDialog } from "./new-tenant-dialog";
+import { PaymentDialog } from "./payment-dialog";
+import { PaymentHistoryDialog } from "./payment-history-dialog";
+import { StatusDialog, type StatusTarget } from "./status-dialog";
 import { IconPlus, IconRefresh } from "./icons";
 import { useResource } from "@/lib/use-resource";
-import { formatDate } from "@/lib/format";
+import { payStatus } from "@/lib/format";
 import type { Tenant } from "@/lib/types";
+
+export function PayCell({ paidUntil }: { paidUntil: string | null }) {
+  const pay = payStatus(paidUntil);
+  return (
+    <span className="pay">
+      <span className={`pay__label pay__label--${pay.tone}`}>{pay.label}</span>
+      <span className="pay__detail">{pay.detail}</span>
+    </span>
+  );
+}
 
 export function TenantsView() {
   const { state } = useSession();
@@ -19,6 +32,9 @@ export function TenantsView() {
   const domain = state.status === "in" ? (state.user.distributor?.domain ?? "") : "";
   const [open, setOpen] = useState(false);
   const [adminFor, setAdminFor] = useState<Tenant | null>(null);
+  const [payFor, setPayFor] = useState<Tenant | null>(null);
+  const [historyFor, setHistoryFor] = useState<Tenant | null>(null);
+  const [statusTarget, setStatusTarget] = useState<StatusTarget | null>(null);
 
   useEffect(() => {
     if (state.status === "in" && !isSuper && !isDist) router.replace("/");
@@ -98,18 +114,20 @@ export function TenantsView() {
             <thead>
               <tr>
                 <th scope="col">Cliente</th>
-                <th scope="col">Dirección</th>
                 {isSuper ? <th scope="col">Distribuidor</th> : null}
                 <th scope="col">Administrador</th>
                 <th scope="col">Estado</th>
-                <th scope="col">Creado</th>
+                <th scope="col">Pago</th>
+                <th scope="col">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {tenants.map((t) => (
                 <tr key={t.id}>
-                  <td className="strong">{t.name}</td>
-                  <td>{t.address}</td>
+                  <td>
+                    <span className="strong">{t.name}</span>
+                    <span className="sub">{t.address}</span>
+                  </td>
                   {isSuper ? <td>{t.distributor.companyName}</td> : null}
                   <td>
                     {t._count.users > 0 ? (
@@ -124,14 +142,62 @@ export function TenantsView() {
                   </td>
                   <td>
                     <StatusBadge status={t.status} />
+                    {t.status === "suspended" && t.suspendedReason ? (
+                      <span className="sub-reason">{t.suspendedReason}</span>
+                    ) : null}
                   </td>
-                  <td className="nowrap">{formatDate(t.createdAt)}</td>
+                  <td>
+                    <PayCell paidUntil={t.paidUntil} />
+                  </td>
+                  <td>
+                    <div className="actions-cell">
+                      <button
+                        type="button"
+                        className="btn btn--secondary btn--sm"
+                        onClick={() => setPayFor(t)}
+                      >
+                        Registrar pago
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn--secondary btn--sm"
+                        onClick={() => setHistoryFor(t)}
+                      >
+                        Pagos
+                      </button>
+                      {t.status === "suspended" ? (
+                        <button
+                          type="button"
+                          className="btn btn--secondary btn--sm"
+                          onClick={() =>
+                            setStatusTarget({ kind: "tenant", id: t.id, name: t.name, next: "active" })
+                          }
+                        >
+                          Reactivar
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          className="btn btn--danger-ghost btn--sm"
+                          onClick={() =>
+                            setStatusTarget({ kind: "tenant", id: t.id, name: t.name, next: "suspended" })
+                          }
+                        >
+                          Suspender
+                        </button>
+                      )}
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       ) : null}
+
+      <PaymentDialog tenant={payFor} onClose={() => setPayFor(null)} onDone={reload} />
+      <PaymentHistoryDialog tenant={historyFor} onClose={() => setHistoryFor(null)} />
+      <StatusDialog target={statusTarget} onClose={() => setStatusTarget(null)} onDone={reload} />
 
       {isDist ? (
         <NewTenantDialog
