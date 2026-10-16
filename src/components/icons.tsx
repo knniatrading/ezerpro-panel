@@ -156,3 +156,23 @@ export const IconBike = (p: SVGProps<SVGSVGElement>) => (
     <path d="M6 17l4-8h5l3 8M10 9L9 6H7" />
   </Icon>
 );
+
+export const IconReceipt = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <path d="M6 3h12v18l-3-2-3 2-3-2-3 2z" />
+    <path d="M9 8h6M9 12h6" />
+  </Icon>
+);
+
+export const IconChart = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <path d="M4 20V10M10 20V4M16 20v-8M22 20H2" />
+  </Icon>
+);
+
+export const IconWallet = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <rect x="3" y="6" width="18" height="14" rx="2" />
+    <path d="M3 10h18M16 15h2" />
+  </Icon>
+);

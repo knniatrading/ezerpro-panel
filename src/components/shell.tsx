@@ -8,7 +8,7 @@ import { Logo } from "./brand";
 import { TenantBrand } from "./tenant-brand";
 import { brandStyle } from "@/lib/brand";
 import { TenantLanding } from "./tenant-landing";
-import { IconCard, IconLogout, IconNetwork, IconOverview, IconStore, IconUser, IconBag, IconMenu, IconTeam, IconPalette, IconPos, IconTable, IconBike } from "./icons";
+import { IconCard, IconLogout, IconNetwork, IconOverview, IconStore, IconUser, IconBag, IconMenu, IconTeam, IconPalette, IconPos, IconTable, IconBike, IconReceipt, IconChart, IconWallet } from "./icons";
 import { roleLabel } from "@/lib/format";
 
 const SUPER_NAV = [
@@ -36,6 +36,7 @@ function tenantNav(modules: string[] | undefined, role: string) {
   if (mods.includes("pedidos") && (role === "TENANT_ADMIN" || role === "CASHIER")) {
     nav.push({ href: "/domicilios", label: "Domicilios", icon: IconBike });
     nav.push({ href: "/caja", label: "Caja", icon: IconCard });
+    nav.push({ href: "/ventas", label: "Mis ventas", icon: IconReceipt });
   }
   if (mods.includes("pedidos") && role === "DRIVER") {
     nav.push({ href: "/entregas", label: "Mis entregas", icon: IconBike });
@@ -43,7 +44,9 @@ function tenantNav(modules: string[] | undefined, role: string) {
   if (role === "TENANT_ADMIN") {
     if (mods.includes("menu")) nav.push({ href: "/menu", label: "Menú", icon: IconMenu });
     if (mods.includes("pedidos")) nav.push({ href: "/mesas", label: "Mesas", icon: IconTable });
+    if (mods.includes("pedidos")) nav.push({ href: "/metricas", label: "Métricas", icon: IconChart });
     nav.push({ href: "/equipo", label: "Equipo", icon: IconTeam });
+    nav.push({ href: "/nomina", label: "Nómina", icon: IconWallet });
     nav.push({ href: "/marca", label: "Marca", icon: IconPalette });
   }
   nav.push({ href: "/cuenta", label: "Mi cuenta", icon: IconUser });

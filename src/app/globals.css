@@ -1276,3 +1276,29 @@ button {
 }
 
 .section-title { font-size: 17px; margin: 8px 0 12px; }
+
+/* Periodo, filtros y gráficos simples (ventas, métricas) */
+.period { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin-bottom: 18px; }
+.period .seg { flex-wrap: wrap; }
+.period__label { margin: 0; color: var(--muted); font-size: 14px; }
+.period__dates { display: flex; gap: 12px; flex-wrap: wrap; }
+.period__dates label { display: grid; gap: 2px; font-size: 13px; color: var(--muted); }
+.period__dates input { font: inherit; padding: 6px 8px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--surface); color: var(--ink); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
+.chip { font: inherit; font-size: 14px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); cursor: pointer; }
+.chip.is-on { background: var(--green-dark); border-color: var(--green-dark); color: #fff; }
+.table tfoot td { border-top: 2px solid var(--line-strong); padding: 12px 14px; }
+.bars { display: flex; align-items: flex-end; gap: 6px; height: 180px; padding-top: 8px; overflow-x: auto; }
+.bars__col { flex: 1 1 0; min-width: 22px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; }
+.bars__bar { width: 100%; max-width: 48px; background: var(--green); border-radius: 4px 4px 0 0; min-height: 0; }
+.bars__tick { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.hbars, .stars { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 10px; }
+.hbars li { display: grid; grid-template-columns: 110px 1fr auto; gap: 10px; align-items: center; }
+.hbars__track { display: block; height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; }
+.hbars__fill { display: block; height: 100%; background: var(--green); border-radius: 999px; }
+.stars li { display: grid; grid-template-columns: 26px minmax(100px, 1.2fr) 1.5fr auto auto; gap: 10px; align-items: center; }
+.stars__n { font-weight: 700; color: var(--muted); }
+.stars__name { font-weight: 600; overflow-wrap: anywhere; }
+@media (max-width: 640px) { .stars li { grid-template-columns: 22px 1fr auto; } .stars .hbars__track, .stars .sub { display: none; } }
+.ledger { list-style: none; margin: 4px 0 14px; padding: 0; display: grid; gap: 6px; }
+.ledger li { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center; padding: 6px 0; border-bottom: 1px dashed var(--line-strong); font-size: 14px; }

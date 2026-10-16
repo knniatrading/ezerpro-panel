@@ -37,8 +37,9 @@ export function Modal({
       className={`dialog${wide ? " dialog--wide" : ""}`}
       aria-labelledby="dlg-title"
       // Solo cuenta el cierre hecho por la persona (Esc o clic afuera); el cierre por código no.
-      onClose={() => {
-        if (openRef.current) onClose();
+      onClose={(e) => {
+        // Un diálogo anidado (p. ej. la confirmación) no debe cerrar a su padre.
+        if (e.target === ref.current && openRef.current) onClose();
       }}
       onClick={(e) => {
         if (e.target === ref.current) onClose();

@@ -268,3 +268,78 @@ export interface MyDelivery {
   dispatchedAt: string | null;
   items: { id: string; name: string; quantity: number }[];
 }
+
+export interface SalesRow {
+  id: string;
+  number: number;
+  paidAt: string;
+  type: "domicilio" | "recoger" | "mesa";
+  source: string;
+  customerName: string;
+  tableName: string | null;
+  paymentMethod: string | null;
+  deliveryFee: number;
+  total: number;
+  cashier: string | null;
+  products: string;
+}
+
+export interface Tally {
+  total: number;
+  count: number;
+}
+
+export interface SalesResponse {
+  from: string;
+  to: string;
+  summary: {
+    count: number;
+    total: number;
+    average: number;
+    deliveryFees: number;
+    byMethod: Record<string, Tally>;
+    byType: Record<string, Tally>;
+  };
+  truncated: boolean;
+  items: SalesRow[];
+}
+
+export interface MetricsResponse {
+  from: string;
+  to: string;
+  summary: { count: number; total: number; average: number; cancelled: number };
+  byDay: { date: string; total: number; count: number }[];
+  byHour: { hour: number; total: number; count: number }[];
+  byType: Record<string, Tally>;
+  byMethod: Record<string, Tally>;
+  topDishes: { name: string; quantity: number; revenue: number }[];
+}
+
+export type PayType = "hora" | "dia" | "domicilio";
+
+export interface PayrollRow {
+  id: string;
+  name: string | null;
+  email: string;
+  role: Role;
+  status: string;
+  payType: PayType | null;
+  payRate: number;
+  units: number;
+  earnedPeriod: number;
+  paidPeriod: number;
+  balance: number;
+}
+
+export interface PayrollResponse {
+  items: PayrollRow[];
+  totals: { earnedPeriod: number; paidPeriod: number; balance: number };
+}
+
+export interface PayrollDetail {
+  user: { id: string; name: string | null; email: string; role: Role; payType: PayType | null; payRate: number };
+  work: { id: string; workDate: string; units: number; rate: number; amount: number; note: string | null }[];
+  deliveries: { id: string; number: number; deliveredAt: string; driverPay: number }[];
+  payments: { id: string; amount: number; method: string | null; note: string | null; paidAt: string }[];
+  balance: number;
+}
