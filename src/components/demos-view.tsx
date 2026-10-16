@@ -37,7 +37,12 @@ export function DemosView() {
   const [err, setErr] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const [panelUrl, setPanelUrl] = useState("");
-  useEffect(() => setPanelUrl(`${window.location.origin}/login`), []);
+  // El demo del distribuidor se abre en la dirección del panel (panel.dominio), nunca en la de un negocio.
+  useEffect(() => {
+    const { protocol, hostname, port } = window.location;
+    const panelHost = hostname.startsWith("panel.") ? hostname : `panel.${hostname.split(".").slice(1).join(".")}`;
+    setPanelUrl(`${protocol}//${panelHost}${port ? `:${port}` : ""}/login`);
+  }, []);
   if (state.status === "in" && !allowed) return <NoAccess />;
 
   async function run(key: string, path: string, body: object, okMsg: string) {
@@ -74,7 +79,7 @@ export function DemosView() {
           {data?.distributorDemo ? (
             <>
               <p className="field__hint" style={{ marginTop: 10 }}>
-                Se abre desde la pantalla de inicio de sesión del panel (botón «Entrar como distribuidor»). Enlace para compartir:
+                Este enlace lleva al inicio de sesión del panel, donde aparece el botón «Entrar como distribuidor». Compártelo con el distribuidor que quieras convencer:
               </p>
               <CopyLink url={panelUrl} />
               {data.distributorDemo.resetAt ? <p className="field__hint">Último reinicio: {stampCO(data.distributorDemo.resetAt)}</p> : null}
