@@ -7,17 +7,16 @@ const LIMIT = 80000; // el servidor acepta hasta 90.000 caracteres
 
 function load(file: File): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      resolve(img);
+    const fail = () => reject(new Error("No se pudo leer la imagen. Prueba con una foto JPG o PNG."));
+    const reader = new FileReader();
+    reader.onerror = fail;
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = fail;
+      img.src = String(reader.result);
     };
-    img.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error("No se pudo leer la imagen."));
-    };
-    img.src = url;
+    reader.readAsDataURL(file);
   });
 }
 
