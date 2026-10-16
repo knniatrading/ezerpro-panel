@@ -6,7 +6,7 @@ export class ApiError extends Error {
   }
 }
 
-const NO_REFRESH = new Set(["/auth/login", "/auth/refresh", "/auth/logout"]);
+const NO_REFRESH = new Set(["/auth/login", "/auth/refresh", "/auth/logout", "/auth/forgot-password", "/auth/reset-password"]);
 const NETWORK_MESSAGE =
   "No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.";
 

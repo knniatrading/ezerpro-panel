@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "./session";
 import { Logo } from "./brand";
@@ -130,6 +131,10 @@ export function LoginView() {
               </div>
             </div>
 
+            <p className="auth__forgot">
+              <Link href="/recuperar">¿Olvidaste tu contraseña?</Link>
+            </p>
+
             <div id="login-error" role="alert" className="form-error-slot">
               {error ? <p className="form-error">{error}</p> : null}
             </div>
@@ -154,7 +159,7 @@ export function LoginView() {
             </section>
           ) : null}
 
-          <p className="auth__help">¿No puedes entrar? Pide ayuda a quien creó tu cuenta.</p>
+          <p className="auth__help">Si el correo no te llega, pide ayuda a quien creó tu cuenta.</p>
         </div>
       </main>
 

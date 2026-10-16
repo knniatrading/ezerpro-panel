@@ -1326,3 +1326,9 @@ button {
 .photo-field__empty { display: grid; place-items: center; border: 1px dashed var(--line-strong); color: var(--muted); font-size: 13px; }
 .photo-field__actions { display: grid; gap: 6px; justify-items: start; min-width: 0; }
 .photo-field__actions input[type=file] { font: inherit; font-size: 14px; max-width: 100%; }
+
+/* Recuperar contraseña */
+.auth__forgot { margin: -4px 0 14px; font-size: 14px; text-align: right; }
+.auth__forgot a, .auth__help a { color: var(--brand, var(--accent)); text-decoration: underline; text-underline-offset: 3px; }
+.notice { display: grid; gap: 10px; padding: 16px; border-radius: 12px; background: var(--surface, #fff); border: 1px solid var(--line-strong); }
+.notice p { margin: 0; }
