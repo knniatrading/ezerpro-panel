@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { api, ApiError } from "@/lib/api";
 import { useResource } from "@/lib/use-resource";
 import { formatMoney } from "@/lib/format";
+import { photoToDataUrl, productImageUrl } from "@/lib/image";
 import type { MenuCategory, MenuItem, MenuResponse } from "@/lib/types";
 import { Modal } from "./modal";
 import { useSession } from "./session";
@@ -91,6 +92,23 @@ function ItemForm({
   const [cat, setCat] = useState(item ? (item.categoryId ?? "") : (categoryId ?? ""));
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // undefined = la foto no cambia; null = se quita; texto = foto nueva
+  const [photo, setPhoto] = useState<string | null | undefined>(undefined);
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const currentPhoto = photo === undefined ? (item ? productImageUrl(item.id, item.img) : null) : photo;
+
+  async function pickPhoto(file: File | undefined) {
+    if (!file) return;
+    setErr(null);
+    setPhotoBusy(true);
+    try {
+      setPhoto(await photoToDataUrl(file));
+    } catch (x) {
+      setErr(x instanceof Error ? x.message : "No se pudo preparar la foto.");
+    } finally {
+      setPhotoBusy(false);
+    }
+  }
 
   const digits = priceTxt.replace(/[^0-9]/g, "");
   const price = digits ? Number(digits) : 0;
@@ -106,6 +124,7 @@ function ItemForm({
       description: desc.trim() || null,
       price,
       categoryId: cat || null,
+      ...(photo !== undefined ? { image: photo } : {}),
     });
     try {
       if (item) await api(`/menu/items/${item.id}`, { method: "PATCH", body });
@@ -131,6 +150,17 @@ function ItemForm({
       <div className="field">
         <label htmlFor="i-desc">Descripción (opcional)</label>
         <input id="i-desc" type="text" value={desc} autoComplete="off" onChange={(e) => setDesc(e.target.value)} />
+      </div>
+      <div className="field photo-field">
+        <label htmlFor="i-photo">Foto (opcional)</label>
+        <div className="photo-field__row">
+          {currentPhoto ? <img className="photo-field__img" src={currentPhoto} alt="Foto del producto" /> : <span className="photo-field__empty" aria-hidden="true">Sin foto</span>}
+          <div className="photo-field__actions">
+            <input id="i-photo" type="file" accept="image/*" onChange={(e) => { void pickPhoto(e.target.files?.[0]); e.target.value = ""; }} />
+            {currentPhoto ? <button type="button" className="btn btn--danger-ghost btn--sm" onClick={() => setPhoto(null)}>Quitar foto</button> : null}
+            <p className="field__hint">{photoBusy ? "Preparando la foto…" : "Se ajusta sola para que cargue rápido."}</p>
+          </div>
+        </div>
       </div>
       <div className="field-row">
         <div className="field">
@@ -272,8 +302,13 @@ export function MenuView() {
                   {items.map((i) => (
                     <tr key={i.id}>
                       <td>
-                        <div className="strong-t">{i.name}</div>
-                        {i.description ? <div className="sub">{i.description}</div> : null}
+                        <div className="prod-cell">
+                          {i.img ? <img className="thumb" src={productImageUrl(i.id, i.img) ?? ""} alt="" loading="lazy" /> : null}
+                          <div>
+                            <div className="strong-t">{i.name}</div>
+                            {i.description ? <div className="sub">{i.description}</div> : null}
+                          </div>
+                        </div>
                       </td>
                       <td className="num-r">{formatMoney(i.price)}</td>
                       <td>{i.active ? <span className="badge badge--ok">Disponible</span> : <span className="badge badge--warn">Agotado</span>}</td>

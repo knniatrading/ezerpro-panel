@@ -8,6 +8,7 @@ import type { PublicMenu, PublicTenant } from "@/lib/types";
 import { Modal } from "./modal";
 import { TenantBrand } from "./tenant-brand";
 import { brandStyle } from "@/lib/brand";
+import { productImageUrl } from "@/lib/image";
 
 type Item = PublicMenu["categories"][number]["items"][number];
 type Placed = { id: string; number: number; total: number; status: string };
@@ -178,6 +179,7 @@ export function Storefront({ tenant, tableCode, tableName }: { tenant: PublicTen
                   const qty = cart[i.id]?.qty ?? 0;
                   return (
                     <li key={i.id} className="shop__item">
+                      {i.img ? <img className="shop__img" src={productImageUrl(i.id, i.img) ?? ""} alt="" loading="lazy" /> : null}
                       <div className="shop__info">
                         <span className="shop__name">{i.name}</span>
                         {i.description ? <span className="shop__desc">{i.description}</span> : null}

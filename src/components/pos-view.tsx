@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { api, ApiError } from "@/lib/api";
+import { productImageUrl } from "@/lib/image";
 import { useResource } from "@/lib/use-resource";
 import { formatMoney } from "@/lib/format";
 import type { CashCurrent, DiningTable, MenuItem, MenuResponse } from "@/lib/types";
@@ -159,6 +160,7 @@ export function PosView() {
               const q = cart[i.id]?.qty ?? 0;
               return (
                 <button key={i.id} type="button" className={`pos__item${q ? " is-in" : ""}`} onClick={() => add(i, 1)} aria-label={`Agregar ${i.name}`}>
+                  {i.img ? <img className="pos__img" src={productImageUrl(i.id, i.img) ?? ""} alt="" loading="lazy" /> : null}
                   <span className="pos__iname">{i.name}</span>
                   <span className="pos__iprice">{formatMoney(i.price)}</span>
                   {q ? <span className="pos__qty" aria-hidden="true">{q}</span> : null}

@@ -134,6 +134,7 @@ export interface MenuCategory {
 }
 
 export interface MenuItem {
+  img?: number | null;
   id: string;
   name: string;
   description: string | null;
@@ -190,7 +191,7 @@ export interface PublicMenu {
   available: boolean;
   acceptingOrders: boolean;
   deliveryFee?: number;
-  categories: { id: string; name: string; items: { id: string; name: string; description: string | null; price: number }[] }[];
+  categories: { id: string; name: string; items: { id: string; name: string; description: string | null; price: number; img?: number | null }[] }[];
 }
 
 export interface Employee {

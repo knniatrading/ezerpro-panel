@@ -1313,3 +1313,16 @@ button {
 .demo-role:hover:not(:disabled) { border-color: var(--green); }
 .demo-role:disabled { opacity: 0.6; cursor: default; }
 .demo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+
+/* Fotos de productos */
+.shop__img { width: 84px; height: 84px; border-radius: 12px; object-fit: cover; flex: none; background: var(--line); }
+.shop__info { flex: 1; min-width: 0; }
+.pos__img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 8px; background: var(--line); }
+.prod-cell { display: flex; align-items: center; gap: 12px; }
+.thumb { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; flex: none; background: var(--line); }
+.photo-field__row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.photo-field__img, .photo-field__empty { width: 96px; height: 96px; border-radius: 12px; flex: none; }
+.photo-field__img { object-fit: cover; border: 1px solid var(--line-strong); }
+.photo-field__empty { display: grid; place-items: center; border: 1px dashed var(--line-strong); color: var(--muted); font-size: 13px; }
+.photo-field__actions { display: grid; gap: 6px; justify-items: start; min-width: 0; }
+.photo-field__actions input[type=file] { font: inherit; font-size: 14px; max-width: 100%; }
