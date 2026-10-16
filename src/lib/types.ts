@@ -9,6 +9,7 @@ export type Role =
   | "CUSTOMER";
 
 export interface Me {
+  demo?: boolean;
   id: string;
   email: string;
   name?: string | null;
@@ -342,4 +343,21 @@ export interface PayrollDetail {
   deliveries: { id: string; number: number; deliveredAt: string; driverPay: number }[];
   payments: { id: string; amount: number; method: string | null; note: string | null; paidAt: string }[];
   balance: number;
+}
+
+export interface DemoRole {
+  key: string;
+  label: string;
+  desc: string;
+}
+
+export interface DemoInfo {
+  kind: "tenant" | "distributor" | null;
+  roles?: DemoRole[];
+}
+
+export interface DemosResponse {
+  items: { distributorId: string; companyName: string; domain: string; demo: { host: string; resetAt: string | null } | null }[];
+  roles: DemoRole[];
+  distributorDemo: { resetAt: string | null } | null;
 }

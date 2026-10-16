@@ -20,6 +20,7 @@ type State =
 interface SessionValue {
   state: State;
   login: (email: string, password: string) => Promise<void>;
+  demoLogin: (body: { kind?: string; host?: string; role?: string }) => Promise<void>;
   logout: () => Promise<void>;
   reloadUser: () => Promise<void>;
 }
@@ -41,6 +42,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  const demoLogin = useCallback(async (body: { kind?: string; host?: string; role?: string }) => {
+    await api("/demo/login", { method: "POST", body: JSON.stringify(body) });
+    const user = await api<Me>("/auth/me");
+    setState({ status: "in", user });
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
@@ -78,8 +85,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ state, login, logout, reloadUser }),
-    [state, login, logout, reloadUser],
+    () => ({ state, login, demoLogin, logout, reloadUser }),
+    [state, login, demoLogin, logout, reloadUser],
   );
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 }

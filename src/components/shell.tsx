@@ -8,7 +8,7 @@ import { Logo } from "./brand";
 import { TenantBrand } from "./tenant-brand";
 import { brandStyle } from "@/lib/brand";
 import { TenantLanding } from "./tenant-landing";
-import { IconCard, IconLogout, IconNetwork, IconOverview, IconStore, IconUser, IconBag, IconMenu, IconTeam, IconPalette, IconPos, IconTable, IconBike, IconReceipt, IconChart, IconWallet } from "./icons";
+import { IconCard, IconLogout, IconNetwork, IconOverview, IconStore, IconUser, IconBag, IconMenu, IconTeam, IconPalette, IconPos, IconTable, IconBike, IconReceipt, IconChart, IconWallet, IconSpark } from "./icons";
 import { roleLabel } from "@/lib/format";
 
 const SUPER_NAV = [
@@ -16,12 +16,14 @@ const SUPER_NAV = [
   { href: "/distribuidores", label: "Distribuidores", icon: IconNetwork },
   { href: "/clientes", label: "Clientes", icon: IconStore },
   { href: "/pagos", label: "Pagos", icon: IconCard },
+  { href: "/demos", label: "Demos", icon: IconSpark },
   { href: "/cuenta", label: "Mi cuenta", icon: IconUser },
 ];
 const DIST_NAV = [
   { href: "/", label: "Resumen", icon: IconOverview },
   { href: "/clientes", label: "Mis clientes", icon: IconStore },
   { href: "/pagos", label: "Pagos", icon: IconCard },
+  { href: "/demos", label: "Demos", icon: IconSpark },
   { href: "/cuenta", label: "Mi cuenta", icon: IconUser },
 ];
 // Motor de módulos: el menú del negocio depende de los módulos de su nicho.
@@ -86,12 +88,14 @@ export function Shell({ children }: { children: ReactNode }) {
   }
 
   const { user } = state;
-  const nav =
+  const nav0 =
     user.role === "SUPER_ADMIN"
       ? SUPER_NAV
       : user.role === "DISTRIBUTOR_ADMIN"
         ? DIST_NAV
         : tenantNav(user.tenant?.modules, user.role);
+  // En una sesión de demo no se muestra la gestión de demos.
+  const nav = user.demo ? nav0.filter((i) => i.href !== "/demos") : nav0;
   const displayName = user.distributor?.companyName ?? user.tenant?.name ?? user.email;
 
   return (
@@ -138,6 +142,11 @@ export function Shell({ children }: { children: ReactNode }) {
         </div>
       </aside>
       <main className="main" id="contenido" tabIndex={-1}>
+        {user.demo ? (
+          <div className="demo-banner" role="note">
+            <strong>Estás en un demo.</strong> Los datos son de ejemplo y se reinician cada noche. Puedes probar todo con confianza.
+          </div>
+        ) : null}
         {children}
       </main>
     </div>

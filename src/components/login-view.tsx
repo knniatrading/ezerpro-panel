@@ -8,10 +8,10 @@ import { IconEye, IconEyeOff } from "./icons";
 import { api, ApiError } from "@/lib/api";
 import { TenantBrand } from "./tenant-brand";
 import { brandStyle } from "@/lib/brand";
-import type { PublicTenant } from "@/lib/types";
+import type { DemoInfo, PublicTenant } from "@/lib/types";
 
 export function LoginView() {
-  const { state, login } = useSession();
+  const { state, login, demoLogin } = useSession();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,6 +19,8 @@ export function LoginView() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [tenant, setTenant] = useState<PublicTenant | null>(null);
+  const [demo, setDemo] = useState<DemoInfo | null>(null);
+  const [demoBusy, setDemoBusy] = useState<string | null>(null);
 
   // En la dirección de un negocio, el inicio de sesión lleva su marca y no la de EzerPro.
   useEffect(() => {
@@ -26,6 +28,22 @@ export function LoginView() {
     if (host.startsWith("panel.")) return;
     api<PublicTenant>(`/public/tenant?host=${encodeURIComponent(host)}`).then(setTenant).catch(() => undefined);
   }, []);
+
+  // Si esta dirección tiene un demo, se ofrece entrar sin contraseña.
+  useEffect(() => {
+    api<DemoInfo>(`/demo/info?host=${encodeURIComponent(window.location.hostname)}`).then(setDemo).catch(() => undefined);
+  }, []);
+
+  async function enterDemo(role: string) {
+    setError(null);
+    setDemoBusy(role);
+    try {
+      await demoLogin(demo?.kind === "distributor" ? { kind: "distributor" } : { host: window.location.hostname, role });
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "No se pudo abrir el demo. Inténtalo de nuevo.");
+      setDemoBusy(null);
+    }
+  }
 
   useEffect(() => {
     if (state.status === "in") router.replace("/");
@@ -120,6 +138,21 @@ export function LoginView() {
               {busy ? "Entrando…" : "Iniciar sesión"}
             </button>
           </form>
+
+          {demo?.kind && demo.roles ? (
+            <section className="demo-box" aria-label="Probar el demo">
+              <h2>{demo.kind === "distributor" ? "Mira cómo funciona para un distribuidor" : "Prueba el demo, sin contraseña"}</h2>
+              <p className="field__hint">Son datos de ejemplo. Entra con el rol que quieras ver:</p>
+              <div className="demo-box__roles">
+                {demo.roles.map((r) => (
+                  <button key={r.key} type="button" className="demo-role" disabled={demoBusy !== null} onClick={() => enterDemo(r.key)}>
+                    <strong>{demoBusy === r.key ? "Entrando…" : `Entrar como ${r.label.toLowerCase()}`}</strong>
+                    <span>{r.desc}</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
           <p className="auth__help">¿No puedes entrar? Pide ayuda a quien creó tu cuenta.</p>
         </div>
