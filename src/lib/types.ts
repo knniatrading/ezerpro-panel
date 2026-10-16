@@ -34,4 +34,5 @@ export interface Tenant {
   createdAt: string;
   address: string;
   distributor: { domain: string; companyName: string };
+  _count: { users: number };
 }

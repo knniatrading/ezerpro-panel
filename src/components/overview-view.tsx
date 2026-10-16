@@ -151,9 +151,120 @@ function SuperOverview() {
   );
 }
 
+function DistributorOverview({ companyName, domain }: { companyName: string; domain: string }) {
+  const ten = useResource<Tenant[]>("/tenants");
+  const tenants = ten.data ?? [];
+  const ready = !ten.loading && !ten.error;
+  const trial = tenants.filter((t) => t.status === "trial").length;
+  const activeT = tenants.filter((t) => t.status === "active").length;
+  const noAdmin = tenants.filter((t) => t._count.users === 0).length;
+
+  return (
+    <div className="page">
+      <header className="page-head">
+        <div>
+          <h1>Resumen</h1>
+          <p className="lede">
+            {companyName} · tus clientes viven en direcciones como <strong>nombre.{domain}</strong>
+          </p>
+        </div>
+      </header>
+
+      {ten.error ? (
+        <div className="banner banner--error" role="alert">
+          <span>{ten.error}</span>
+          <button type="button" className="btn btn--secondary btn--sm" onClick={ten.reload}>
+            <IconRefresh />
+            <span>Reintentar</span>
+          </button>
+        </div>
+      ) : null}
+
+      <section className="stack" aria-label="Tus clientes" aria-busy={ten.loading}>
+        <Tier
+          level={1}
+          value={ready ? tenants.length : null}
+          title="Clientes"
+          note={
+            !ready
+              ? "Cargando…"
+              : tenants.length === 0
+                ? "Aún no tienes ninguno"
+                : `${trial} en prueba, ${plural(activeT, "activo", "activos")}`
+          }
+        />
+      </section>
+
+      {ready && tenants.length === 0 ? (
+        <section className="note">
+          <h2>Crea tu primer cliente</h2>
+          <p>
+            Pon el nombre del negocio, elige su dirección y define la cuenta con la que entrará a
+            administrarlo.
+          </p>
+          <Link href="/clientes" className="btn btn--primary">
+            Crear cliente
+          </Link>
+        </section>
+      ) : null}
+
+      {ready && noAdmin > 0 ? (
+        <section className="note">
+          <h2>{plural(noAdmin, "cliente sin administrador", "clientes sin administrador")}</h2>
+          <p>Sin administrador, ese negocio todavía no puede entrar a su plataforma.</p>
+          <Link href="/clientes" className="btn btn--secondary">
+            Ver mis clientes
+          </Link>
+        </section>
+      ) : null}
+
+      {ready && tenants.length > 0 ? (
+        <section className="block">
+          <div className="block__head">
+            <h2>Últimos clientes</h2>
+            <Link href="/clientes">Ver todos</Link>
+          </div>
+          <div className="table-wrap">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th scope="col">Cliente</th>
+                  <th scope="col">Dirección</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Creado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tenants.slice(0, 5).map((t) => (
+                  <tr key={t.id}>
+                    <td className="strong">{t.name}</td>
+                    <td>{t.address}</td>
+                    <td>
+                      <StatusBadge status={t.status} />
+                    </td>
+                    <td className="nowrap">{formatDate(t.createdAt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ) : null}
+    </div>
+  );
+}
+
 export function OverviewView() {
   const { state } = useSession();
   if (state.status !== "in") return null;
+  if (state.user.role === "DISTRIBUTOR_ADMIN" && state.user.distributor) {
+    return (
+      <DistributorOverview
+        companyName={state.user.distributor.companyName}
+        domain={state.user.distributor.domain}
+      />
+    );
+  }
   if (state.user.role !== "SUPER_ADMIN") return <ComingSoon user={state.user} />;
   return <SuperOverview />;
 }

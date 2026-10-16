@@ -13,6 +13,10 @@ const SUPER_NAV = [
   { href: "/distribuidores", label: "Distribuidores", icon: IconNetwork },
   { href: "/clientes", label: "Clientes", icon: IconStore },
 ];
+const DIST_NAV = [
+  { href: "/", label: "Resumen", icon: IconOverview },
+  { href: "/clientes", label: "Mis clientes", icon: IconStore },
+];
 const BASIC_NAV = [{ href: "/", label: "Inicio", icon: IconOverview }];
 
 export function Shell({ children }: { children: ReactNode }) {
@@ -36,7 +40,12 @@ export function Shell({ children }: { children: ReactNode }) {
   }
 
   const { user } = state;
-  const nav = user.role === "SUPER_ADMIN" ? SUPER_NAV : BASIC_NAV;
+  const nav =
+    user.role === "SUPER_ADMIN"
+      ? SUPER_NAV
+      : user.role === "DISTRIBUTOR_ADMIN"
+        ? DIST_NAV
+        : BASIC_NAV;
   const displayName = user.distributor?.companyName ?? user.tenant?.name ?? user.email;
 
   return (
