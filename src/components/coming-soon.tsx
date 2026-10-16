@@ -14,8 +14,8 @@ export function ComingSoon({ user }: { user: Me }) {
       <section className="note">
         <h2>Tu panel todavía no está disponible</h2>
         <p>
-          Esta primera versión del panel incluye solo las herramientas del Super Admin. Las de{" "}
-          {roleLabel(user.role).toLowerCase()} llegan en la siguiente versión.
+          Las herramientas de {roleLabel(user.role).toLowerCase()} se están construyendo y llegan
+          en las próximas versiones.
         </p>
         {user.distributor ? (
           <dl className="facts">

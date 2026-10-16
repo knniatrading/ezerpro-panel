@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 import { useSession } from "./session";
 import { Logo } from "./brand";
+import { TenantLanding } from "./tenant-landing";
 import { IconLogout, IconNetwork, IconOverview, IconStore } from "./icons";
 import { roleLabel } from "@/lib/format";
 
@@ -24,9 +25,16 @@ export function Shell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
+  // En la dirección de un cliente (no "panel."), la portada es su página de bienvenida.
+  const onTenantHost =
+    typeof window !== "undefined" && !window.location.hostname.startsWith("panel.");
+  const showLanding = state.status === "out" && pathname === "/" && onTenantHost;
+
   useEffect(() => {
-    if (state.status === "out") router.replace("/login");
-  }, [state.status, router]);
+    if (state.status === "out" && !showLanding) router.replace("/login");
+  }, [state.status, showLanding, router]);
+
+  if (showLanding) return <TenantLanding />;
 
   if (state.status !== "in") {
     return (

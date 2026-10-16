@@ -36,3 +36,10 @@ export interface Tenant {
   distributor: { domain: string; companyName: string };
   _count: { users: number };
 }
+
+export interface PublicTenant {
+  name: string;
+  slug: string;
+  status: string;
+  distributor: { companyName: string };
+}
