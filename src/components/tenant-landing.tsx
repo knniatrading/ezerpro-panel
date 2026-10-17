@@ -6,6 +6,7 @@ import { api, ApiError } from "@/lib/api";
 import { Logo } from "./brand";
 import type { PublicTenant } from "@/lib/types";
 import { Storefront } from "./storefront";
+import { DriverCardPublic } from "./driver-public";
 
 type View =
   | { kind: "loading" }
@@ -54,6 +55,18 @@ export function TenantLanding() {
     return (
       <main id="contenido">
         <Storefront tenant={view.tenant} />
+      </main>
+    );
+  }
+
+  if (
+    view.kind === "ok" &&
+    view.tenant.status !== "suspended" &&
+    view.tenant.modules?.includes("tarjeta")
+  ) {
+    return (
+      <main id="contenido">
+        <DriverCardPublic tenant={view.tenant} />
       </main>
     );
   }

@@ -358,7 +358,131 @@ export interface DemoInfo {
 }
 
 export interface DemosResponse {
-  items: { distributorId: string; companyName: string; domain: string; demo: { host: string; resetAt: string | null } | null }[];
-  roles: DemoRole[];
+  items: {
+    distributorId: string;
+    companyName: string;
+    domain: string;
+    demos: { niche: string; label: string; host: string | null; resetAt: string | null; roles: DemoRole[] }[];
+  }[];
   distributorDemo: { resetAt: string | null } | null;
+}
+
+// ---------- Nicho conductores ----------
+export interface RideOffer {
+  by: "conductor" | "pasajero";
+  amount: number;
+  km?: number | null;
+  note?: string | null;
+  createdAt: string;
+}
+export interface Ride {
+  id: string;
+  number: number;
+  status: string;
+  serviceName: string | null;
+  passengerName: string;
+  passengerPhone: string;
+  pickup: string;
+  dropoff: string;
+  notes: string | null;
+  extras: { id: string; name: string; amount: number }[] | null;
+  extrasTotal: number;
+  km: number | null;
+  price: number | null;
+  offeredBy: "conductor" | "pasajero" | null;
+  finalPrice: number | null;
+  createdAt: string;
+  acceptedAt: string | null;
+  startedAt: string | null;
+  completedAt: string | null;
+  cancelledAt: string | null;
+  cancelledBy: string | null;
+  offers: RideOffer[];
+}
+export interface DriverProfile {
+  displayName: string;
+  vehicleType: string;
+  vehicleDesc: string | null;
+  plate: string | null;
+  phone: string | null;
+  bio: string | null;
+  available: boolean;
+  perKm: number;
+  baseFee: number;
+  minFare: number;
+  img: number | null;
+}
+export interface RideServiceItem {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number | null;
+  active: boolean;
+}
+export interface RideExtraItem {
+  id: string;
+  name: string;
+  amount: number;
+  active: boolean;
+}
+export interface DriverData {
+  profile: DriverProfile;
+  services: RideServiceItem[];
+  extras: RideExtraItem[];
+  host: string | null;
+}
+export interface DriverSummary {
+  count: number;
+  total: number;
+  average: number;
+  cancelled: number;
+  km: number;
+  byDay: { date: string; count: number; total: number }[];
+  byService: { name: string; count: number; total: number }[];
+}
+export interface PublicDriver {
+  suspended: boolean;
+  name: string;
+  vehicleType?: string;
+  vehicleDesc?: string | null;
+  plate?: string | null;
+  phone?: string | null;
+  bio?: string | null;
+  img?: number | null;
+  available: boolean;
+  perKm?: number;
+  baseFee?: number;
+  minFare?: number;
+  services?: { id: string; name: string; description: string | null; price: number | null }[];
+  extras?: { id: string; name: string; amount: number }[];
+}
+export interface PublicRide {
+  number: number;
+  status: string;
+  serviceName: string | null;
+  pickup: string;
+  dropoff: string;
+  notes: string | null;
+  extras: { id: string; name: string; amount: number }[];
+  extrasTotal: number;
+  km: number | null;
+  price: number | null;
+  offeredBy: "conductor" | "pasajero" | null;
+  finalPrice: number | null;
+  createdAt: string;
+  completedAt: string | null;
+  cancelledBy: string | null;
+  offers: RideOffer[];
+  driver: { name: string; phone: string | null; vehicleType: string; vehicleDesc: string | null; plate: string | null };
+}
+export interface RideSummaryRow {
+  token: string;
+  number: number;
+  status: string;
+  serviceName: string | null;
+  pickup: string;
+  dropoff: string;
+  price: number | null;
+  finalPrice: number | null;
+  createdAt: string;
 }

@@ -43,6 +43,8 @@ export function NewTenantDialog({
   const ref = useRef<HTMLDialogElement>(null);
 
   const [name, setName] = useState("");
+  const [niche, setNiche] = useState("comidas_rapidas");
+  const [niches, setNiches] = useState<{ key: string; label: string }[]>([]);
   const [slug, setSlug] = useState("");
   const [slugTouched, setSlugTouched] = useState(false);
   const [email, setEmail] = useState("");
@@ -63,6 +65,8 @@ export function NewTenantDialog({
     if (!dialog) return;
     if (open && !dialog.open) {
       setName("");
+      setNiche("comidas_rapidas");
+      api<{ key: string; label: string }[]>("/tenants/niches").then(setNiches).catch(() => setNiches([]));
       setSlug("");
       setSlugTouched(false);
       setEmail("");
@@ -129,7 +133,7 @@ export function NewTenantDialog({
       if (!adminOnly) {
         const t = await api<Tenant>("/tenants", {
           method: "POST",
-          body: JSON.stringify({ name: cleanName, slug: finalSlug }),
+          body: JSON.stringify({ name: cleanName, slug: finalSlug, niche }),
         });
         tid = t.id;
         tname = t.name;
@@ -255,6 +259,17 @@ export function NewTenantDialog({
                       </p>
                     ) : null}
                   </div>
+
+                  {niches.length > 1 ? (
+                    <div className="field">
+                      <label htmlFor="t-niche">Tipo de negocio</label>
+                      <select id="t-niche" value={niche} onChange={(e) => setNiche(e.target.value)}>
+                        {niches.map((n) => (
+                          <option key={n.key} value={n.key}>{n.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  ) : null}
 
                   <div className="field">
                     <label htmlFor="t-slug">Dirección del cliente</label>

@@ -93,34 +93,41 @@ export function DemosView() {
         </section>
       ) : null}
 
-      <h2 className="section-title">Demo de Comidas Rápidas</h2>
       <p className="field__hint" style={{ marginBottom: 12 }}>
-        Una hamburguesería con carta, mesas, personal, un mes de ventas, pedidos en curso y nómina. Quien abre el enlace puede entrar como:{" "}
-        {data?.roles.map((r) => r.label.toLowerCase()).join(", ")}.
+        Un demo por tipo de negocio, con datos de ejemplo de un mes. Aparecen solos en tu página de ventas.
       </p>
       {data && data.items.length === 0 ? (
         <section className="note"><h2>Aún no hay distribuidores</h2><p>Crea un distribuidor para poder armarle su demo.</p></section>
       ) : null}
-      <div className="demo-grid">
-        {data?.items.map((d) => (
-          <section className="account-card" key={d.distributorId}>
-            <h2>{isSuper ? d.companyName : "Tu demo"}</h2>
-            {d.demo ? (
-              <>
-                <CopyLink url={tenantOrigin(d.demo.host)} />
-                {d.demo.resetAt ? <p className="field__hint">Último reinicio: {stampCO(d.demo.resetAt)}. Se reinicia solo cada madrugada.</p> : null}
-              </>
-            ) : (
-              <p className="field__hint">Todavía no tiene demo.</p>
-            )}
-            <div className="actions-cell" style={{ marginTop: 12 }}>
-              <button type="button" className="btn btn--primary btn--sm" disabled={busy !== null} onClick={() => run(d.distributorId, "/demos/tenant", { distributorId: d.distributorId }, "Demo listo.")}>
-                {busy === d.distributorId ? "Preparando…" : d.demo ? "Reiniciar datos" : "Crear demo"}
-              </button>
-            </div>
-          </section>
-        ))}
-      </div>
+      {data?.items.map((d) => (
+        <div key={d.distributorId}>
+          {isSuper ? <h2 className="section-title">{d.companyName}</h2> : null}
+          <div className="demo-grid">
+            {d.demos.map((m) => {
+              const key = `${d.distributorId}:${m.niche}`;
+              return (
+                <section className="account-card" key={key}>
+                  <h2>Demo de {m.label}</h2>
+                  <p className="field__hint">Entra como: {m.roles.map((r) => r.label.toLowerCase()).join(", ")}.</p>
+                  {m.host ? (
+                    <>
+                      <CopyLink url={tenantOrigin(m.host)} />
+                      {m.resetAt ? <p className="field__hint">Último reinicio: {stampCO(m.resetAt)}. Se reinicia solo cada madrugada.</p> : null}
+                    </>
+                  ) : (
+                    <p className="field__hint">Todavía no tiene demo.</p>
+                  )}
+                  <div className="actions-cell" style={{ marginTop: 12 }}>
+                    <button type="button" className="btn btn--primary btn--sm" disabled={busy !== null} onClick={() => run(key, "/demos/tenant", { distributorId: d.distributorId, niche: m.niche }, "Demo listo.")}>
+                      {busy === key ? "Preparando…" : m.host ? "Reiniciar datos" : "Crear demo"}
+                    </button>
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

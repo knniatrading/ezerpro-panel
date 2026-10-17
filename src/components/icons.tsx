@@ -183,3 +183,35 @@ export const IconSpark = (p: SVGProps<SVGSVGElement>) => (
     <path d="M19 16l.7 1.8L21.5 18.5l-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z" />
   </Icon>
 );
+
+export const IconCar = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <path d="M5 16V11l1.7-4.3A2 2 0 0 1 8.6 5.4h6.8a2 2 0 0 1 1.9 1.3L19 11v5" />
+    <path d="M3 16h18v2.5a.5.5 0 0 1-.5.5H19a1 1 0 0 1-1-1v-1H6v1a1 1 0 0 1-1 1H3.5a.5.5 0 0 1-.5-.5z" />
+    <circle cx="7.5" cy="13" r=".8" />
+    <circle cx="16.5" cy="13" r=".8" />
+  </Icon>
+);
+
+export const IconInbox = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <path d="M4 13l2.2-7a1.5 1.5 0 0 1 1.4-1h8.8a1.5 1.5 0 0 1 1.4 1L20 13" />
+    <path d="M4 13h4.5a1 1 0 0 1 1 .8 2.5 2.5 0 0 0 5 0 1 1 0 0 1 1-.8H20v5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18z" />
+  </Icon>
+);
+
+export const IconIdCard = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <rect x="3" y="5" width="18" height="14" rx="2" />
+    <circle cx="9" cy="11" r="2" />
+    <path d="M6 16c.6-1.6 1.8-2.3 3-2.3s2.4.7 3 2.3" />
+    <path d="M14.5 10h4M14.5 13h3" />
+  </Icon>
+);
+
+export const IconTag = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <path d="M3 12.5V4.5A1.5 1.5 0 0 1 4.5 3h8a1.5 1.5 0 0 1 1.1.4l7 7a1.5 1.5 0 0 1 0 2.2l-7.5 7.5a1.5 1.5 0 0 1-2.2 0l-7-7A1.5 1.5 0 0 1 3 12.5z" />
+    <circle cx="8" cy="8" r="1.2" />
+  </Icon>
+);

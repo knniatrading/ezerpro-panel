@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "./session";
@@ -34,6 +34,18 @@ export function LoginView() {
   useEffect(() => {
     api<DemoInfo>(`/demo/info?host=${encodeURIComponent(window.location.hostname)}`).then(setDemo).catch(() => undefined);
   }, []);
+
+  // Enlaces de la página de ventas (?demo=admin): entran directo al demo con ese rol.
+  const autoDemo = useRef(false);
+  useEffect(() => {
+    if (!demo?.roles || autoDemo.current) return;
+    const wanted = new URLSearchParams(window.location.search).get("demo");
+    if (wanted && demo.roles.some((r) => r.key === wanted)) {
+      autoDemo.current = true;
+      void enterDemo(wanted);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [demo]);
 
   async function enterDemo(role: string) {
     setError(null);

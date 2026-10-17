@@ -8,7 +8,7 @@ import { Logo } from "./brand";
 import { TenantBrand } from "./tenant-brand";
 import { brandStyle } from "@/lib/brand";
 import { TenantLanding } from "./tenant-landing";
-import { IconCard, IconLogout, IconNetwork, IconOverview, IconStore, IconUser, IconBag, IconMenu, IconTeam, IconPalette, IconPos, IconTable, IconBike, IconReceipt, IconChart, IconWallet, IconSpark } from "./icons";
+import { IconCard, IconLogout, IconNetwork, IconOverview, IconStore, IconUser, IconBag, IconMenu, IconTeam, IconPalette, IconPos, IconTable, IconBike, IconReceipt, IconChart, IconWallet, IconSpark, IconInbox, IconIdCard, IconTag } from "./icons";
 import { roleLabel } from "@/lib/format";
 
 const SUPER_NAV = [
@@ -43,7 +43,14 @@ function tenantNav(modules: string[] | undefined, role: string) {
   if (mods.includes("pedidos") && role === "DRIVER") {
     nav.push({ href: "/entregas", label: "Mis entregas", icon: IconBike });
   }
-  if (role === "TENANT_ADMIN") {
+  if (mods.includes("tarjeta") && role === "TENANT_ADMIN") {
+    nav.push({ href: "/solicitudes", label: "Solicitudes", icon: IconInbox });
+    nav.push({ href: "/historial", label: "Historial y ganancias", icon: IconReceipt });
+    nav.push({ href: "/mi-tarjeta", label: "Mi tarjeta y QR", icon: IconIdCard });
+    nav.push({ href: "/tarifas", label: "Tarifas y servicios", icon: IconTag });
+    nav.push({ href: "/marca", label: "Marca", icon: IconPalette });
+  }
+  if (role === "TENANT_ADMIN" && !mods.includes("tarjeta")) {
     if (mods.includes("menu")) nav.push({ href: "/menu", label: "Menú", icon: IconMenu });
     if (mods.includes("pedidos")) nav.push({ href: "/mesas", label: "Mesas", icon: IconTable });
     if (mods.includes("pedidos")) nav.push({ href: "/metricas", label: "Métricas", icon: IconChart });

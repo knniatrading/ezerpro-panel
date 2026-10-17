@@ -1,5 +1,7 @@
 "use client";
 
+import { DriverHome } from "./driver-home";
+
 import Link from "next/link";
 import { useSession } from "./session";
 import { ComingSoon } from "./coming-soon";
@@ -364,6 +366,7 @@ export function OverviewView() {
     );
   }
   if (state.user.tenant?.modules?.includes("pedidos")) return <TenantHome />;
+  if (state.user.tenant?.modules?.includes("tarjeta") && state.user.role === "TENANT_ADMIN") return <DriverHome />;
   if (state.user.role !== "SUPER_ADMIN") return <ComingSoon user={state.user} />;
   return <SuperOverview />;
 }
