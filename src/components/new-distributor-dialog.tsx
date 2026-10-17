@@ -155,6 +155,11 @@ export function NewDistributorDialog({
                   <dd className="mono">{created.password}</dd>
                 </div>
               </dl>
+              <div className="note" style={{ margin: "8px 0" }}>
+                <strong>Dominio propio:</strong> para que <span className="mono">{created.domain}</span> funcione, en el servidor ejecuta{" "}
+                <span className="mono" style={{ overflowWrap: "anywhere" }}>bash ~/ezerpro/dominios/agregar-dominio.sh {created.domain}</span>{" "}
+                y entrégale al distribuidor los registros DNS que muestra. (Si el dominio ya estaba configurado, no hace falta.)
+              </div>
               <p className="field__hint" role="status" style={{ minHeight: "1.4em", marginTop: 0 }}>
                 {copyNote}
               </p>
