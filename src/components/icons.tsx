@@ -215,3 +215,10 @@ export const IconTag = (p: SVGProps<SVGSVGElement>) => (
     <circle cx="8" cy="8" r="1.2" />
   </Icon>
 );
+
+export const IconShield = (p: SVGProps<SVGSVGElement>) => (
+  <Icon {...p}>
+    <path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z" />
+    <path d="M9 12l2 2 4-4" />
+  </Icon>
+);

@@ -491,3 +491,18 @@ export interface RideSummaryRow {
   finalPrice: number | null;
   createdAt: string;
 }
+
+export interface AuditItem {
+  id: string;
+  at: string;
+  email: string | null;
+  role: string | null;
+  action: string;
+  summary: string;
+  ip: string | null;
+  meta: Record<string, unknown> | null;
+}
+export interface AuditResponse {
+  items: AuditItem[];
+  next: string | null;
+}

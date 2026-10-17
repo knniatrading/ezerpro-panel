@@ -8,7 +8,7 @@ import { Logo } from "./brand";
 import { TenantBrand } from "./tenant-brand";
 import { brandStyle } from "@/lib/brand";
 import { TenantLanding } from "./tenant-landing";
-import { IconCard, IconLogout, IconNetwork, IconOverview, IconStore, IconUser, IconBag, IconMenu, IconTeam, IconPalette, IconPos, IconTable, IconBike, IconReceipt, IconChart, IconWallet, IconSpark, IconInbox, IconIdCard, IconTag } from "./icons";
+import { IconCard, IconLogout, IconNetwork, IconOverview, IconStore, IconUser, IconBag, IconMenu, IconTeam, IconPalette, IconPos, IconTable, IconBike, IconReceipt, IconChart, IconWallet, IconSpark, IconInbox, IconIdCard, IconTag, IconShield } from "./icons";
 import { roleLabel } from "@/lib/format";
 
 const SUPER_NAV = [
@@ -17,6 +17,7 @@ const SUPER_NAV = [
   { href: "/clientes", label: "Clientes", icon: IconStore },
   { href: "/pagos", label: "Pagos", icon: IconCard },
   { href: "/demos", label: "Demos", icon: IconSpark },
+  { href: "/actividad", label: "Actividad", icon: IconShield },
   { href: "/cuenta", label: "Mi cuenta", icon: IconUser },
 ];
 const DIST_NAV = [
@@ -24,6 +25,7 @@ const DIST_NAV = [
   { href: "/clientes", label: "Mis clientes", icon: IconStore },
   { href: "/pagos", label: "Pagos", icon: IconCard },
   { href: "/demos", label: "Demos", icon: IconSpark },
+  { href: "/actividad", label: "Actividad", icon: IconShield },
   { href: "/cuenta", label: "Mi cuenta", icon: IconUser },
 ];
 // Motor de módulos: el menú del negocio depende de los módulos de su nicho.
@@ -49,6 +51,7 @@ function tenantNav(modules: string[] | undefined, role: string) {
     nav.push({ href: "/mi-tarjeta", label: "Mi tarjeta y QR", icon: IconIdCard });
     nav.push({ href: "/tarifas", label: "Tarifas y servicios", icon: IconTag });
     nav.push({ href: "/marca", label: "Marca", icon: IconPalette });
+    nav.push({ href: "/actividad", label: "Actividad", icon: IconShield });
   }
   if (role === "TENANT_ADMIN" && !mods.includes("tarjeta")) {
     if (mods.includes("menu")) nav.push({ href: "/menu", label: "Menú", icon: IconMenu });
@@ -57,6 +60,7 @@ function tenantNav(modules: string[] | undefined, role: string) {
     nav.push({ href: "/equipo", label: "Equipo", icon: IconTeam });
     nav.push({ href: "/nomina", label: "Nómina", icon: IconWallet });
     nav.push({ href: "/marca", label: "Marca", icon: IconPalette });
+    nav.push({ href: "/actividad", label: "Actividad", icon: IconShield });
   }
   nav.push({ href: "/cuenta", label: "Mi cuenta", icon: IconUser });
   return nav;

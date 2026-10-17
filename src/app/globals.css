@@ -1471,3 +1471,4 @@ button {
 .trip__price { font-size: 18px; }
 .check { display: flex; gap: 8px; align-items: center; padding: 4px 0; }
 .dcard__list b { display: block; }
+.row--warn td { background: #fff7e6; }
