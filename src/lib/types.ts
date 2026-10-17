@@ -358,13 +358,18 @@ export interface DemoInfo {
 }
 
 export interface DemosResponse {
-  items: {
-    distributorId: string;
-    companyName: string;
-    domain: string;
-    demos: { niche: string; label: string; host: string | null; resetAt: string | null; roles: DemoRole[] }[];
+  demos: {
+    niche: string;
+    label: string;
+    host: string | null;
+    resetAt: string | null;
+    roles: DemoRole[];
+    adminUrl?: string;
+    adminLabel?: string;
+    clientUrl?: string;
+    clientLabel?: string;
   }[];
-  distributorDemo: { resetAt: string | null } | null;
+  distributorDemo: { resetAt: string | null; url: string } | null;
 }
 
 // ---------- Nicho conductores ----------

@@ -1,15 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { api, ApiError } from "@/lib/api";
 import { useResource } from "@/lib/use-resource";
-import { tenantOrigin } from "@/lib/tenant-url";
 import { stampCO } from "@/lib/dates";
 import { useSession } from "./session";
 import { NoAccess } from "./no-access";
 import type { DemosResponse } from "@/lib/types";
 
-function CopyLink({ url }: { url: string }) {
+function CopyLink({ label, url }: { label: string; url: string }) {
   const [msg, setMsg] = useState("");
   async function copy() {
     try {
@@ -20,8 +19,9 @@ function CopyLink({ url }: { url: string }) {
     }
   }
   return (
-    <div>
-      <p className="mono" style={{ margin: "6px 0 8px", overflowWrap: "anywhere" }}>{url}</p>
+    <div style={{ marginTop: 10 }}>
+      <p className="field__hint" style={{ margin: 0 }}>{label}</p>
+      <p className="mono" style={{ margin: "4px 0 8px", overflowWrap: "anywhere" }}>{url}</p>
       <button type="button" className="btn btn--secondary btn--sm" onClick={copy}>Copiar enlace</button>
       <span role="status" className="field__hint" style={{ marginLeft: 10 }}>{msg}</span>
     </div>
@@ -36,13 +36,6 @@ export function DemosView() {
   const [busy, setBusy] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
-  const [panelUrl, setPanelUrl] = useState("");
-  // El demo del distribuidor se abre en la dirección del panel (panel.dominio), nunca en la de un negocio.
-  useEffect(() => {
-    const { protocol, hostname, port } = window.location;
-    const panelHost = hostname.startsWith("panel.") ? hostname : `panel.${hostname.split(".").slice(1).join(".")}`;
-    setPanelUrl(`${protocol}//${panelHost}${port ? `:${port}` : ""}/login`);
-  }, []);
   if (state.status === "in" && !allowed) return <NoAccess />;
 
   async function run(key: string, path: string, body: object, okMsg: string) {
@@ -65,7 +58,11 @@ export function DemosView() {
       <header className="page-head">
         <div>
           <h1>Demos</h1>
-          <p className="lede">Negocios de ejemplo para mostrar la plataforma a tus prospectos. Quien abre el enlace entra con un clic, sin contraseña.</p>
+          <p className="lede">
+            {isSuper
+              ? "Demos de la plataforma. Aparecen solos en la página de ventas y cada distribuidor ve sus enlaces en su panel."
+              : "Demos listos para tus prospectos. Copia el enlace y envíaselo: entra con un clic, sin contraseña, y puede probar todo."}
+          </p>
         </div>
       </header>
       {error ? <div className="banner banner--error" role="alert"><span>{error}</span></div> : null}
@@ -78,10 +75,7 @@ export function DemosView() {
           <p className="field__hint">Un distribuidor de ejemplo con 6 clientes (activos, en prueba, vencido y suspendido), sus pagos y los pagos a la plataforma.</p>
           {data?.distributorDemo ? (
             <>
-              <p className="field__hint" style={{ marginTop: 10 }}>
-                Este enlace lleva al inicio de sesión del panel, donde aparece el botón «Entrar como distribuidor». Compártelo con el distribuidor que quieras convencer:
-              </p>
-              <CopyLink url={panelUrl} />
+              <CopyLink label="Enlace para el prospecto (muestra el botón «Entrar como distribuidor»):" url={data.distributorDemo.url} />
               {data.distributorDemo.resetAt ? <p className="field__hint">Último reinicio: {stampCO(data.distributorDemo.resetAt)}</p> : null}
             </>
           ) : null}
@@ -93,41 +87,32 @@ export function DemosView() {
         </section>
       ) : null}
 
-      <p className="field__hint" style={{ marginBottom: 12 }}>
-        Un demo por tipo de negocio, con datos de ejemplo de un mes. Aparecen solos en tu página de ventas.
-      </p>
-      {data && data.items.length === 0 ? (
-        <section className="note"><h2>Aún no hay distribuidores</h2><p>Crea un distribuidor para poder armarle su demo.</p></section>
-      ) : null}
-      {data?.items.map((d) => (
-        <div key={d.distributorId}>
-          {isSuper ? <h2 className="section-title">{d.companyName}</h2> : null}
-          <div className="demo-grid">
-            {d.demos.map((m) => {
-              const key = `${d.distributorId}:${m.niche}`;
-              return (
-                <section className="account-card" key={key}>
-                  <h2>Demo de {m.label}</h2>
-                  <p className="field__hint">Entra como: {m.roles.map((r) => r.label.toLowerCase()).join(", ")}.</p>
-                  {m.host ? (
-                    <>
-                      <CopyLink url={tenantOrigin(m.host)} />
-                      {m.resetAt ? <p className="field__hint">Último reinicio: {stampCO(m.resetAt)}. Se reinicia solo cada madrugada.</p> : null}
-                    </>
-                  ) : (
-                    <p className="field__hint">Todavía no tiene demo.</p>
-                  )}
-                  <div className="actions-cell" style={{ marginTop: 12 }}>
-                    <button type="button" className="btn btn--primary btn--sm" disabled={busy !== null} onClick={() => run(key, "/demos/tenant", { distributorId: d.distributorId, niche: m.niche }, "Demo listo.")}>
-                      {busy === key ? "Preparando…" : m.host ? "Reiniciar datos" : "Crear demo"}
-                    </button>
-                  </div>
-                </section>
-              );
-            })}
-          </div>
-        </div>
-      ))}
+      <h2 className="section-title">Demos para clientes finales</h2>
+      <p className="field__hint" style={{ marginBottom: 12 }}>Un demo por tipo de negocio, con datos de ejemplo de un mes. Se reinician solos cada madrugada.</p>
+      <div className="demo-grid">
+        {data?.demos.map((m) => (
+          <section className="account-card" key={m.niche}>
+            <h2>Demo de {m.label}</h2>
+            <p className="field__hint">Entra como: {m.roles.map((r) => r.label.toLowerCase()).join(", ")}.</p>
+            {m.host && m.adminUrl && m.clientUrl ? (
+              <>
+                <CopyLink label={`Entrar como ${(m.adminLabel ?? "administrador").toLowerCase()}:`} url={m.adminUrl} />
+                <CopyLink label={`${m.clientLabel ?? "Ver lo que ve el cliente"}:`} url={m.clientUrl} />
+                {m.resetAt ? <p className="field__hint">Último reinicio: {stampCO(m.resetAt)}.</p> : null}
+              </>
+            ) : (
+              <p className="field__hint">{isSuper ? "Todavía no está creado." : "Este demo aún no está disponible."}</p>
+            )}
+            {isSuper ? (
+              <div className="actions-cell" style={{ marginTop: 12 }}>
+                <button type="button" className="btn btn--primary btn--sm" disabled={busy !== null} onClick={() => run(m.niche, "/demos/tenant", { niche: m.niche }, "Demo listo.")}>
+                  {busy === m.niche ? "Preparando…" : m.host ? "Reiniciar datos" : "Crear demo"}
+                </button>
+              </div>
+            ) : null}
+          </section>
+        ))}
+      </div>
     </div>
   );
 }
