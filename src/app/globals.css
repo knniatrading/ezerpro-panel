@@ -1472,3 +1472,24 @@ button {
 .check { display: flex; gap: 8px; align-items: center; padding: 4px 0; }
 .dcard__list b { display: block; }
 .row--warn td { background: #fff7e6; }
+
+/* ---------- Nicho técnicos ---------- */
+.tech__badges { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.tech__cta { display: grid; gap: 10px; }
+.tech__big { width: 100%; height: auto; min-height: 64px; line-height: 1.25; padding: 14px; font-size: 20px; font-weight: 700; display: grid; gap: 2px; justify-items: center; text-align: center; text-decoration: none; }
+.tech__big small { font-size: 14px; font-weight: 500; opacity: 0.9; }
+.tech__big--urgent { background: #c62828; border-color: #c62828; color: #fff; }
+.tech__big--wa { background: #1fa855; border-color: #1fa855; color: #fff; }
+.tech__price { font-size: 13px; color: var(--muted); white-space: nowrap; }
+.tech__certs { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.ba-list { display: grid; gap: 14px; }
+.ba { margin: 0; display: grid; gap: 8px; border: 1px solid var(--line-strong); border-radius: 12px; padding: 10px; background: var(--surface); }
+.ba__pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+.ba__pair div { position: relative; }
+.ba__pair img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; display: block; background: var(--line-strong); }
+.ba__pair span { position: absolute; left: 6px; top: 6px; background: #000000b3; color: #fff; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+.ba figcaption p { margin: 2px 0 6px; color: var(--muted); }
+.ba-slots { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 8px; }
+.ba-slot { display: grid; gap: 6px; align-content: start; }
+.ba-slot img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; }
+.ba-slot input[type="file"] { max-width: 100%; }

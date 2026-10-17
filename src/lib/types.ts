@@ -506,3 +506,47 @@ export interface AuditResponse {
   items: AuditItem[];
   next: string | null;
 }
+
+// ---------- Nicho técnicos ----------
+export interface TechProfile {
+  id: string;
+  tenantId: string;
+  displayName: string;
+  trade: string;
+  phone: string | null;
+  bio: string | null;
+  years: number | null;
+  coverage: string | null;
+  certifications: string | null;
+  emergency: boolean;
+  available: boolean;
+  img: number | null;
+}
+export interface TechWorkItem {
+  id: string;
+  title: string;
+  description: string | null;
+  before: number | null;
+  after: number | null;
+}
+export interface TechData {
+  profile: TechProfile;
+  services: RideServiceItem[];
+  works: TechWorkItem[];
+  host: string | null;
+}
+export interface PublicTech {
+  suspended: boolean;
+  name: string;
+  trade?: string;
+  phone?: string | null;
+  bio?: string | null;
+  years?: number | null;
+  coverage?: string | null;
+  certifications?: string[];
+  emergency?: boolean;
+  available?: boolean;
+  img?: number | null;
+  services?: { id: string; name: string; description: string | null; price: number | null }[];
+  works?: TechWorkItem[];
+}

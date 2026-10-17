@@ -7,6 +7,7 @@ import { Logo } from "./brand";
 import type { PublicTenant } from "@/lib/types";
 import { Storefront } from "./storefront";
 import { DriverCardPublic } from "./driver-public";
+import { TechPublic } from "./tech-public";
 
 type View =
   | { kind: "loading" }
@@ -67,6 +68,18 @@ export function TenantLanding() {
     return (
       <main id="contenido">
         <DriverCardPublic tenant={view.tenant} />
+      </main>
+    );
+  }
+
+  if (
+    view.kind === "ok" &&
+    view.tenant.status !== "suspended" &&
+    view.tenant.modules?.includes("tecnico")
+  ) {
+    return (
+      <main id="contenido">
+        <TechPublic tenant={view.tenant} />
       </main>
     );
   }

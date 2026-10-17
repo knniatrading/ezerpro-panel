@@ -53,7 +53,14 @@ function tenantNav(modules: string[] | undefined, role: string) {
     nav.push({ href: "/marca", label: "Marca", icon: IconPalette });
     nav.push({ href: "/actividad", label: "Actividad", icon: IconShield });
   }
-  if (role === "TENANT_ADMIN" && !mods.includes("tarjeta")) {
+  if (mods.includes("tecnico") && role === "TENANT_ADMIN") {
+    nav.push({ href: "/mi-pagina", label: "Mi página y QR", icon: IconIdCard });
+    nav.push({ href: "/servicios", label: "Servicios", icon: IconTag });
+    nav.push({ href: "/galeria", label: "Galería", icon: IconSpark });
+    nav.push({ href: "/marca", label: "Marca", icon: IconPalette });
+    nav.push({ href: "/actividad", label: "Actividad", icon: IconShield });
+  }
+  if (role === "TENANT_ADMIN" && !mods.includes("tarjeta") && !mods.includes("tecnico")) {
     if (mods.includes("menu")) nav.push({ href: "/menu", label: "Menú", icon: IconMenu });
     if (mods.includes("pedidos")) nav.push({ href: "/mesas", label: "Mesas", icon: IconTable });
     if (mods.includes("pedidos")) nav.push({ href: "/metricas", label: "Métricas", icon: IconChart });
