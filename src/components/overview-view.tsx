@@ -11,6 +11,8 @@ import { StatusBadge } from "./status-badge";
 import { IconRefresh } from "./icons";
 import { VetHome } from "./vet-home";
 import { GymHome } from "./gym-home";
+import { ClinicHome } from "./clinic-home";
+import { ClinicAgendaView } from "./clinic-agenda";
 import { GymAccessView } from "./gym-access";
 import { GymRoutinesView } from "./gym-routines";
 import { useResource } from "@/lib/use-resource";
@@ -374,6 +376,10 @@ export function OverviewView() {
     if (state.user.role === "TENANT_ADMIN") return <GymHome />;
     if (state.user.role === "CASHIER") return <GymAccessView />;
     if (state.user.role === "EMPLOYEE") return <GymRoutinesView />;
+  }
+  if (state.user.tenant?.modules?.includes("clinica")) {
+    if (state.user.role === "TENANT_ADMIN") return <ClinicHome />;
+    return <ClinicAgendaView />;
   }
   if (state.user.tenant?.modules?.includes("veterinaria") && state.user.role === "TENANT_ADMIN") return <VetHome />;
   if (state.user.tenant?.modules?.includes("pedidos")) return <TenantHome />;

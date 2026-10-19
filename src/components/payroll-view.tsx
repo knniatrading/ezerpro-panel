@@ -37,6 +37,8 @@ function ConfigForm({ row, onClose, onSaved }: { row: PayrollRow; onClose: () =>
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const isDriver = row.role === "DRIVER";
+  const sessP = useSession();
+  const isGymP = sessP.state.status === "in" && !!sessP.state.user.tenant?.modules?.includes("gimnasio");
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -65,7 +67,7 @@ function ConfigForm({ row, onClose, onSaved }: { row: PayrollRow; onClose: () =>
           <option value="hora">Por hora</option>
           <option value="dia">Por día</option>
           {isDriver ? <option value="domicilio">Por domicilio entregado</option> : null}
-          {row.role === "EMPLOYEE" ? <option value="rutina">Por rutina asignada</option> : null}
+          {row.role === "EMPLOYEE" && isGymP ? <option value="rutina">Por rutina asignada</option> : null}
         </select>
       </div>
       {type ? (

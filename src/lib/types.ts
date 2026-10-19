@@ -743,3 +743,64 @@ export interface GymPortal {
   payments?: { id: string; planName: string; amount: number; periodStart: string; periodEnd: string; paidAt: string }[];
   bookings?: { id: string; date: string; classId: string; name: string; startMin: number; minutes: number; instructor: string | null }[];
 }
+
+// ---------- Nicho clínicas ----------
+export type ApptStatus = "programada" | "confirmada" | "atendida" | "cancelada" | "no_asistio";
+export interface ClinicAgenda { id: string; name: string; kind: "especialista" | "silla"; specialty: string | null; license: string | null; color: string; workDays: string; openMin: number; closeMin: number; slotMin: number; active: boolean; hasSignature?: boolean }
+export interface ClinicServiceItem { id: string; name: string; description: string | null; price: number | null; minutes: number; active: boolean }
+export interface ClinicProfileData {
+  profile: { id: string; clinicName: string; phone: string | null; address: string | null; bio: string | null; reminders: boolean };
+  agendas: ClinicAgenda[]; services: ClinicServiceItem[]; host: string;
+}
+export interface ClinicPatient {
+  id: string; name: string; phone: string; email: string | null; document: string | null; birthDate: string | null; allergies: string | null; conditions?: string | null; notes: string | null;
+  archived: boolean; createdAt: string; debt?: number; nextAppt?: string | null; lastVisit?: string | null; portalUrl?: string;
+}
+export interface ClinicAppt { id: string; start: string; end: string; status: ApptStatus; serviceName: string; notes: string | null; source?: string; agendaId: string; agendaName: string; color: string; patientId: string; patientName: string; phone: string }
+export interface ToothMark { w?: string; s?: Record<string, string>; n?: string }
+export type ToothChart = Record<string, ToothMark>;
+export interface ClinicRecord { id: string; kind: string; title: string; body: string | null; tooth: string | null; doctorName: string | null; createdAt: string }
+export interface ClinicPay { id: string; amount: number; method: string; note: string | null; paidAt: string }
+export interface ClinicTreatment { id: string; name: string; total: number; installments: number | null; status: "activo" | "terminado" | "cancelado"; doctorName: string | null; startDate: string; notes: string | null; paid: number; balance: number; paymentsCount: number; payments: ClinicPay[] }
+export interface ClinicRxItem { drug: string; dose?: string | null; instructions?: string | null }
+export interface ClinicRxRow { id: string; number: number; token: string; doctorName: string; diagnosis: string | null; createdAt: string; items: ClinicRxItem[]; url: string }
+export interface ClinicConsentRow { id: string; title: string; token: string; status: "pendiente" | "firmado"; signedAt: string | null; signedName: string | null; createdAt: string; url: string }
+export interface ClinicPatientDetail {
+  patient: ClinicPatient & { portalUrl: string };
+  chart: ToothChart | null;
+  appointments: Omit<ClinicAppt, "patientId" | "patientName" | "phone">[];
+  treatments: ClinicTreatment[];
+  records: ClinicRecord[];
+  prescriptions: ClinicRxRow[];
+  consents: ClinicConsentRow[];
+}
+export interface ClinicDashboard {
+  today: { income: number; appointments: number; attended: number; confirmed: number; pending: number };
+  tomorrow: { total: number; confirmed: number };
+  patients: { total: number; newThisMonth: number; withDebt: number; debtTotal: number };
+  days: { date: string; income: number }[];
+  agenda: { id: string; start: string; end: string; status: ApptStatus; serviceName: string; patientId: string; patientName: string; phone: string; agendaName: string; color: string }[];
+  debtors: { id: string; name: string; phone: string; debt: number }[];
+}
+export interface ClinicPaymentsRes { total: number; byMethod: Record<string, number>; rows: { id: string; patientId: string | null; patientName: string; treatmentName: string; amount: number; method: string; paidAt: string }[] }
+export interface ConsentTpl { id: string; title: string; body: string; active: boolean }
+export interface PublicClinic {
+  suspended: boolean; name: string; phone?: string | null; address?: string | null; bio?: string | null;
+  services?: { id: string; name: string; description: string | null; price: number | null; minutes: number }[];
+  agendas?: { id: string; name: string; kind: string; specialty: string | null; color: string }[];
+  demoPortalUrl?: string | null;
+}
+export interface ClinicPortalAppt { id: string; start: string; status: ApptStatus; serviceName: string; agendaName: string; confirmUrl: string }
+export interface ClinicPortal {
+  suspended: boolean; name?: string;
+  clinic?: { name: string; phone: string | null; address: string | null };
+  patient?: { name: string; phone: string; email: string | null };
+  upcoming?: ClinicPortalAppt[]; past?: ClinicPortalAppt[];
+  prescriptions?: { id: string; number: number; doctorName: string; diagnosis: string | null; createdAt: string; url: string }[];
+  consents?: { id: string; title: string; status: "pendiente" | "firmado"; signedAt: string | null; url: string }[];
+  treatments?: { id: string; name: string; total: number; installments: number | null; status: string; paid: number; balance: number; payments: { id: string; amount: number; method: string; paidAt: string }[] }[];
+}
+export interface ClinicHeader { name: string; phone: string | null; address: string | null; logo?: string | null }
+export interface PublicRx { clinic: ClinicHeader; number: number; createdAt: string; patient: { name: string; document: string | null; birthDate: string | null }; doctor: { name: string; specialty: string | null; license: string | null; signature: string | null }; diagnosis: string | null; items: ClinicRxItem[]; notes: string | null }
+export interface PublicConsent { clinic: ClinicHeader; title: string; body: string; status: "pendiente" | "firmado"; patient: { name: string; document: string | null }; doctorName: string | null; createdAt: string; signedAt: string | null; signedName: string | null; signature: string | null }
+export interface PublicApptInfo { suspended: boolean; name?: string; clinic?: { name: string; phone: string | null; address: string | null }; patientName?: string; serviceName?: string; agendaName?: string; start?: string; status?: ApptStatus; open?: boolean }

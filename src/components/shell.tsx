@@ -9,7 +9,7 @@ import { TenantBrand } from "./tenant-brand";
 import { brandStyle } from "@/lib/brand";
 import { TenantLanding } from "./tenant-landing";
 import { IconCard, IconLogout, IconNetwork, IconOverview, IconStore, IconUser, IconBag, IconMenu, IconTeam, IconPalette, IconPos, IconTable, IconBike, IconReceipt, IconChart, IconWallet, IconSpark, IconInbox, IconIdCard, IconTag, IconShield } from "./icons";
-import { roleLabel } from "@/lib/format";
+import { roleLabel, setRoleContext } from "@/lib/format";
 
 const SUPER_NAV = [
   { href: "/", label: "Resumen", icon: IconOverview },
@@ -60,6 +60,29 @@ function tenantNav(modules: string[] | undefined, role: string) {
     } else if (role === "EMPLOYEE") {
       nav.push({ href: "/rutinas", label: "Rutinas", icon: IconSpark });
       nav.push({ href: "/clases", label: "Clases", icon: IconReceipt });
+    }
+    nav.push({ href: "/cuenta", label: "Mi cuenta", icon: IconUser });
+    return nav;
+  }
+  if (mods.includes("clinica")) {
+    if (role === "TENANT_ADMIN") {
+      nav.push({ href: "/agenda", label: "Agenda", icon: IconReceipt });
+      nav.push({ href: "/historias", label: "Pacientes", icon: IconTeam });
+      nav.push({ href: "/cobros", label: "Cobros", icon: IconCard });
+      nav.push({ href: "/agendas", label: "Agendas y servicios", icon: IconTag });
+      nav.push({ href: "/consentimientos", label: "Consentimientos", icon: IconShield });
+      nav.push({ href: "/equipo", label: "Equipo", icon: IconTeam });
+      nav.push({ href: "/nomina", label: "Nómina", icon: IconWallet });
+      nav.push({ href: "/mi-consultorio", label: "Mi consultorio y QR", icon: IconIdCard });
+      nav.push({ href: "/marca", label: "Marca", icon: IconPalette });
+      nav.push({ href: "/actividad", label: "Actividad", icon: IconShield });
+    } else if (role === "CASHIER") {
+      nav.push({ href: "/agenda", label: "Agenda", icon: IconReceipt });
+      nav.push({ href: "/historias", label: "Pacientes", icon: IconTeam });
+      nav.push({ href: "/cobros", label: "Cobros", icon: IconCard });
+    } else if (role === "EMPLOYEE") {
+      nav.push({ href: "/agenda", label: "Agenda", icon: IconReceipt });
+      nav.push({ href: "/historias", label: "Pacientes", icon: IconTeam });
     }
     nav.push({ href: "/cuenta", label: "Mi cuenta", icon: IconUser });
     return nav;
@@ -152,6 +175,7 @@ export function Shell({ children }: { children: ReactNode }) {
   }
 
   const { user } = state;
+  setRoleContext(user.tenant?.modules);
   const nav0 =
     user.role === "SUPER_ADMIN"
       ? SUPER_NAV

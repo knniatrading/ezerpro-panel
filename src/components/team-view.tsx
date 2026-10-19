@@ -48,8 +48,10 @@ function EmployeeForm({ emp, onSaved, onCreated, onClose }: { emp: Employee | nu
   const [email, setEmail] = useState(emp?.email ?? "");
   const [phone, setPhone] = useState(emp?.phone ?? "");
   const sessG = useSession();
-  const isGym = sessG.state.status === "in" && !!sessG.state.user.tenant?.modules?.includes("gimnasio");
-  const roleList = ROLES.filter((r) => r.value !== "EMPLOYEE" || isGym).filter((r) => !isGym || r.value !== "WAITER" && r.value !== "DRIVER");
+  const mods = sessG.state.status === "in" ? sessG.state.user.tenant?.modules ?? [] : [];
+  const isClinic = mods.includes("clinica");
+  const isGym = mods.includes("gimnasio") || isClinic;
+  const roleList = ROLES.filter((r) => r.value !== "EMPLOYEE" || isGym).filter((r) => !isGym || r.value !== "WAITER" && r.value !== "DRIVER").map((r) => (isClinic && r.value === "EMPLOYEE" ? { ...r, label: "Doctor", hint: "Ve la agenda, la historia clínica, el odontograma, las recetas y los consentimientos." } : r));
   const [role, setRole] = useState<Role>(emp?.role ?? "CASHIER");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
