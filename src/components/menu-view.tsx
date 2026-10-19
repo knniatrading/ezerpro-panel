@@ -90,6 +90,10 @@ function ItemForm({
   const [desc, setDesc] = useState(item?.description ?? "");
   const [priceTxt, setPriceTxt] = useState(item ? String(item.price) : "");
   const [cat, setCat] = useState(item ? (item.categoryId ?? "") : (categoryId ?? ""));
+  const { state: sess } = useSession();
+  const vet = sess.status === "in" && !!sess.user.tenant?.modules?.includes("veterinaria");
+  const [stockTxt, setStockTxt] = useState(item?.stock === null || item?.stock === undefined ? "" : String(item.stock));
+  const [minTxt, setMinTxt] = useState(item?.stockMin === null || item?.stockMin === undefined ? "" : String(item.stockMin));
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   // undefined = la foto no cambia; null = se quita; texto = foto nueva
@@ -118,12 +122,14 @@ function ItemForm({
     if (busy) return;
     if (name.trim().length < 2) return setErr("Escribe el nombre del producto.");
     if (!price || price < 1) return setErr("Escribe el precio en pesos.");
+    const num = (t: string) => (t.trim() === "" ? null : Number(t.replace(/[^0-9]/g, "")));
     setBusy(true);
     const body = JSON.stringify({
       name,
       description: desc.trim() || null,
       price,
       categoryId: cat || null,
+      ...(vet ? { stock: num(stockTxt), stockMin: num(minTxt) } : {}),
       ...(photo !== undefined ? { image: photo } : {}),
     });
     try {
@@ -178,6 +184,20 @@ function ItemForm({
           </select>
         </div>
       </div>
+      {vet ? (
+        <div className="field-row">
+          <div className="field">
+            <label htmlFor="i-stock">Unidades en inventario</label>
+            <input id="i-stock" type="text" inputMode="numeric" value={stockTxt} autoComplete="off" onChange={(e) => { setStockTxt(e.target.value); clear(); }} />
+            <p className="field__hint">Vacío = no controlar. Se descuenta solo al vender.</p>
+          </div>
+          <div className="field">
+            <label htmlFor="i-min">Avisar cuando queden</label>
+            <input id="i-min" type="text" inputMode="numeric" value={minTxt} autoComplete="off" onChange={(e) => { setMinTxt(e.target.value); clear(); }} />
+            <p className="field__hint">Unidades mínimas.</p>
+          </div>
+        </div>
+      ) : null}
       <div role="alert" className="form-error-slot">
         {err ? <p className="form-error">{err}</p> : null}
       </div>
@@ -196,6 +216,7 @@ function ItemForm({
 export function MenuView() {
   const { state } = useSession();
   const isAdmin = state.status === "in" && state.user.role === "TENANT_ADMIN";
+  const isVet = state.status === "in" && !!state.user.tenant?.modules?.includes("veterinaria");
   const { data, error, loading, reload } = useResource<MenuResponse>(isAdmin ? "/menu" : null);
   const [dlg, setDlg] = useState<Dlg>(null);
   const [busy, setBusy] = useState(false);
@@ -229,7 +250,7 @@ export function MenuView() {
   if (!data) {
     return (
       <div className="page">
-        <header className="page-head"><div><h1>Menú</h1></div></header>
+        <header className="page-head"><div><h1>{isVet ? "Productos" : "Menú"}</h1></div></header>
         {error ? <div className="banner banner--error" role="alert"><span>{error}</span></div> : <p className="lede">{loading ? "Cargando…" : ""}</p>}
       </div>
     );
@@ -246,8 +267,8 @@ export function MenuView() {
     <div className="page">
       <header className="page-head">
         <div>
-          <h1>Menú</h1>
-          <p className="lede">Lo que tus clientes ven y piden en tu página.</p>
+          <h1>{isVet ? "Productos" : "Menú"}</h1>
+          <p className="lede">{isVet ? "Alimentos, medicamentos y accesorios que tus clientes ven y piden en tu tienda. Controla tus existencias." : "Lo que tus clientes ven y piden en tu página."}</p>
         </div>
         <div className="actions-cell">
           <button type="button" className="btn btn--secondary" onClick={() => setDlg({ kind: "cat", cat: null })}>
@@ -311,7 +332,12 @@ export function MenuView() {
                         </div>
                       </td>
                       <td className="num-r">{formatMoney(i.price)}</td>
-                      <td>{i.active ? <span className="badge badge--ok">Disponible</span> : <span className="badge badge--warn">Agotado</span>}</td>
+                      <td>
+                        {i.active ? <span className="badge badge--ok">Disponible</span> : <span className="badge badge--warn">Oculto</span>}
+                        {isVet && i.stock !== null && i.stock !== undefined ? (
+                          <div className="sub">{i.stock} en inventario{i.stock <= (i.stockMin ?? 0) ? <> · <span className="badge badge--warn">{i.stock === 0 ? "Agotado" : "Poco"}</span></> : null}</div>
+                        ) : null}
+                      </td>
                       <td>
                         <div className="actions-cell">
                           <button type="button" className="btn btn--secondary btn--sm" onClick={() => patch(`/menu/items/${i.id}`, { active: !i.active })}>

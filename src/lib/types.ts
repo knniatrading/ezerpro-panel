@@ -141,6 +141,8 @@ export interface MenuItem {
   price: number;
   active: boolean;
   categoryId: string | null;
+  stock?: number | null;
+  stockMin?: number | null;
 }
 
 export interface MenuResponse {
@@ -549,4 +551,147 @@ export interface PublicTech {
   img?: number | null;
   services?: { id: string; name: string; description: string | null; price: number | null }[];
   works?: TechWorkItem[];
+}
+
+// ---------- Nicho veterinarias ----------
+export interface VetProfile {
+  id: string;
+  clinicName: string;
+  phone: string | null;
+  address: string | null;
+  bio: string | null;
+  openHour: number;
+  closeHour: number;
+  slotMinutes: number;
+  capacity: number;
+  workDays: string;
+  reminderDays: number;
+}
+export interface VetServiceItem {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number | null;
+  minutes: number;
+  active: boolean;
+}
+export interface VetProfileData {
+  profile: VetProfile;
+  services: VetServiceItem[];
+  host: string;
+}
+export interface VetOwner {
+  id: string;
+  name: string;
+  phone: string;
+  email: string | null;
+  portalUrl: string;
+  pets?: { id: string; name: string; species: string; code: string; img: number | null }[];
+}
+export interface VetPet {
+  id: string;
+  ownerId: string;
+  code: string;
+  name: string;
+  species: string;
+  breed: string | null;
+  sex: string | null;
+  birthDate: string | null;
+  weightKg: number | null;
+  allergies: string | null;
+  notes: string | null;
+  lost: boolean;
+  img: number | null;
+  owner?: { id: string; name: string; phone: string };
+}
+export interface VetRecord {
+  id: string;
+  kind: string;
+  title: string;
+  notes: string | null;
+  date: string;
+  weightKg: number | null;
+  amount: number;
+  nextDue: string | null;
+}
+export interface VetAppt {
+  id: string;
+  serviceId: string | null;
+  serviceName: string;
+  start: string;
+  end: string;
+  status: string;
+  notes: string | null;
+  source: string;
+  petId: string | null;
+  ownerId: string | null;
+  petName: string | null;
+  ownerName: string | null;
+  phone: string | null;
+  email: string | null;
+  guest: boolean;
+}
+export interface VetPetDetail {
+  pet: VetPet;
+  owner: VetOwner;
+  records: VetRecord[];
+  appointments: VetAppt[];
+  host: string;
+  idUrl: string;
+}
+export interface VetDashboard {
+  today: { income: number; services: number; products: number; patients: number; appointments: number; attended: number; pending: number };
+  appointments: VetAppt[];
+  days: { date: string; income: number; products: number; services: number; patients: number }[];
+  upcoming: { id: string; petId: string; petName: string; ownerName: string; phone: string; title: string; kind: string; nextDue: string; overdue: boolean }[];
+  lowStock: { id: string; name: string; stock: number; min: number }[];
+  totals: { pets: number; owners: number; newPetsMonth: number };
+}
+export interface PublicVet {
+  suspended: boolean;
+  name: string;
+  phone?: string | null;
+  address?: string | null;
+  bio?: string | null;
+  openHour?: number;
+  closeHour?: number;
+  workDays?: string;
+  services?: { id: string; name: string; description: string | null; price: number | null; minutes: number }[];
+  shop?: boolean;
+  demoPortalUrl?: string | null;
+}
+export interface VetPortalPet {
+  id: string;
+  code: string;
+  name: string;
+  species: string;
+  breed: string | null;
+  sex: string | null;
+  birthDate: string | null;
+  weightKg: number | null;
+  allergies: string | null;
+  lost: boolean;
+  img: number | null;
+  records: { id: string; kind: string; title: string; notes: string | null; date: string; weightKg: number | null; nextDue: string | null }[];
+}
+export interface VetPortal {
+  suspended: boolean;
+  name?: string;
+  clinic?: { name: string; phone: string | null; address: string | null };
+  owner?: { name: string; phone: string; email: string | null };
+  pets?: VetPortalPet[];
+  appointments?: { id: string; serviceName: string; petName: string | null; start: string; status: string }[];
+}
+export interface PublicPetId {
+  suspended: boolean;
+  name: string;
+  species?: string;
+  breed?: string | null;
+  sex?: string | null;
+  birthDate?: string | null;
+  allergies?: string | null;
+  img?: number | null;
+  lost?: boolean;
+  clinic?: { name: string; phone: string | null; address: string | null };
+  owner?: { name: string; phone: string } | null;
 }

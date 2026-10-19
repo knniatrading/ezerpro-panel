@@ -9,6 +9,7 @@ import { ComingSoon } from "./coming-soon";
 import { TenantHome } from "./tenant-home";
 import { StatusBadge } from "./status-badge";
 import { IconRefresh } from "./icons";
+import { VetHome } from "./vet-home";
 import { useResource } from "@/lib/use-resource";
 import { formatDate, formatMoney, payStatus } from "@/lib/format";
 import type {
@@ -366,6 +367,7 @@ export function OverviewView() {
       />
     );
   }
+  if (state.user.tenant?.modules?.includes("veterinaria") && state.user.role === "TENANT_ADMIN") return <VetHome />;
   if (state.user.tenant?.modules?.includes("pedidos")) return <TenantHome />;
   if (state.user.tenant?.modules?.includes("tarjeta") && state.user.role === "TENANT_ADMIN") return <DriverHome />;
   if (state.user.tenant?.modules?.includes("tecnico") && state.user.role === "TENANT_ADMIN") return <TechHome />;

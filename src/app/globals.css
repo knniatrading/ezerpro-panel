@@ -1493,3 +1493,24 @@ button {
 .ba-slot { display: grid; gap: 6px; align-content: start; }
 .ba-slot img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; }
 .ba-slot input[type="file"] { max-width: 100%; }
+
+/* Nicho veterinarias */
+.bars__val { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.bars__lbl { font-size: 12px; text-transform: capitalize; }
+.text-danger { color: var(--danger); font-weight: 600; }
+.vet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; align-items: start; margin: 16px 0; }
+.vet-grid .dcard__sec, .vetpage .dcard__sec { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin: 0 0 16px; }
+.vet-grid .dcard__sec h2 { margin-top: 0; font-size: 17px; }
+.pet-av { border-radius: 50%; object-fit: cover; background: var(--line); flex: none; }
+.pet-av--empty { display: inline-flex; align-items: center; justify-content: center; font-weight: 800; color: var(--green-dark); background: #e3f3ec; }
+.pet-cell { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.pet-head { display: flex; align-items: center; gap: 14px; }
+.pet-head h1, .pet-head h2 { margin: 0; }
+.pet-facts { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 0 0 14px; }
+.pet-facts dt { color: var(--muted); }
+.pet-facts dd { margin: 0; }
+.timeline { list-style: none; margin: 8px 0 0; padding: 0 0 0 14px; border-left: 3px solid var(--line); display: grid; gap: 14px; }
+.timeline li { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.timeline p { margin: 2px 0; font-size: 14px; }
+.vetpage { max-width: 640px; margin: 0 auto; padding: 16px; }
+.vetpage .dcard__hero { text-align: center; }

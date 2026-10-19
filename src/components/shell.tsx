@@ -33,6 +33,21 @@ function tenantNav(modules: string[] | undefined, role: string) {
   const mods = modules ?? [];
   const nav = [{ href: "/", label: "Inicio", icon: IconOverview }];
   const staff = role === "TENANT_ADMIN" || role === "CASHIER" || role === "WAITER";
+  if (mods.includes("veterinaria") && role === "TENANT_ADMIN") {
+    nav.push({ href: "/pacientes", label: "Pacientes", icon: IconTeam });
+    nav.push({ href: "/citas", label: "Citas", icon: IconReceipt });
+    nav.push({ href: "/servicios-clinica", label: "Servicios", icon: IconTag });
+    nav.push({ href: "/menu", label: "Productos", icon: IconMenu });
+    nav.push({ href: "/pedidos", label: "Pedidos", icon: IconBag });
+    nav.push({ href: "/vender", label: "Vender", icon: IconPos });
+    nav.push({ href: "/caja", label: "Caja", icon: IconCard });
+    nav.push({ href: "/ventas", label: "Mis ventas", icon: IconReceipt });
+    nav.push({ href: "/mi-clinica", label: "Mi clínica y QR", icon: IconIdCard });
+    nav.push({ href: "/marca", label: "Marca", icon: IconPalette });
+    nav.push({ href: "/actividad", label: "Actividad", icon: IconShield });
+    nav.push({ href: "/cuenta", label: "Mi cuenta", icon: IconUser });
+    return nav;
+  }
   if (mods.includes("pedidos") && staff) {
     nav.push({ href: "/vender", label: "Vender", icon: IconPos });
     nav.push({ href: "/pedidos", label: "Pedidos", icon: IconBag });
