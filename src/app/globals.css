@@ -1769,3 +1769,8 @@ button {
   .fe-quote .table th, .fe-quote .table td { padding: 8px 5px; font-size: .85rem; }
   .fe-quote__num { justify-items: start; }
 }
+
+/* Ferreterías: pedidos */
+.fe-steps{display:flex;gap:6px;list-style:none;padding:0;margin:12px 0}
+.fe-steps li{flex:1;text-align:center;padding:8px 4px;border-radius:8px;background:rgba(127,127,127,.15);font-size:.85rem}
+.fe-steps li.is-done{background:#16a34a;color:#fff;font-weight:600}

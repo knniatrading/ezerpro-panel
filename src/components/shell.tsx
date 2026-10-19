@@ -91,7 +91,8 @@ function tenantNav(modules: string[] | undefined, role: string) {
     if (role === "TENANT_ADMIN") {
       nav.push({ href: "/pos", label: "Punto de venta", icon: IconPos });
       nav.push({ href: "/inventario", label: "Inventario", icon: IconBag });
-      nav.push({ href: "/ventas-mostrador", label: "Ventas", icon: IconReceipt });
+      nav.push({ href: "/ventas-mostrador", label: "Pedidos y ventas", icon: IconReceipt });
+      nav.push({ href: "/vendedores", label: "Vendedores", icon: IconChart });
       nav.push({ href: "/cuentas", label: "Cuentas por cobrar", icon: IconWallet });
       nav.push({ href: "/cotizaciones", label: "Cotizaciones", icon: IconInbox });
       nav.push({ href: "/equipo", label: "Equipo", icon: IconTeam });
@@ -100,7 +101,7 @@ function tenantNav(modules: string[] | undefined, role: string) {
       nav.push({ href: "/actividad", label: "Actividad", icon: IconShield });
     } else if (role === "CASHIER") {
       nav[0] = { href: "/", label: "Punto de venta", icon: IconPos };
-      nav.push({ href: "/ventas-mostrador", label: "Mis ventas", icon: IconReceipt });
+      nav.push({ href: "/ventas-mostrador", label: "Pedidos y mis ventas", icon: IconReceipt });
       nav.push({ href: "/cuentas", label: "Cuentas por cobrar", icon: IconWallet });
       nav.push({ href: "/cotizaciones", label: "Cotizaciones", icon: IconInbox });
       nav.push({ href: "/inventario", label: "Consultar inventario", icon: IconBag });

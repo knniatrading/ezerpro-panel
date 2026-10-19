@@ -68,14 +68,14 @@ export function FerrePublic({ tenant }: { tenant: PublicTenant }) {
         {d.bio ? <p className="dcard__bio">{d.bio}</p> : null}
       </header>
       <section className="tech__cta" aria-label="Acciones">
-        <Link className="btn btn--primary tech__big" href="/catalogo">Ver catálogo y pedir cotización<small>{d.products ? `${d.products} productos` : "Precios y disponibilidad"}</small></Link>
+        <Link className="btn btn--primary tech__big" href="/catalogo">Ver catálogo y hacer pedido<small>{d.products ? `${d.products} productos` : "Precios y disponibilidad"}</small></Link>
         {token ? <Link className="btn btn--secondary tech__big" href={`/mi-cuenta?t=${token}`}>Mi cuenta de crédito</Link> : <button type="button" className="btn btn--secondary tech__big" onClick={() => setLookup(true)}>Mi cuenta de crédito<small>Con tu cédula y tu celular</small></button>}
         {phone ? <a className="btn btn--secondary tech__big" href={`tel:${phone}`}>Llamar<small>{formatPhone(phone)}</small></a> : null}
         {phone ? <a className="btn btn--secondary tech__big tech__big--wa" href={`https://wa.me/${waNumber(phone)}?text=${encodeURIComponent("Hola, quisiera información.")}`} target="_blank" rel="noreferrer">WhatsApp</a> : null}
         {phone ? <button type="button" className="btn btn--secondary" onClick={saveContact}>Guardar contacto en tu celular</button> : null}
       </section>
       <section className="dcard__sec" aria-label="Cómo funciona"><h2>Tu ferretería en tu celular</h2>
-        <ul className="tl-bullets"><li>🧱 Mira los productos y sus precios sin ir a la tienda.</li><li>📄 Pide una cotización para tu obra y recíbela en PDF.</li><li>💳 Maestros y constructores: revisa tu saldo, tus facturas y tus abonos.</li></ul></section>
+        <ul className="tl-bullets"><li>🧱 Mira los productos y sus precios sin ir a la tienda.</li><li>🛒 Haz tu pedido y recíbelo a domicilio o recógelo en la tienda.</li><li>💳 Maestros y constructores: revisa tu saldo, tus facturas y tus abonos.</li></ul></section>
       {d.demoAccountUrl || d.demoQuoteUrl ? <p className="field__hint" style={{ textAlign: "center" }}>{d.demoQuoteUrl ? <><a href={d.demoQuoteUrl}>Ver una cotización de ejemplo</a><br /></> : null}{d.demoAccountUrl ? <a href={d.demoAccountUrl}>Ver la cuenta de un contratista de ejemplo</a> : null}</p> : null}
       <p className="landing__foot">Con tecnología de EzerPro</p>
       <Modal open={lookup} onClose={() => setLookup(false)}>{lookup ? <LookupDialog host={host} onClose={() => setLookup(false)} /> : null}</Modal>
@@ -121,6 +121,49 @@ function RequestDialog({ host, lines, total, onClose, onDone }: { host: string; 
   );
 }
 
+function OrderDialog({ host, lines, total, onClose, onDone }: { host: string; lines: CartLine[]; total: number; onClose: () => void; onDone: () => void }) {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [delivery, setDelivery] = useState<"domicilio" | "recoger">("recoger");
+  const [address, setAddress] = useState("");
+  const [payMethod, setPayMethod] = useState("efectivo");
+  const [note, setNote] = useState("");
+  const [err, setErr] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [sent, setSent] = useState<{ number: number; url: string } | null>(null);
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (name.trim().length < 2) return setErr("Escribe tu nombre.");
+    if (phone.replace(/\D/g, "").length < 7) return setErr("Escribe tu celular para avisarte cuando esté listo.");
+    if (delivery === "domicilio" && address.trim().length < 5) return setErr("Escribe la dirección de entrega.");
+    setBusy(true); setErr(null);
+    try {
+      const r = await api<{ number: number; url: string }>("/public/ferre-order", { method: "POST", body: JSON.stringify({ host, name: name.trim(), phone: phone.trim(), delivery, address: delivery === "domicilio" ? address.trim() : undefined, payMethod, note: note.trim() || undefined, items: lines.map((l) => ({ productId: l.id, qty: parseQty(l.qty) })) }) });
+      setSent(r); onDone();
+    } catch (x) { setErr(x instanceof ApiError ? x.message : "Algo salió mal."); setBusy(false); }
+  }
+  if (sent) {
+    const path = (() => { try { return new URL(sent.url).search; } catch { return ""; } })();
+    return <div><h2 id="dlg-title" tabIndex={-1}>¡Pedido enviado!</h2><p role="status">Tu pedido #{sent.number} llegó a la ferretería. {delivery === "domicilio" ? "Te lo llevarán a la dirección indicada." : "Pasa a recogerlo cuando te avisen."}</p><p className="field__hint">Guarda este enlace para ver cómo va tu pedido:</p><div className="dialog__actions"><a className="btn btn--secondary" href={`/pedido${path}`}>Ver mi pedido</a><button className="btn btn--primary" onClick={onClose}>Listo</button></div></div>;
+  }
+  return (
+    <form onSubmit={submit} noValidate>
+      <h2 id="dlg-title" tabIndex={-1}>Hacer pedido</h2>
+      <p className="lede">{lines.length} {lines.length === 1 ? "producto" : "productos"} · total {formatMoney(total)}</p>
+      <div className="field-row">
+        <div className="field"><label htmlFor="od-n">Tu nombre</label><input id="od-n" type="text" value={name} autoComplete="name" onChange={(e) => { setName(e.target.value); setErr(null); }} /></div>
+        <div className="field"><label htmlFor="od-p">Tu celular</label><input id="od-p" type="tel" inputMode="numeric" value={phone} autoComplete="tel" onChange={(e) => { setPhone(e.target.value); setErr(null); }} /></div>
+      </div>
+      <div className="chips" role="group" aria-label="Entrega"><button type="button" className={delivery === "recoger" ? "is-on" : ""} aria-pressed={delivery === "recoger"} onClick={() => setDelivery("recoger")}>Recoger en la tienda</button><button type="button" className={delivery === "domicilio" ? "is-on" : ""} aria-pressed={delivery === "domicilio"} onClick={() => setDelivery("domicilio")}>Domicilio</button></div>
+      {delivery === "domicilio" ? <div className="field"><label htmlFor="od-a">Dirección de entrega</label><input id="od-a" type="text" maxLength={200} value={address} autoComplete="street-address" onChange={(e) => { setAddress(e.target.value); setErr(null); }} /></div> : null}
+      <div className="field"><label htmlFor="od-m">¿Cómo pagas?</label><select id="od-m" value={payMethod} onChange={(e) => setPayMethod(e.target.value)}><option value="efectivo">Efectivo</option><option value="transferencia">Transferencia</option><option value="tarjeta">Tarjeta</option></select></div>
+      <div className="field"><label htmlFor="od-no">Nota (opcional)</label><input id="od-no" type="text" maxLength={300} value={note} autoComplete="off" onChange={(e) => setNote(e.target.value)} /></div>
+      <div role="alert" className="form-error-slot">{err ? <p className="form-error">{err}</p> : null}</div>
+      <div className="dialog__actions"><button type="button" className="btn btn--secondary" onClick={onClose}>Cancelar</button><button type="submit" className="btn btn--primary" disabled={busy}>{busy ? "Enviando…" : "Enviar pedido"}</button></div>
+    </form>
+  );
+}
+
 export function FerreCatalogView() {
   const host = typeof window === "undefined" ? "" : window.location.hostname;
   const [d, setD] = useState<FerreCatalog | null>(null);
@@ -130,6 +173,7 @@ export function FerreCatalogView() {
   const [cart, setCart] = useState<CartLine[]>([]);
   const [open, setOpen] = useState(false);
   const [req, setReq] = useState(false);
+  const [ord, setOrd] = useState(false);
   const [qtys, setQtys] = useState<Record<string, string>>({});
   useEffect(() => { api<FerreCatalog>(`/public/ferre-catalog?host=${encodeURIComponent(host)}`).then(setD).catch((e) => setError(e instanceof ApiError ? e.message : "No se pudo cargar el catálogo.")); }, [host]);
   const rows = useMemo(() => {
@@ -154,23 +198,25 @@ export function FerreCatalogView() {
       <ul className="dcard__list fe-catalog__list">
         {rows.map((p) => (
           <li key={p.id}><div><b>{p.name}</b><p>{formatMoney(p.price)} <small>por {p.unit}</small> · <span className={p.available ? "is-ok" : "is-out"}>{p.available ? "Disponible" : "Agotado"}</span></p></div>
-            <div className="fe-add"><input type="text" inputMode="decimal" aria-label={`Cantidad de ${p.name}`} placeholder="1" value={qtys[p.id] ?? ""} onChange={(e) => setQtys((s) => ({ ...s, [p.id]: e.target.value }))} /><button type="button" className="btn btn--secondary btn--sm" onClick={() => add(p)} aria-label={`Agregar ${p.name} a la cotización`}>Agregar</button></div></li>
+            <div className="fe-add"><input type="text" inputMode="decimal" aria-label={`Cantidad de ${p.name}`} placeholder="1" value={qtys[p.id] ?? ""} onChange={(e) => setQtys((s) => ({ ...s, [p.id]: e.target.value }))} /><button type="button" className="btn btn--secondary btn--sm" onClick={() => add(p)} aria-label={`Agregar ${p.name} al pedido`}>Agregar</button></div></li>
         ))}
       </ul>
       {!rows.length ? <p className="field__hint">No encontramos productos con esa búsqueda.</p> : null}
-      <p className="landing__foot">Los precios son de referencia y pueden cambiar. La cotización final te la envía la ferretería.</p>
+      <p className="landing__foot">Haz tu pedido y la ferretería te lo lleva o lo deja listo para recoger. Los precios pueden cambiar.</p>
       {cart.length ? <div className="fe-cartbar"><button type="button" className="btn btn--primary" onClick={() => setOpen(true)}>Mi lista ({cart.length}) · {formatMoney(total)}</button></div> : null}
       <Modal open={open} onClose={() => setOpen(false)}>{open ? (
         <div>
-          <h2 id="dlg-title" tabIndex={-1}>Mi lista de materiales</h2>
+          <h2 id="dlg-title" tabIndex={-1}>Mi pedido</h2>
           <ul className="dcard__list">{cart.map((l, i) => (
             <li key={l.id}><div><b>{l.name}</b><p>{formatMoney(l.price)} por {l.unit}</p></div>
               <div className="fe-add"><input type="text" inputMode="decimal" aria-label={`Cantidad de ${l.name}`} value={l.qty} onChange={(e) => setCart((c) => c.map((x, j) => (j === i ? { ...x, qty: e.target.value } : x)))} /><span>{l.unit}</span><button type="button" className="btn btn--danger-ghost btn--sm" aria-label={`Quitar ${l.name}`} onClick={() => setCart((c) => c.filter((_, j) => j !== i))}>✕</button></div></li>
           ))}</ul>
-          <p className="fe-sum"><span>Total de referencia</span> <strong>{formatMoney(total)}</strong></p>
-          <div className="dialog__actions"><button type="button" className="btn btn--secondary" onClick={() => setOpen(false)}>Seguir buscando</button><button type="button" className="btn btn--primary" disabled={!valid} onClick={() => { setOpen(false); setReq(true); }}>Pedir cotización</button></div>
+          <p className="fe-sum"><span>Total</span> <strong>{formatMoney(total)}</strong></p>
+          <div className="dialog__actions"><button type="button" className="btn btn--secondary" onClick={() => setOpen(false)}>Seguir buscando</button><button type="button" className="btn btn--primary" disabled={!valid} onClick={() => { setOpen(false); setOrd(true); }}>Hacer pedido</button></div>
+          <p className="field__hint" style={{ textAlign: "center" }}>¿Solo quieres saber el precio? <button type="button" className="linklike" disabled={!valid} onClick={() => { setOpen(false); setReq(true); }}>Pedir una cotización</button></p>
         </div>
       ) : null}</Modal>
+      <Modal open={ord} onClose={() => setOrd(false)}>{ord ? <OrderDialog host={host} lines={cart} total={total} onClose={() => setOrd(false)} onDone={() => setCart([])} /> : null}</Modal>
       <Modal open={req} onClose={() => setReq(false)}>{req ? <RequestDialog host={host} lines={cart} total={total} onClose={() => setReq(false)} onDone={() => setCart([])} /> : null}</Modal>
       <span hidden>{fmtQty(0)}</span>
     </div>

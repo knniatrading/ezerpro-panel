@@ -45,12 +45,12 @@ export function FerreSettingsView() {
           </div>
           <div className="field"><label htmlFor="fs-addr">Dirección</label><input id="fs-addr" type="text" value={f.address} autoComplete="off" onChange={text("address")} /></div>
           <div className="field"><label htmlFor="fs-bio">Presentación</label><textarea id="fs-bio" rows={3} maxLength={400} value={f.bio} onChange={text("bio")} /></div>
-          <fieldset className="field"><legend>Control del cajero</legend>
+          <fieldset className="field"><legend>Control del vendedor</legend>
             <div className="field-row">
-              <div className="field"><label htmlFor="fs-disc">Descuento máximo que puede dar (%)</label><input id="fs-disc" type="number" min={0} max={50} value={f.cashierMaxDiscount} onChange={(e) => { setF({ ...f, cashierMaxDiscount: e.target.value }); touch(); }} /></div>
+              <div className="field"><label htmlFor="fs-disc">Descuento máximo que puede dar un vendedor (%)</label><input id="fs-disc" type="number" min={0} max={50} value={f.cashierMaxDiscount} onChange={(e) => { setF({ ...f, cashierMaxDiscount: e.target.value }); touch(); }} /></div>
               <div className="field"><label htmlFor="fs-qd">Validez de las cotizaciones (días)</label><input id="fs-qd" type="number" min={1} max={90} value={f.quoteDays} onChange={(e) => { setF({ ...f, quoteDays: e.target.value }); touch(); }} /></div>
             </div>
-            <p className="field__hint">Con 0 % el cajero no puede dar descuentos. Nunca puede cambiar precios, anular ventas ni ver ganancias.</p>
+            <p className="field__hint">Con 0 % el vendedor no puede dar descuentos. Nunca puede cambiar precios, anular ventas ni ver ganancias.</p>
           </fieldset>
           <div className="field"><label htmlFor="fs-qn">Nota al pie de las cotizaciones</label><textarea id="fs-qn" rows={2} maxLength={400} value={f.quoteNote} placeholder="Ej.: Precios sujetos a cambio. Despachamos a obra con costo adicional." onChange={text("quoteNote")} /></div>
           <label className="check"><input type="checkbox" checked={f.reminders} onChange={(e) => { setF({ ...f, reminders: e.target.checked }); touch(); }} /> Enviar recordatorios de pago por correo a clientes con facturas vencidas (una vez por semana)</label>

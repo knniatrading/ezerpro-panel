@@ -18,8 +18,9 @@ export function FerreHome() {
   return (
     <div className="page">
       <div className="page-head"><div><h1>Hola, {name}</h1><p className="lede">Así va la ferretería hoy, {weekdayName(today)} {niceDate(today)}.</p></div>
-        <div className="actions-cell"><Link className="btn btn--primary btn--sm" href="/pos">Abrir el punto de venta</Link><Link className="btn btn--secondary btn--sm" href="/cotizaciones">Cotizaciones</Link></div></div>
+        <div className="actions-cell"><Link className="btn btn--primary btn--sm" href="/pos">Abrir el punto de venta</Link><Link className="btn btn--secondary btn--sm" href="/ventas-mostrador">Pedidos</Link><Link className="btn btn--secondary btn--sm" href="/vendedores">Vendedores</Link></div></div>
       <div className="kpis" role="group" aria-label="Resumen de hoy">
+        <Link className="kpi kpi--link kpi--warn" href="/ventas-mostrador"><span>Pedidos por despachar</span><strong>{d?.ordersPending ?? 0}</strong></Link>
         <div className="kpi"><span>Vendido hoy</span><strong>{formatMoney(d?.today.total ?? 0)}</strong></div>
         <div className="kpi"><span>Ganancia de hoy</span><strong>{formatMoney(d?.today.profit ?? 0)}</strong></div>
         <div className="kpi"><span>Ventas de hoy</span><strong>{d?.today.sales ?? 0}</strong></div>

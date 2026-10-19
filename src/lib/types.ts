@@ -881,7 +881,7 @@ export interface FerreDashboard {
   today: { sales: number; total: number; profit: number; byMethod: Record<string, number> }; days: { date: string; total: number }[];
   lowStock: { id: string; name: string; stock: number; minStock: number; unit: string }[];
   receivables: { total: number; overdue: number; debtors: { id: string; name: string; phone: string; balance: number; overdue: number }[] };
-  quotesOpen: number; top: { name: string; total: number }[]; products: number;
+  quotesOpen: number; ordersPending: number; top: { name: string; total: number }[]; products: number;
 }
 export interface PublicFerre { suspended: boolean; name: string; phone?: string | null; address?: string | null; bio?: string | null; products?: number; demoAccountUrl?: string | null; demoQuoteUrl?: string | null }
 export interface FerreCatalog { shop: { name: string; phone: string | null }; categories: string[]; products: { id: string; name: string; category: string | null; unitKind: FerreKind; unit: string; price: number; available: boolean }[] }
@@ -891,3 +891,12 @@ export interface FerreAccount {
   balance: number; overdue: number; available: number; charges: { number: number; date: string; total: number; open: number; dueDate: string; overdue: boolean }[];
   statement: { at: string; kind: string; ref: string; amount: number; balance: number }[]; quotes: { number: number; status: string; total: number; url: string }[];
 }
+export interface FerreOrderItem { id: string; productId: string | null; name: string; unit: string; qty: number; unitPrice: number; total: number }
+export interface FerreOrder { id: string; number: number; token: string; customerId: string | null; customerName: string; phone: string; delivery: "domicilio" | "recoger"; address: string | null; payMethod: string; priceList: string; status: string; note: string | null; total: number; saleNumber: number | null; cancelReason: string | null; handledByName: string | null; source: string; createdAt: string; dispatchedAt: string | null; items: FerreOrderItem[]; url?: string }
+export interface FerreOrderList { orders: FerreOrder[]; counts: { nuevo: number; preparando: number; despachado: number; cancelado: number; pendientes: number } }
+export interface FerreAgg { count: number; total: number; profit: number }
+export interface FerreSellerRow { id: string; name: string; role: string | null; today: FerreAgg; week: FerreAgg; month: FerreAgg }
+export interface FerreSellers { sellers: FerreSellerRow[]; totals: { today: FerreAgg; week: FerreAgg; month: FerreAgg }; weekStart: string }
+export interface FerreSellerDetail { id: string; name: string; days: ({ date: string } & FerreAgg)[]; weeks: ({ weekStart: string } & FerreAgg)[]; months: ({ month: string } & FerreAgg)[] }
+export interface FerreMyStats { today: { count: number; total: number }; week: { count: number; total: number }; month: { count: number; total: number } }
+export interface FerrePublicOrder { suspended: boolean; name?: string; shop?: { name: string; phone: string | null; address: string | null }; order?: { number: number; status: string; delivery: string; address: string | null; payMethod: string; note: string | null; total: number; cancelReason: string | null; createdAt: string; dispatchedAt: string | null; customerName: string; items: { id: string; name: string; unit: string; qty: number; unitPrice: number; total: number }[] } }

@@ -42,7 +42,7 @@ export function FerreReceipt({ detail }: { detail: FerreSaleDetail }) {
         <p className="fe-ticket__row fe-ticket__total"><span>TOTAL</span><span>{formatMoney(s.total)}</span></p>
         <p className="fe-ticket__row"><span>Pago</span><span>{METHOD_TEXT[s.method] ?? s.method}</span></p>
         {s.method === "credito" ? <p className="fe-ticket__row"><span>Saldo a crédito</span><span>{formatMoney(s.total - s.paid)}</span></p> : null}
-        <p className="fe-ticket__rule">Atendió: {s.createdByName ?? "—"}</p>
+        <p className="fe-ticket__rule">Vendió: {s.createdByName ?? "—"}</p>
         <p>¡Gracias por su compra!</p>
       </div>
     </div>

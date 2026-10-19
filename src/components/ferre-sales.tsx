@@ -5,7 +5,8 @@ import { api } from "@/lib/api";
 import { useResource } from "@/lib/use-resource";
 import { formatMoney } from "@/lib/format";
 import { LIST_TEXT, METHOD_TEXT, addDays, fmtQty, todayCO } from "@/lib/ferre";
-import type { FerreSale, FerreSaleDetail, FerreSalesRes } from "@/lib/types";
+import type { FerreMyStats, FerreSale, FerreSaleDetail, FerreSalesRes, FerreSellers } from "@/lib/types";
+import { FerreOrdersPanel } from "./ferre-orders";
 import { NoAccess } from "./no-access";
 import { Dlg, FerreReceipt, errMsg, useFerreAccess, usePrintWhen } from "./ferre-common";
 
@@ -55,7 +56,12 @@ export function FerreSalesView() {
   const [to, setTo] = useState(today);
   const [q, setQ] = useState("");
   const [onlyVoid, setOnlyVoid] = useState(false);
-  const qs = admin ? `?from=${from}&to=${to}${q.trim() ? `&q=${encodeURIComponent(q.trim())}` : ""}${onlyVoid ? "&status=anulada" : ""}` : "";
+  const [seller, setSeller] = useState("");
+  const [tab, setTab] = useState<"pedidos" | "ventas">("pedidos");
+  const [pending, setPending] = useState<number | null>(null);
+  const sellers = useResource<FerreSellers>(allowed && admin ? "/ferre/sellers" : null);
+  const mine = useResource<FerreMyStats>(allowed && !admin ? "/ferre/my-stats" : null);
+  const qs = admin ? `?from=${from}&to=${to}${q.trim() ? `&q=${encodeURIComponent(q.trim())}` : ""}${onlyVoid ? "&status=anulada" : ""}${seller ? `&sellerId=${seller}` : ""}` : "";
   const { data, error, reload } = useResource<FerreSalesRes>(allowed ? `/ferre/sales${qs}` : null);
   const [open, setOpen] = useState<FerreSale | null>(null);
   const [print, setPrint] = useState<FerreSaleDetail | null>(null);
@@ -64,23 +70,28 @@ export function FerreSalesView() {
   return (
     <div className="page">
       <div className="no-print">
-        <div className="page-head"><div><h1>{admin ? "Ventas de mostrador" : "Mis ventas de hoy"}</h1><p className="lede">{admin ? "Todas las ventas del negocio, con su responsable." : "Solo ves las ventas que cobraste hoy."}</p></div></div>
+        <div className="page-head"><div><h1>Pedidos y ventas</h1><p className="lede">{tab === "pedidos" ? "Atiende los pedidos que llegan y despáchalos: así se registra la venta." : admin ? "Todas las ventas del negocio, con el vendedor que las hizo." : "Solo ves las ventas que registraste hoy."}</p></div></div>
+        <div className="chips" role="tablist" aria-label="Sección"><button type="button" role="tab" aria-selected={tab === "pedidos"} className={tab === "pedidos" ? "is-on" : ""} onClick={() => setTab("pedidos")}>Pedidos{pending ? ` (${pending})` : ""}</button><button type="button" role="tab" aria-selected={tab === "ventas"} className={tab === "ventas" ? "is-on" : ""} onClick={() => setTab("ventas")}>Ventas</button></div>
+        {tab === "pedidos" ? <FerreOrdersPanel onCount={setPending} /> : <>
         {error ? <p className="form-error" role="alert">{error}</p> : null}
         {admin ? (
           <div className="agenda-bar">
             <label>Desde <input type="date" value={from} max={to} onChange={(e) => setFrom(e.target.value)} /></label>
             <label>Hasta <input type="date" value={to} min={from} max={today} onChange={(e) => setTo(e.target.value)} /></label>
             <label>Buscar <input type="search" value={q} placeholder="# de venta o cliente" onChange={(e) => setQ(e.target.value)} /></label>
+            <label>Vendedor <select value={seller} onChange={(e) => setSeller(e.target.value)}><option value="">Todos</option>{(sellers.data?.sellers ?? []).map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</select></label>
             <label className="check"><input type="checkbox" checked={onlyVoid} onChange={(e) => setOnlyVoid(e.target.checked)} /> Solo anuladas</label>
           </div>
         ) : null}
+        {!admin && mine.data ? <div className="kpis" role="group" aria-label="Mi récord"><div className="kpi"><span>Hoy</span><strong>{formatMoney(mine.data.today.total)}</strong><small>{mine.data.today.count} ventas</small></div><div className="kpi"><span>Esta semana</span><strong>{formatMoney(mine.data.week.total)}</strong><small>{mine.data.week.count} ventas</small></div><div className="kpi"><span>Este mes</span><strong>{formatMoney(mine.data.month.total)}</strong><small>{mine.data.month.count} ventas</small></div></div> : null}
         <div className="kpis"><div className="kpi"><span>Ventas</span><strong>{data?.count ?? 0}</strong></div><div className="kpi"><span>Total vendido</span><strong>{formatMoney(data?.total ?? 0)}</strong></div>{admin ? <div className="kpi"><span>Ganancia</span><strong>{formatMoney(data?.profit ?? 0)}</strong></div> : null}</div>
-        <div className="table-wrap"><table className="table"><thead><tr><th>#</th><th>Fecha</th><th>Cliente</th><th>Pago</th><th>Total</th><th>Cajero</th><th></th></tr></thead><tbody>
+        <div className="table-wrap"><table className="table"><thead><tr><th>#</th><th>Fecha</th><th>Cliente</th><th>Pago</th><th>Total</th><th>Vendedor</th><th></th></tr></thead><tbody>
           {(data?.sales ?? []).map((s) => (
             <tr key={s.id} className={s.status === "anulada" ? "is-off" : ""}><td><b>{s.number}</b></td><td>{hour(s.createdAt)}</td><td>{s.customerName ?? <span className="field__hint">Mostrador</span>}</td><td>{METHOD_TEXT[s.method]}</td><td>{formatMoney(s.total)} {s.status === "anulada" ? <span className="badge badge--warn">Anulada</span> : null}</td><td>{s.createdByName}</td><td className="actions-cell"><button className="btn btn--secondary btn--sm" onClick={() => setOpen(s)}>Ver</button></td></tr>
           ))}
         </tbody></table></div>
         {data && !data.sales.length ? <p className="lede">No hay ventas en este periodo.</p> : null}
+        </>}
       </div>
       {print ? <FerreReceipt detail={print} /> : null}
       <Dlg open={!!open} onClose={() => setOpen(null)} wide>{open ? <SaleDialog id={open.id} admin={admin} onClose={() => setOpen(null)} onChanged={() => { setOpen(null); reload(); }} onPrint={(d) => { setOpen(null); setPrint(d); }} /> : null}</Dlg>
