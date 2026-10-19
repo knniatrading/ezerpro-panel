@@ -13,6 +13,8 @@ import { VetHome } from "./vet-home";
 import { GymHome } from "./gym-home";
 import { ClinicHome } from "./clinic-home";
 import { TallerHome } from "./taller-home";
+import { FerreHome } from "./ferre-home";
+import { FerrePosView } from "./ferre-pos";
 import { TallerOrdersView } from "./taller-orders";
 import { ClinicAgendaView } from "./clinic-agenda";
 import { GymAccessView } from "./gym-access";
@@ -378,6 +380,10 @@ export function OverviewView() {
     if (state.user.role === "TENANT_ADMIN") return <GymHome />;
     if (state.user.role === "CASHIER") return <GymAccessView />;
     if (state.user.role === "EMPLOYEE") return <GymRoutinesView />;
+  }
+  if (state.user.tenant?.modules?.includes("ferreteria")) {
+    if (state.user.role === "TENANT_ADMIN") return <FerreHome />;
+    return <FerrePosView />;
   }
   if (state.user.tenant?.modules?.includes("taller")) {
     if (state.user.role === "TENANT_ADMIN") return <TallerHome />;

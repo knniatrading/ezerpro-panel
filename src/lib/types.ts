@@ -860,3 +860,34 @@ export interface TallerPortal {
     history: { id: string; number: number; date: string; complaint: string; total: number; items: string[]; url: string }[];
     reminders: { id: string; serviceName: string; dueDate: string; dueKm: number | null; overdue: boolean }[] }[];
 }
+
+// ---------- Ferreterías ----------
+export type FerreKind = "unidad" | "peso" | "longitud";
+export interface FerreProduct { id: string; name: string; sku: string | null; barcode: string | null; category: string | null; unitKind: FerreKind; unit: string; priceDetal: number; priceMayor: number; cost: number | null; stock: number; minStock: number; active: boolean; low: boolean; exact?: boolean }
+export interface FerreProfileData { profile: { shopName: string; phone: string | null; address: string | null; bio?: string | null; nit: string | null; cashierMaxDiscount: number; quoteDays: number; quoteNote?: string | null; reminders?: boolean }; host: string; categories: string[] }
+export interface FerreCustomer { id: string; name: string; phone: string; document: string | null; email: string | null; address: string | null; notes: string | null; priceList: "detal" | "mayorista"; creditLimit: number; creditDays: number; archived: boolean; balance: number; overdue: number; available: number }
+export interface FerreSaleItem { id: string; productId: string | null; name: string; sku: string | null; unit: string; qty: number; unitPrice: number; total: number; unitCost: number | null }
+export interface FerreSale { id: string; number: number; customerId: string | null; customerName: string | null; priceList: string; status: string; subtotal: number; discount: number; total: number; method: string; paid: number; note: string | null; createdByName: string | null; voidedAt: string | null; voidReason: string | null; voidedByName: string | null; createdAt: string; items: FerreSaleItem[]; itemCount?: number; profit: number | null }
+export interface FerreSalesRes { sales: FerreSale[]; total: number; profit: number | null; count: number }
+export interface FerreSaleDetail { sale: FerreSale; shop: { name: string; phone: string | null; address: string | null; nit: string | null } }
+export interface FerreStatementLine { at: string; kind: "venta" | "abono"; ref: string; amount: number; balance: number; id: string }
+export interface FerreCharge { saleId: string; number: number; date: string; total: number; paid: number; open: number; dueDate: string; overdue: boolean }
+export interface FerreCustomerDetail { customer: FerreCustomer; charges: FerreCharge[]; statement: FerreStatementLine[]; quotes: { id: string; number: number; status: string; total: number; createdAt: string }[]; accountUrl: string }
+export interface FerreReceivables { total: number; overdue: number; customers: FerreCustomer[] }
+export interface FerreMove { id: string; productId: string; productName: string; unit: string; delta: number; reason: string; saleNumber: number | null; note: string | null; byName: string | null; createdAt: string }
+export interface FerreQuoteItem { id: string; productId: string | null; name: string; unit: string; qty: number; unitPrice: number; total: number }
+export interface FerreQuote { id: string; number: number; token: string; customerId: string | null; customerName: string; customerPhone: string | null; priceList: string; status: string; validUntil: string; expired: boolean; note: string | null; total: number; saleNumber: number | null; createdByName: string | null; createdAt: string; items: FerreQuoteItem[]; url?: string }
+export interface FerreDashboard {
+  today: { sales: number; total: number; profit: number; byMethod: Record<string, number> }; days: { date: string; total: number }[];
+  lowStock: { id: string; name: string; stock: number; minStock: number; unit: string }[];
+  receivables: { total: number; overdue: number; debtors: { id: string; name: string; phone: string; balance: number; overdue: number }[] };
+  quotesOpen: number; top: { name: string; total: number }[]; products: number;
+}
+export interface PublicFerre { suspended: boolean; name: string; phone?: string | null; address?: string | null; bio?: string | null; products?: number; demoAccountUrl?: string | null; demoQuoteUrl?: string | null }
+export interface FerreCatalog { shop: { name: string; phone: string | null }; categories: string[]; products: { id: string; name: string; category: string | null; unitKind: FerreKind; unit: string; price: number; available: boolean }[] }
+export interface FerrePublicQuote { suspended: boolean; name?: string; shop?: { name: string; phone: string | null; address: string | null; nit: string | null; note: string | null }; quote?: Omit<FerreQuote, "id" | "token" | "customerId" | "createdByName"> & { pending: boolean } }
+export interface FerreAccount {
+  suspended: boolean; name?: string; shop?: { name: string; phone: string | null; address: string | null }; customer?: { name: string; priceList: string; creditLimit: number; creditDays: number };
+  balance: number; overdue: number; available: number; charges: { number: number; date: string; total: number; open: number; dueDate: string; overdue: boolean }[];
+  statement: { at: string; kind: string; ref: string; amount: number; balance: number }[]; quotes: { number: number; status: string; total: number; url: string }[];
+}

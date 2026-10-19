@@ -1708,3 +1708,64 @@ button {
 .tl-veh h3 { margin: 14px 0 6px; font-size: 1rem; }
 
 .note--warn { background: #fff4e0; border-color: #f0b35c; color: #6b3f00; }
+
+/* ===== Ferreterías ===== */
+.fe-pos { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 6fr); gap: 20px; align-items: start; }
+.fe-pos__right { position: sticky; top: 12px; display: grid; gap: 12px; }
+.fe-search { display: flex; gap: 8px; margin-bottom: 10px; }
+.fe-search input { flex: 1; font-size: 1.15rem; padding: 12px 14px; }
+.fe-results { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.fe-result { width: 100%; display: flex; justify-content: space-between; gap: 12px; align-items: center; text-align: left; font: inherit; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); cursor: pointer; color: inherit; }
+.fe-result:hover, .fe-result:focus-visible { border-color: var(--green-dark); }
+.fe-result.is-exact { border-color: var(--green-dark); box-shadow: 0 0 0 2px color-mix(in srgb, var(--green-dark) 25%, transparent); }
+.fe-result span { display: grid; gap: 2px; }
+.fe-result small { color: var(--muted); font-size: .8rem; }
+.fe-result__side { text-align: right; }
+.is-out { color: #b42318 !important; }
+.is-low { color: #b25e00 !important; }
+.is-ok { color: var(--green-dark); }
+.fe-cart { max-height: 46vh; overflow: auto; }
+.fe-cart table td { vertical-align: middle; }
+.fe-qty { white-space: nowrap; }
+.fe-cart .table th, .fe-cart .table td { padding: 8px 6px; }
+.fe-cart .table td:first-child { min-width: 120px; }
+.fe-qty input, .fe-qtyin { width: 64px; text-align: center; padding: 6px 4px; }
+.fe-qty .btn { padding: 4px 10px; }
+.fe-price { width: 96px; padding: 6px 8px; }
+.fe-empty { padding: 14px; text-align: center; }
+.fe-totals { display: grid; gap: 10px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.fe-sum { display: grid; gap: 2px; justify-items: end; align-content: end; margin: 0; }
+.fe-sum strong { font-size: 1.6rem; line-height: 1.1; }
+.fe-charge { font-size: 1.1rem; padding: 12px 22px; flex: 1; }
+.fe-add { display: flex; align-items: center; gap: 6px; }
+.fe-add input { width: 64px; text-align: center; padding: 6px 4px; }
+.fe-catalog { padding-bottom: 90px; }
+.fe-catalog__list li { gap: 10px; }
+.fe-cartbar { position: fixed; left: 0; right: 0; bottom: 0; padding: 12px 16px; background: var(--surface); border-top: 1px solid var(--line); display: grid; z-index: 20; }
+.fe-cartbar .btn { width: 100%; max-width: 560px; margin: 0 auto; font-size: 1.05rem; padding: 12px; }
+.fe-quote__head { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; border-bottom: 2px solid var(--line-strong); padding-bottom: 12px; margin-bottom: 14px; }
+.fe-quote__head h1 { margin: 0 0 4px; font-size: 1.5rem; }
+.fe-quote__head p { margin: 0; color: var(--muted); }
+.fe-quote__num { display: grid; gap: 6px; justify-items: end; align-content: start; }
+.fe-print { display: none; }
+.fe-ticket { width: 76mm; font-family: var(--mono, monospace); font-size: 10pt; line-height: 1.35; }
+.fe-ticket p { margin: 2px 0; }
+.fe-ticket table { width: 100%; border-collapse: collapse; }
+.fe-ticket td { padding: 3px 0; vertical-align: top; }
+.fe-ticket td:last-child { text-align: right; white-space: nowrap; padding-left: 6px; }
+.fe-ticket__name { font-size: 13pt; font-weight: 800; text-align: center; }
+.fe-ticket__rule { border-top: 1px dashed #000; margin-top: 6px !important; padding-top: 4px; }
+.fe-ticket__row { display: flex; justify-content: space-between; }
+.fe-ticket__total { font-size: 12pt; font-weight: 800; }
+@media (max-width: 900px) {
+  .fe-pos { grid-template-columns: 1fr; }
+  .fe-pos__right { position: static; }
+  .fe-cart { max-height: none; }
+}
+@media print {
+  .fe-print { display: block !important; }
+}
+@media (max-width: 600px) {
+  .fe-quote .table th, .fe-quote .table td { padding: 8px 5px; font-size: .85rem; }
+  .fe-quote__num { justify-items: start; }
+}

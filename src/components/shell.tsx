@@ -87,6 +87,27 @@ function tenantNav(modules: string[] | undefined, role: string) {
     nav.push({ href: "/cuenta", label: "Mi cuenta", icon: IconUser });
     return nav;
   }
+  if (mods.includes("ferreteria")) {
+    if (role === "TENANT_ADMIN") {
+      nav.push({ href: "/pos", label: "Punto de venta", icon: IconPos });
+      nav.push({ href: "/inventario", label: "Inventario", icon: IconBag });
+      nav.push({ href: "/ventas-mostrador", label: "Ventas", icon: IconReceipt });
+      nav.push({ href: "/cuentas", label: "Cuentas por cobrar", icon: IconWallet });
+      nav.push({ href: "/cotizaciones", label: "Cotizaciones", icon: IconInbox });
+      nav.push({ href: "/equipo", label: "Equipo", icon: IconTeam });
+      nav.push({ href: "/mi-ferreteria", label: "Mi ferretería y QR", icon: IconTag });
+      nav.push({ href: "/marca", label: "Marca", icon: IconPalette });
+      nav.push({ href: "/actividad", label: "Actividad", icon: IconShield });
+    } else if (role === "CASHIER") {
+      nav[0] = { href: "/", label: "Punto de venta", icon: IconPos };
+      nav.push({ href: "/ventas-mostrador", label: "Mis ventas", icon: IconReceipt });
+      nav.push({ href: "/cuentas", label: "Cuentas por cobrar", icon: IconWallet });
+      nav.push({ href: "/cotizaciones", label: "Cotizaciones", icon: IconInbox });
+      nav.push({ href: "/inventario", label: "Consultar inventario", icon: IconBag });
+    }
+    nav.push({ href: "/cuenta", label: "Mi cuenta", icon: IconUser });
+    return nav;
+  }
   if (mods.includes("taller")) {
     if (role === "TENANT_ADMIN") {
       nav.push({ href: "/ordenes", label: "Órdenes", icon: IconReceipt });
@@ -233,7 +254,7 @@ export function Shell({ children }: { children: ReactNode }) {
         </div>
         <nav className="sidebar__nav" aria-label="Principal">
           {nav.map((item) => {
-            const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+            const active = item.href === "/" ? pathname === "/" : pathname === item.href || pathname.startsWith(item.href + "/");
             const Icon = item.icon;
             return (
               <Link

@@ -11,6 +11,7 @@ import { TechPublic } from "./tech-public";
 import { VetPublic } from "./vet-public";
 import { ClinicPublic } from "./clinic-public";
 import { TallerPublic } from "./taller-public";
+import { FerrePublic } from "./ferre-public";
 import { GymPublic } from "./gym-public";
 
 type View =
@@ -60,6 +61,18 @@ export function TenantLanding() {
     return (
       <main id="contenido">
         <GymPublic tenant={view.tenant} />
+      </main>
+    );
+  }
+
+  if (
+    view.kind === "ok" &&
+    view.tenant.status !== "suspended" &&
+    view.tenant.modules?.includes("ferreteria")
+  ) {
+    return (
+      <main id="contenido">
+        <FerrePublic tenant={view.tenant} />
       </main>
     );
   }
