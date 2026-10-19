@@ -730,13 +730,13 @@ export interface GymSession {
   attendees?: { bookingId: string; memberId: string; name: string; status: string }[];
 }
 export interface PublicGym {
-  suspended: boolean; name: string; phone?: string | null; address?: string | null; bio?: string | null;
+  suspended: boolean; shop?: boolean; name: string; phone?: string | null; address?: string | null; bio?: string | null;
   plans?: { id: string; name: string; description: string | null; price: number; days: number }[];
   classes?: { id: string; name: string; instructor: string | null; weekday: number; startMin: number; minutes: number }[];
   demoPortalUrl?: string | null;
 }
 export interface GymPortal {
-  suspended: boolean; name?: string; gym?: { name: string; phone: string | null; address: string | null };
+  suspended: boolean; shop?: boolean; name?: string; gym?: { name: string; phone: string | null; address: string | null };
   member?: { name: string; code: string; planName: string | null; paidUntil: string | null; img: number | null; state: GymState; daysLeft: number | null };
   visits30?: number;
   routines?: { id: string; title: string; body: string; videoUrl: string | null; trainerName: string | null; createdAt: string }[];

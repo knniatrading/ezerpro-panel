@@ -8,7 +8,7 @@ import { formatMoney } from "@/lib/format";
 import { STATE_LABEL, dueText, hhmm, niceDate, todayCO, youtubeEmbed } from "@/lib/gym";
 import { dateCO } from "@/lib/vet";
 import type { GymPortal, GymSession } from "@/lib/types";
-import { readGymToken, saveGymToken } from "./gym-public";
+import { ICON_SHOP, readGymToken, saveGymToken } from "./gym-public";
 
 /** Portal del socio: QR de entrada que se renueva solo, membresía, rutinas y reserva de clases. */
 export function GymPortalView() {
@@ -145,6 +145,7 @@ export function GymPortalView() {
         {d.visits30 !== undefined ? <p className="field__hint">{d.visits30} visita{d.visits30 === 1 ? "" : "s"} en los últimos 30 días.</p> : null}
       </section>
       {msg ? <p className="form-error" role="alert">{msg}</p> : null}
+      {d.shop ? <section className="tech__cta" aria-label="Tienda"><Link className="btn tech__big vet-cta vet-cta--shop" href="/tienda"><span className="vet-cta__row">{ICON_SHOP}Tienda y domicilios</span><small>Agua, suplementos, ropa y snacks</small></Link></section> : null}
 
       <section className="dcard__sec" aria-label="Mis rutinas">
         <h2>Mis rutinas</h2>

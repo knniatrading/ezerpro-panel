@@ -17,6 +17,10 @@ export function saveGymToken(host: string, t: string) {
   try { localStorage.setItem(GYM_LS(host), t); } catch { /* sin almacenamiento */ }
 }
 
+const ICON_SHOP = (
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12z" /><path d="M6 6 5 3H2" /><circle cx="9" cy="20" r="1.5" /><circle cx="18" cy="20" r="1.5" /></svg>
+);
+export { ICON_SHOP };
 const ICON_QR = (
   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><path d="M14 14h3v3h-3zM20 14v3M14 20h3M20 20h1" /></svg>
 );
@@ -50,6 +54,7 @@ export function GymPublic({ tenant }: { tenant: PublicTenant }) {
       </header>
       <section className="tech__cta" aria-label="Acciones">
         <Link className="btn tech__big vet-cta vet-cta--portal" href={token ? `/socio?t=${token}` : "/socio"}><span className="vet-cta__row">{ICON_QR}Soy socio: mi QR y mi rutina</span><small>{token ? "Entrar a mi portal" : "Entrada con QR, rutinas y clases"}</small></Link>
+        {d.shop ? <Link className="btn tech__big vet-cta vet-cta--shop" href="/tienda"><span className="vet-cta__row">{ICON_SHOP}Tienda y domicilios</span><small>Agua, suplementos, ropa y snacks</small></Link> : null}
         {phone ? <a className="btn btn--secondary tech__big" href={`tel:${phone}`}>Llamar<small>{formatPhone(phone)}</small></a> : null}
         {phone ? <a className="btn btn--secondary tech__big tech__big--wa" href={`https://wa.me/${waNumber(phone)}?text=${encodeURIComponent("Hola, quisiera información sobre las membresías.")}`} target="_blank" rel="noreferrer">WhatsApp</a> : null}
         {phone ? <button type="button" className="btn btn--secondary" onClick={saveContact}>Guardar contacto en tu celular</button> : null}
