@@ -1660,3 +1660,49 @@ button {
   .doc-wrap { padding: 0; max-width: none; }
   .doc { border: 0; box-shadow: none; padding: 0; }
 }
+
+/* ===== Talleres ===== */
+.tl-plate { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border: 2px solid #1f2933; border-radius: 6px; background: #ffd43b; color: #1f2933; font-family: var(--mono); font-weight: 800; letter-spacing: .08em; font-size: .95em; line-height: 1.5; white-space: nowrap; }
+.tl-plate i { font-style: normal; letter-spacing: 0; }
+.tl-search { max-width: 520px; }
+.tl-search input { font-size: 1.15rem; text-transform: uppercase; }
+.kpi__txt { font-size: 1rem !important; line-height: 1.25; }
+.tl-flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin: 0 0 20px; }
+.tl-flow__step { display: grid; gap: 6px; justify-items: start; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); text-decoration: none; color: inherit; }
+.tl-flow__step:hover { border-color: var(--line-strong); }
+.tl-flow__step strong { font-size: 1.6rem; line-height: 1; }
+.tl-steps { list-style: none; display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; padding: 0; margin: 0 0 20px; counter-reset: tl; }
+.tl-steps li { counter-increment: tl; position: relative; padding-top: 26px; text-align: center; font-size: .78rem; color: var(--muted); }
+.tl-steps li::before { content: counter(tl); position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 22px; height: 22px; border-radius: 50%; background: var(--line); color: var(--muted); display: grid; place-items: center; font-weight: 700; font-size: .75rem; }
+.tl-steps li::after { content: ""; position: absolute; top: 10px; left: calc(50% + 14px); right: calc(-50% + 14px); height: 2px; background: var(--line); }
+.tl-steps li:last-child::after { display: none; }
+.tl-steps li.is-done { color: var(--text); }
+.tl-steps li.is-done::before { background: var(--green); color: #fff; content: "✓"; }
+.tl-steps li.is-done::after { background: var(--green); }
+.tl-steps li.is-now { color: var(--text); font-weight: 700; }
+.tl-steps li.is-now::before { background: var(--ink); color: #fff; box-shadow: 0 0 0 4px rgba(16, 40, 58, .15); }
+.tl-steps--pub li span { display: block; }
+@media (max-width: 640px) {
+  .tl-steps { grid-template-columns: 1fr; gap: 0; }
+  .tl-steps li { text-align: left; padding: 4px 0 4px 34px; min-height: 30px; }
+  .tl-steps li::before { left: 0; transform: none; top: 3px; }
+  .tl-steps li::after { display: none; }
+}
+.tl-now { display: grid; gap: 4px; margin: 0 0 14px; padding: 14px 16px; border-radius: 12px; background: var(--ink); color: #fff; }
+.tl-now strong { font-size: 1.25rem; }
+.tl-now span { opacity: .85; }
+.tl-photos { list-style: none; padding: 0; margin: 0 0 14px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.tl-photos li { display: grid; gap: 6px; align-content: start; font-size: .85rem; color: var(--muted); }
+.tl-photos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); display: block; }
+.tl-photos__video { display: grid; place-items: center; aspect-ratio: 4 / 3; border-radius: 10px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 700; }
+.tl-hist { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+.tl-hist > li { padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.tl-hist__top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.tl-hist p { margin: 6px 0; }
+.tl-mechs { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.tl-bullets { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.tl-total { font-size: 1.1rem; margin: 6px 0 12px; }
+.tl-total strong { font-size: 1.5rem; }
+.tl-decide { display: grid; gap: 10px; margin-top: 10px; }
+.tl-decide-form { margin-top: 10px; }
+.tl-veh h3 { margin: 14px 0 6px; font-size: 1rem; }

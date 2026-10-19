@@ -50,8 +50,9 @@ function EmployeeForm({ emp, onSaved, onCreated, onClose }: { emp: Employee | nu
   const sessG = useSession();
   const mods = sessG.state.status === "in" ? sessG.state.user.tenant?.modules ?? [] : [];
   const isClinic = mods.includes("clinica");
-  const isGym = mods.includes("gimnasio") || isClinic;
-  const roleList = ROLES.filter((r) => r.value !== "EMPLOYEE" || isGym).filter((r) => !isGym || r.value !== "WAITER" && r.value !== "DRIVER").map((r) => (isClinic && r.value === "EMPLOYEE" ? { ...r, label: "Doctor", hint: "Ve la agenda, la historia clínica, el odontograma, las recetas y los consentimientos." } : r));
+  const isTaller = mods.includes("taller");
+  const isGym = mods.includes("gimnasio") || isClinic || isTaller;
+  const roleList = ROLES.filter((r) => r.value !== "EMPLOYEE" || isGym).filter((r) => !isGym || r.value !== "WAITER" && r.value !== "DRIVER").map((r) => (isClinic && r.value === "EMPLOYEE" ? { ...r, label: "Doctor", hint: "Ve la agenda, la historia clínica, el odontograma, las recetas y los consentimientos." } : isTaller && r.value === "EMPLOYEE" ? { ...r, label: "Mecánico", hint: "Ve sus órdenes, sube fotos del diagnóstico, cotiza repuestos y marca el avance." } : r));
   const [role, setRole] = useState<Role>(emp?.role ?? "CASHIER");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);

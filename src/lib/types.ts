@@ -319,7 +319,7 @@ export interface MetricsResponse {
   topDishes: { name: string; quantity: number; revenue: number }[];
 }
 
-export type PayType = "hora" | "dia" | "domicilio" | "rutina";
+export type PayType = "hora" | "dia" | "domicilio" | "rutina" | "obra";
 
 export interface PayrollRow {
   id: string;
@@ -345,6 +345,7 @@ export interface PayrollDetail {
   work: { id: string; workDate: string; units: number; rate: number; amount: number; note: string | null }[];
   deliveries: { id: string; number: number; deliveredAt: string; driverPay: number }[];
   routines?: { id: string; title: string; createdAt: string; pay: number; memberName: string | null }[];
+  jobs?: { id: string; number: number; plate: string; deliveredAt: string; labor: number; pay: number }[];
   payments: { id: string; amount: number; method: string | null; note: string | null; paidAt: string }[];
   balance: number;
 }
@@ -804,3 +805,58 @@ export interface ClinicHeader { name: string; phone: string | null; address: str
 export interface PublicRx { clinic: ClinicHeader; number: number; createdAt: string; patient: { name: string; document: string | null; birthDate: string | null }; doctor: { name: string; specialty: string | null; license: string | null; signature: string | null }; diagnosis: string | null; items: ClinicRxItem[]; notes: string | null }
 export interface PublicConsent { clinic: ClinicHeader; title: string; body: string; status: "pendiente" | "firmado"; patient: { name: string; document: string | null }; doctorName: string | null; createdAt: string; signedAt: string | null; signedName: string | null; signature: string | null }
 export interface PublicApptInfo { suspended: boolean; name?: string; clinic?: { name: string; phone: string | null; address: string | null }; patientName?: string; serviceName?: string; agendaName?: string; start?: string; status?: ApptStatus; open?: boolean }
+
+// ---------- Talleres ----------
+export type TallerStatus = "recibido" | "diagnostico" | "cotizado" | "aprobado" | "en_reparacion" | "listo" | "entregado" | "cancelado";
+export type TallerQuote = "ninguna" | "enviada" | "aprobada" | "rechazada";
+export interface TallerType { id: string; name: string; months: number; km: number | null; active: boolean }
+export interface TallerProfileData { profile: { workshopName: string; phone: string | null; address: string | null; bio: string | null; reminders: boolean }; types: TallerType[]; host: string }
+export interface TallerOrderRow {
+  id: string; number: number; status: TallerStatus; quoteStatus: TallerQuote; plate: string; kind: string; label: string; customerName: string; phone: string;
+  mechanicId: string | null; mechanicName: string | null; complaint: string; total: number; paid: number | null; createdAt: string; updatedAt: string; deliveredAt: string | null;
+}
+export interface TallerItem { id: string; kind: "mano_obra" | "repuesto"; description: string; qty: number; unitPrice: number; unitCost: number | null; partId: string | null; serviceTypeId: string | null; consumed: boolean }
+export interface TallerPhotoRow { id: string; kind: "foto" | "video"; caption: string | null; url: string | null; createdAt: string }
+export interface TallerEventRow { id: string; status: string; note: string | null; byName: string | null; createdAt: string }
+export interface TallerPaymentRow { id: string; amount: number; method: string; note: string | null; paidAt: string }
+export interface TallerOrderDetail {
+  order: { id: string; number: number; status: TallerStatus; quoteStatus: TallerQuote; quoteNote: string | null; complaint: string; diagnosis: string | null; kmIn: number | null; kmOut: number | null; mechanicId: string | null; mechanicName: string | null; approvedName: string | null; laborTotal: number; partsTotal: number; total: number; paid: number | null; balance: number | null; mechanicPay: number | null; trackUrl: string; token: string; createdAt: string; deliveredAt: string | null };
+  vehicle: { id: string; plate: string; kind: string; brand: string | null; model: string | null; year: number | null; color: string | null; oil: string | null; km: number; label: string };
+  customer: { id: string; name: string; phone: string; email: string | null; portalUrl: string };
+  items: TallerItem[]; photos: TallerPhotoRow[]; events: TallerEventRow[]; payments: TallerPaymentRow[];
+}
+export interface TallerVehicleRow { id: string; plate: string; kind: string; brand: string | null; model: string | null; year: number | null; color: string | null; km: number; label: string; customerId: string; customerName: string; phone: string; orders: number; lastVisit: string | null; lastStatus: TallerStatus | null }
+export interface TallerReminderRow { id: string; serviceName: string; dueDate: string; dueKm: number | null; overdue: boolean; sentAt: string | null }
+export interface TallerVehicleDetail {
+  vehicle: { id: string; plate: string; kind: string; brand: string | null; model: string | null; year: number | null; color: string | null; oil: string | null; km: number; notes: string | null; label: string; customerId: string };
+  customer: { id: string; name: string; phone: string; email: string | null; notes: string | null; portalUrl: string };
+  history: { id: string; number: number; status: TallerStatus; complaint: string; diagnosis: string | null; kmIn: number | null; mechanicName: string | null; createdAt: string; deliveredAt: string | null; total: number; paid: number | null; items: { id: string; kind: string; description: string; qty: number; unitPrice: number }[] }[];
+  reminders: (TallerReminderRow & { id: string })[]; spent: number | null;
+}
+export interface TallerPart { id: string; name: string; sku: string | null; unit: string; stock: number; minStock: number; price: number; cost: number | null; active: boolean; low: boolean }
+export interface TallerMove { id: string; delta: number; reason: string; orderNumber: number | null; note: string | null; byName: string | null; createdAt: string }
+export interface TallerMechanic { id: string; name: string; payType: string | null; payRate: number; active: { id: string; number: number; status: TallerStatus; plate: string; label: string; complaint: string }[]; doneMonth: number; laborMonth: number; payMonth: number }
+export interface TallerDashRow { id: string; number: number; status: TallerStatus; plate: string; label: string; customerName: string; phone: string; complaint: string; mechanicName: string | null; total: number; createdAt: string }
+export interface TallerDashboard {
+  today: { income: number; delivered: number; received: number }; orders: { open: number; byStatus: Record<string, number> };
+  waiting: TallerDashRow[]; ready: TallerDashRow[]; unassigned: number; days: { date: string; income: number }[];
+  lowStock: { id: string; name: string; stock: number; minStock: number }[]; reminders: number; bookings: number; mechanics: TallerMechanic[];
+}
+export interface TallerReminderFull { id: string; serviceName: string; dueDate: string; dueKm: number | null; overdue: boolean; sentAt: string | null; vehicleId: string; plate: string; label: string; kind: string; km: number; customerName: string; phone: string; portalUrl: string }
+export interface TallerBookingRow { id: string; name: string; phone: string; plate: string | null; service: string; prefDate: string | null; notes: string | null; status: string; createdAt: string }
+export interface TallerPaymentsRes { total: number; byMethod: Record<string, number>; rows: { id: string; amount: number; method: string; paidAt: string; orderId: string; number: number; plate: string; customerName: string }[] }
+export interface PublicTaller { suspended: boolean; name: string; phone?: string | null; address?: string | null; bio?: string | null; services?: { id: string; name: string; months: number }[]; demoPortalUrl?: string | null; demoOrderUrl?: string | null }
+export interface TallerPublicOrder {
+  suspended: boolean; name?: string; workshop?: { name: string; phone: string | null; address: string | null };
+  number: number; status: TallerStatus; createdAt: string; deliveredAt: string | null; vehicle: { plate: string; label: string; kind: string; color: string | null };
+  customerName: string; portalToken: string; complaint: string; diagnosis: string | null; mechanicName: string | null;
+  quote: { status: TallerQuote; note: string | null; items: { id: string; kind: string; description: string; qty: number; unitPrice: number }[]; labor: number; parts: number; total: number; approvedName: string | null; approvedAt: string | null; canDecide: boolean };
+  paid: number; balance: number; photos: { id: string; kind: string; caption: string | null; url: string | null; createdAt: string }[]; events: { id: string; status: string; note: string | null; createdAt: string }[];
+}
+export interface TallerPortal {
+  suspended: boolean; name?: string; workshop?: { name: string; phone: string | null; address: string | null }; customer?: { name: string };
+  vehicles: { id: string; plate: string; kind: string; label: string; color: string | null; km: number; oil: string | null;
+    active: { id: string; number: number; status: TallerStatus; quoteStatus: TallerQuote; complaint: string; url: string }[];
+    history: { id: string; number: number; date: string; complaint: string; total: number; items: string[]; url: string }[];
+    reminders: { id: string; serviceName: string; dueDate: string; dueKm: number | null; overdue: boolean }[] }[];
+}

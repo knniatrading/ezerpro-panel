@@ -13,11 +13,12 @@ import { useSession } from "./session";
 import { NoAccess } from "./no-access";
 import type { PayrollDetail, PayrollResponse, PayrollRow, PayType } from "@/lib/types";
 
-const TYPE_TEXT: Record<PayType, string> = { hora: "por hora", dia: "por día", domicilio: "por domicilio", rutina: "por rutina" };
-const UNIT_TEXT: Record<PayType, string> = { hora: "h", dia: "días", domicilio: "entregas", rutina: "rutinas" };
+const TYPE_TEXT: Record<PayType, string> = { hora: "por hora", dia: "por día", domicilio: "por domicilio", rutina: "por rutina", obra: "de la mano de obra" };
+const UNIT_TEXT: Record<PayType, string> = { hora: "h", dia: "días", domicilio: "entregas", rutina: "rutinas", obra: "órdenes" };
 const METHOD_LABEL: Record<string, string> = { efectivo: "Efectivo", transferencia: "Transferencia", otro: "Otro" };
 
 function rateText(r: { payType: PayType | null; payRate: number }) {
+  if (r.payType === "obra") return `${r.payRate}% ${TYPE_TEXT.obra}`;
   return r.payType ? `${formatMoney(r.payRate)} ${TYPE_TEXT[r.payType]}` : "Sin configurar";
 }
 function num(n: number) {
@@ -39,6 +40,7 @@ function ConfigForm({ row, onClose, onSaved }: { row: PayrollRow; onClose: () =>
   const isDriver = row.role === "DRIVER";
   const sessP = useSession();
   const isGymP = sessP.state.status === "in" && !!sessP.state.user.tenant?.modules?.includes("gimnasio");
+  const isTallerP = sessP.state.status === "in" && !!sessP.state.user.tenant?.modules?.includes("taller");
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -68,11 +70,12 @@ function ConfigForm({ row, onClose, onSaved }: { row: PayrollRow; onClose: () =>
           <option value="dia">Por día</option>
           {isDriver ? <option value="domicilio">Por domicilio entregado</option> : null}
           {row.role === "EMPLOYEE" && isGymP ? <option value="rutina">Por rutina asignada</option> : null}
+          {row.role === "EMPLOYEE" && isTallerP ? <option value="obra">Por mano de obra (% de cada orden entregada)</option> : null}
         </select>
       </div>
       {type ? (
         <div className="field">
-          <label htmlFor="pc-rate">Valor {type === "hora" ? "de cada hora" : type === "dia" ? "de cada día" : type === "rutina" ? "de cada rutina asignada" : "de cada domicilio"} (pesos)</label>
+          <label htmlFor="pc-rate">{type === "obra" ? "Porcentaje de la mano de obra (1 a 100)" : "Valor"} {type === "obra" ? "" : type === "hora" ? "de cada hora" : type === "dia" ? "de cada día" : type === "rutina" ? "de cada rutina asignada" : "de cada domicilio"}{type === "obra" ? "" : " (pesos)"}</label>
           <input id="pc-rate" inputMode="numeric" value={rate} onChange={(e) => setRate(e.target.value)} />
           <p className="field__hint">Si después cambias el valor, lo ya registrado se queda como estaba.</p>
         </div>
@@ -250,6 +253,16 @@ function Detail({ row, range, onChanged, onClose }: { row: PayrollRow; range: Ra
               <ul className="ledger">
                 {data.routines.map((x) => (
                   <li key={x.id}><span>{stampCO(x.createdAt)} · {x.title}{x.memberName ? ` · ${x.memberName}` : ""}</span><strong>{formatMoney(x.pay)}</strong><span /></li>
+                ))}
+              </ul>
+            </>
+          ) : null}
+          {data.jobs && data.jobs.length > 0 ? (
+            <>
+              <h3 className="section-title">Órdenes entregadas</h3>
+              <ul className="ledger">
+                {data.jobs.map((j) => (
+                  <li key={j.id}><span>Orden #{j.number} · {j.plate} · {stampCO(j.deliveredAt)} · mano de obra {formatMoney(j.labor)}</span><strong>{formatMoney(j.pay)}</strong><span /></li>
                 ))}
               </ul>
             </>

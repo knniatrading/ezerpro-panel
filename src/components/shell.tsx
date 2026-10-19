@@ -87,6 +87,36 @@ function tenantNav(modules: string[] | undefined, role: string) {
     nav.push({ href: "/cuenta", label: "Mi cuenta", icon: IconUser });
     return nav;
   }
+  if (mods.includes("taller")) {
+    if (role === "TENANT_ADMIN") {
+      nav.push({ href: "/ordenes", label: "Órdenes", icon: IconReceipt });
+      nav.push({ href: "/vehiculos", label: "Vehículos", icon: IconIdCard });
+      nav.push({ href: "/repuestos", label: "Repuestos", icon: IconBag });
+      nav.push({ href: "/mecanicos", label: "Mecánicos", icon: IconTeam });
+      nav.push({ href: "/recordatorios", label: "Recordatorios", icon: IconSpark });
+      nav.push({ href: "/reservas", label: "Citas", icon: IconInbox });
+      nav.push({ href: "/ingresos", label: "Ingresos", icon: IconCard });
+      nav.push({ href: "/equipo", label: "Equipo", icon: IconTeam });
+      nav.push({ href: "/nomina", label: "Nómina", icon: IconWallet });
+      nav.push({ href: "/mi-taller", label: "Mi taller y QR", icon: IconTag });
+      nav.push({ href: "/marca", label: "Marca", icon: IconPalette });
+      nav.push({ href: "/actividad", label: "Actividad", icon: IconShield });
+    } else if (role === "CASHIER") {
+      nav.push({ href: "/ordenes", label: "Órdenes", icon: IconReceipt });
+      nav.push({ href: "/vehiculos", label: "Vehículos", icon: IconIdCard });
+      nav.push({ href: "/repuestos", label: "Repuestos", icon: IconBag });
+      nav.push({ href: "/mecanicos", label: "Mecánicos", icon: IconTeam });
+      nav.push({ href: "/recordatorios", label: "Recordatorios", icon: IconSpark });
+      nav.push({ href: "/reservas", label: "Citas", icon: IconInbox });
+      nav.push({ href: "/ingresos", label: "Ingresos", icon: IconCard });
+    } else if (role === "EMPLOYEE") {
+      nav.push({ href: "/ordenes", label: "Mis órdenes", icon: IconReceipt });
+      nav.push({ href: "/vehiculos", label: "Vehículos", icon: IconIdCard });
+      nav.push({ href: "/repuestos", label: "Repuestos", icon: IconBag });
+    }
+    nav.push({ href: "/cuenta", label: "Mi cuenta", icon: IconUser });
+    return nav;
+  }
   if (mods.includes("veterinaria") && role === "TENANT_ADMIN") {
     nav.push({ href: "/pacientes", label: "Pacientes", icon: IconTeam });
     nav.push({ href: "/citas", label: "Citas", icon: IconReceipt });

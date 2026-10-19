@@ -12,6 +12,8 @@ import { IconRefresh } from "./icons";
 import { VetHome } from "./vet-home";
 import { GymHome } from "./gym-home";
 import { ClinicHome } from "./clinic-home";
+import { TallerHome } from "./taller-home";
+import { TallerOrdersView } from "./taller-orders";
 import { ClinicAgendaView } from "./clinic-agenda";
 import { GymAccessView } from "./gym-access";
 import { GymRoutinesView } from "./gym-routines";
@@ -376,6 +378,10 @@ export function OverviewView() {
     if (state.user.role === "TENANT_ADMIN") return <GymHome />;
     if (state.user.role === "CASHIER") return <GymAccessView />;
     if (state.user.role === "EMPLOYEE") return <GymRoutinesView />;
+  }
+  if (state.user.tenant?.modules?.includes("taller")) {
+    if (state.user.role === "TENANT_ADMIN") return <TallerHome />;
+    return <TallerOrdersView />;
   }
   if (state.user.tenant?.modules?.includes("clinica")) {
     if (state.user.role === "TENANT_ADMIN") return <ClinicHome />;
