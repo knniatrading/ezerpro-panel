@@ -10,7 +10,7 @@ import { METHODS, QUOTE_TEXT, STATUS_TEXT, STEPS, dateCO, resizeImage, staffPhot
 import type { TallerItem, TallerMechanic, TallerOrderDetail, TallerPart, TallerProfileData, TallerStatus } from "@/lib/types";
 import { NoAccess } from "./no-access";
 import { ConfirmDialog } from "./confirm-dialog";
-import { ALL, Dlg, Plate, StatusBadge, errMsg, useMechanics, useTallerAccess } from "./taller-common";
+import { ALL, Dlg, NumInput, Plate, StatusBadge, errMsg, useMechanics, useTallerAccess } from "./taller-common";
 
 function ItemDialog({ orderId, item, onClose, onDone }: { orderId: string; item: TallerItem | null; onClose: () => void; onDone: () => void }) {
   const [kind, setKind] = useState<"mano_obra" | "repuesto">(item?.kind ?? "mano_obra");
@@ -46,7 +46,7 @@ function ItemDialog({ orderId, item, onClose, onDone }: { orderId: string; item:
       <div className="field"><label htmlFor="it-d">Descripción</label><input id="it-d" type="text" maxLength={120} value={desc} autoComplete="off" onChange={(e) => { setDesc(e.target.value); setErr(null); }} /></div>
       <div className="field-row">
         <div className="field"><label htmlFor="it-q">Cantidad</label><input id="it-q" type="number" min={1} inputMode="numeric" value={qty} onChange={(e) => setQty(e.target.value)} /></div>
-        <div className="field"><label htmlFor="it-p">Precio unitario (pesos)</label><input id="it-p" type="number" min={0} inputMode="numeric" value={price} onChange={(e) => { setPrice(e.target.value); setErr(null); }} /></div>
+        <div className="field"><label htmlFor="it-p">Precio unitario (pesos)</label><NumInput id="it-p" value={price} onChange={(v) => { setPrice(v); setErr(null); }} />{price ? <p className="field__hint">{Number(qty) > 1 ? `${qty} × ${formatMoney(Number(price))} = ${formatMoney(Number(price) * Number(qty))}` : formatMoney(Number(price))}</p> : null}</div>
       </div>
       <div role="alert" className="form-error-slot">{err ? <p className="form-error">{err}</p> : null}</div>
       <div className="dialog__actions"><button type="button" className="btn btn--secondary" onClick={onClose}>Cancelar</button><button type="submit" className="btn btn--primary" disabled={busy}>{busy ? "Guardando…" : "Guardar"}</button></div>
@@ -69,7 +69,7 @@ function PayDialog({ orderId, balance, onClose, onDone }: { orderId: string; bal
       <h2 id="dlg-title" tabIndex={-1}>Registrar pago</h2>
       <p className="lede">Saldo pendiente: <b>{formatMoney(balance)}</b></p>
       <div className="field-row">
-        <div className="field"><label htmlFor="py-a">Valor</label><input id="py-a" type="number" min={1} inputMode="numeric" value={amount} onChange={(e) => { setAmount(e.target.value); setErr(null); }} /></div>
+        <div className="field"><label htmlFor="py-a">Valor</label><NumInput id="py-a" value={amount} onChange={(v) => { setAmount(v); setErr(null); }} /></div>
         <div className="field"><label htmlFor="py-m">Medio</label><select id="py-m" value={method} onChange={(e) => setMethod(e.target.value)}>{METHODS.map((m) => <option key={m.v} value={m.v}>{m.l}</option>)}</select></div>
       </div>
       <div className="field"><label htmlFor="py-n">Nota (opcional)</label><input id="py-n" type="text" maxLength={200} value={note} placeholder="Ej.: anticipo" autoComplete="off" onChange={(e) => setNote(e.target.value)} /></div>
@@ -91,7 +91,7 @@ function DeliverDialog({ orderId, kmIn, onClose, onDone }: { orderId: string; km
     <form onSubmit={submit} noValidate>
       <h2 id="dlg-title" tabIndex={-1}>Entregar el vehículo</h2>
       <p className="lede">Al entregar se cierra la orden, se programa el próximo mantenimiento y se calcula el pago del mecánico.</p>
-      <div className="field"><label htmlFor="dl-km">Kilometraje de salida</label><input id="dl-km" type="number" min={0} inputMode="numeric" value={km} onChange={(e) => setKm(e.target.value)} /></div>
+      <div className="field"><label htmlFor="dl-km">Kilometraje de salida</label><NumInput id="dl-km" value={km} onChange={setKm} /></div>
       <div role="alert" className="form-error-slot">{err ? <p className="form-error">{err}</p> : null}</div>
       <div className="dialog__actions"><button type="button" className="btn btn--secondary" onClick={onClose}>Cancelar</button><button type="submit" className="btn btn--primary" disabled={busy}>{busy ? "Entregando…" : "Entregar"}</button></div>
     </form>
@@ -132,14 +132,29 @@ export function TallerOrderView() {
   }
   const addVideo = () => act(async () => { await api(`/taller/orders/${o.id}/photos`, { method: "POST", body: JSON.stringify({ url: video.url.trim(), caption: video.caption.trim() || null }) }); setVideo({ url: "", caption: "" }); });
   const first = c.name.split(" ")[0];
-  const quoteMsg = `Hola ${first}, te enviamos la cotización de tu ${v.label} (${v.plate}) por ${formatMoney(o.total)}. Revisa el detalle, las fotos y aprueba la reparación con un clic aquí: ${o.trackUrl}`;
+  const needsApproval = d.items.length > 0 && o.quoteStatus !== "aprobada";
+  const quoteMsg = `Hola ${first}, te enviamos la cotización de tu ${v.label} (${v.plate}) por ${formatMoney(o.total)}. Revisa el detalle y las fotos, y aprueba la reparación con un clic aquí: ${o.trackUrl}`;
+  /** Marca la cotización como enviada (el cliente ya puede aprobarla) y abre WhatsApp con el enlace. */
+  async function sendQuote(resend: boolean) {
+    const w = window.open("", "_blank");
+    setBusy(true); setMsg(null);
+    try {
+      if (!resend) await api(`/taller/orders/${o.id}/quote`, { method: "POST", body: JSON.stringify({ action: "enviar" }) });
+      reload();
+      const url = waLink(c.phone, quoteMsg);
+      if (w) w.location.href = url; else setMsg("La cotización ya quedó enviada. Pulsa “Reenviar por WhatsApp” para abrir el mensaje.");
+    } catch (x) { w?.close(); setMsg(errMsg(x)); } finally { setBusy(false); }
+  }
+  async function copyApproval() {
+    try { if (o.quoteStatus !== "enviada") await api(`/taller/orders/${o.id}/quote`, { method: "POST", body: JSON.stringify({ action: "enviar" }) }); await navigator.clipboard?.writeText(o.trackUrl); setMsg("Enlace de aprobación copiado. La cotización quedó enviada."); reload(); } catch (x) { setMsg(errMsg(x)); }
+  }
   const trackMsg = `Hola ${first}, sigue el estado de tu ${v.label} (${v.plate}) en vivo aquí: ${o.trackUrl}`;
   const stepIdx = STEPS.indexOf(o.status);
-  const next: { s: TallerStatus; l: string }[] = [];
+  const next: { s: TallerStatus; l: string; off?: boolean }[] = [];
   if (!closed) {
     if (o.status === "recibido") next.push({ s: "diagnostico", l: "Empezar diagnóstico" });
-    if (["aprobado", "diagnostico", "recibido", "cotizado"].includes(o.status) && (d.items.length === 0 || o.quoteStatus === "aprobada")) next.push({ s: "en_reparacion", l: "Iniciar reparación" });
-    if (o.status === "en_reparacion") next.push({ s: "listo", l: "Marcar como listo" });
+    if (["aprobado", "diagnostico", "recibido", "cotizado"].includes(o.status) ) next.push({ s: "en_reparacion", l: "Iniciar reparación", off: needsApproval });
+    if (o.status === "en_reparacion") next.push({ s: "listo", l: "Finalizar orden (trabajo terminado)" });
   }
   return (
     <div className="page">
@@ -169,7 +184,7 @@ export function TallerOrderView() {
           <section className="card" aria-label="Acciones">
             <h2>Siguiente paso</h2>
             <div className="actions-cell">
-              {next.map((n) => <button key={n.s} className="btn btn--primary btn--sm" disabled={busy} onClick={() => setStatus(n.s)}>{n.l}</button>)}
+              {next.map((n) => <button key={n.s} className="btn btn--primary btn--sm" disabled={busy || n.off} onClick={() => setStatus(n.s)}>{n.l}</button>)}
               {!mech && ["listo", "en_reparacion"].includes(o.status) ? <button className="btn btn--primary btn--sm" disabled={busy} onClick={() => setDeliver(true)}>Entregar vehículo</button> : null}
               {!mech ? <button className="btn btn--danger-ghost btn--sm" disabled={busy} onClick={() => setConfirm("cancel")}>Cancelar orden</button> : null}
             </div>
@@ -197,11 +212,18 @@ export function TallerOrderView() {
             </tbody></table></div>
           ) : <p className="field__hint">Aún no hay ítems. Agrega la mano de obra y los repuestos para cotizar.</p>}
           <p className="lede">Mano de obra <b>{formatMoney(o.laborTotal)}</b> · Repuestos <b>{formatMoney(o.partsTotal)}</b> · Total <b>{formatMoney(o.total)}</b></p>
-          {!closed && d.items.length ? (
+          {d.items.length && !closed ? (
+            o.quoteStatus === "aprobada" ? <p className="note" role="status">✅ El cliente aprobó esta cotización. Ya se puede reparar.</p>
+              : o.quoteStatus === "enviada" ? <p className="note" role="status">⏳ Cotización enviada: esperando que el cliente la apruebe desde su celular.</p>
+              : <p className="note note--warn" role="status">⚠️ Esta cotización todavía <b>no se ha enviado</b> al cliente. Él no puede aprobarla hasta que la envíes.{o.quoteStatus === "rechazada" ? " (El cliente la rechazó: corrígela y vuelve a enviarla.)" : ""}</p>
+          ) : null}
+          {!closed && d.items.length && o.quoteStatus !== "aprobada" ? (
             <div className="actions-cell">
-              {!mech ? <a className="btn btn--primary btn--sm" href={waLink(c.phone, quoteMsg)} target="_blank" rel="noreferrer" onClick={() => { if (o.quoteStatus !== "enviada") void quote("enviar"); }}>Enviar cotización por WhatsApp</a> : null}
-              <button className="btn btn--secondary btn--sm" disabled={busy} onClick={() => quote("enviar")}>{o.quoteStatus === "enviada" ? "Marcar como reenviada" : "Marcar como enviada"}</button>
-              {!mech && o.quoteStatus !== "aprobada" ? <button className="btn btn--secondary btn--sm" disabled={busy} onClick={() => quote("aprobar_taller")}>El cliente aprobó en el taller</button> : null}
+              {o.quoteStatus === "enviada"
+                ? <button className="btn btn--primary btn--sm" disabled={busy} onClick={() => sendQuote(true)}>Reenviar por WhatsApp</button>
+                : <button className="btn btn--primary btn--sm" disabled={busy} onClick={() => sendQuote(false)}>Enviar cotización al cliente por WhatsApp</button>}
+              <button className="btn btn--secondary btn--sm" disabled={busy} onClick={copyApproval}>Copiar enlace de aprobación</button>
+              {!mech ? <button className="btn btn--secondary btn--sm" disabled={busy} onClick={() => quote("aprobar_taller")}>El cliente aprobó en el taller</button> : null}
               {!mech && o.quoteStatus === "enviada" ? <button className="btn btn--danger-ghost btn--sm" disabled={busy} onClick={() => quote("rechazar_taller")}>El cliente la rechazó</button> : null}
             </div>
           ) : null}

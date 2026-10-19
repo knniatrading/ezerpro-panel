@@ -8,7 +8,7 @@ import { tenantOrigin } from "@/lib/tenant-url";
 import type { TallerProfileData, TallerType } from "@/lib/types";
 import { NoAccess } from "./no-access";
 import { ConfirmDialog } from "./confirm-dialog";
-import { Dlg, errMsg, useTallerAccess } from "./taller-common";
+import { Dlg, NumInput, errMsg, useTallerAccess } from "./taller-common";
 
 function TypeDialog({ item, onClose, onDone }: { item: TallerType | null; onClose: () => void; onDone: () => void }) {
   const [name, setName] = useState(item?.name ?? "");
@@ -28,7 +28,7 @@ function TypeDialog({ item, onClose, onDone }: { item: TallerType | null; onClos
       <div className="field"><label htmlFor="ty-n">Nombre</label><input id="ty-n" type="text" maxLength={60} value={name} placeholder="Ej.: Cambio de aceite" autoComplete="off" onChange={(e) => setName(e.target.value)} /></div>
       <div className="field-row">
         <div className="field"><label htmlFor="ty-m">Avisar cada (meses)</label><input id="ty-m" type="number" min={1} max={36} value={months} onChange={(e) => setMonths(e.target.value)} /></div>
-        <div className="field"><label htmlFor="ty-k">O cada (kilómetros, opcional)</label><input id="ty-k" type="number" min={500} value={km} placeholder="Ej.: 5000" onChange={(e) => setKm(e.target.value)} /></div>
+        <div className="field"><label htmlFor="ty-k">O cada (kilómetros, opcional)</label><NumInput id="ty-k" value={km} placeholder="Ej.: 5.000" onChange={setKm} /></div>
       </div>
       {item ? <label className="check"><input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} /> Activo</label> : null}
       <div role="alert" className="form-error-slot">{err ? <p className="form-error">{err}</p> : null}</div>

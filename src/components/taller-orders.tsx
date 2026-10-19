@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { useResource } from "@/lib/use-resource";
 import { formatMoney } from "@/lib/format";
-import { FILTERS, QUOTE_TEXT, dateCO } from "@/lib/taller";
+import { FILTERS, MECH_FILTERS, QUOTE_TEXT, dateCO } from "@/lib/taller";
 import type { TallerOrderRow } from "@/lib/types";
 import { NoAccess } from "./no-access";
 import { ALL, Dlg, NewOrderDialog, Plate, StatusBadge, useMechanics, useTallerAccess } from "./taller-common";
@@ -28,9 +28,9 @@ function Inner() {
   const showMoney = role !== "EMPLOYEE";
   return (
     <div className="page">
-      <div className="page-head"><div><h1>Órdenes de servicio</h1><p className="lede">{role === "EMPLOYEE" ? "Tus órdenes y las que aún no tienen mecánico." : "Todo lo que está pasando en el taller."}</p></div>
+      <div className="page-head"><div><h1>{role === "EMPLOYEE" ? "Mis órdenes" : "Órdenes de servicio"}</h1><p className="lede">{role === "EMPLOYEE" ? "Tus órdenes y las que aún no tienen mecánico." : "Todo lo que está pasando en el taller."}</p></div>
         <button className="btn btn--primary btn--sm" onClick={() => setNw(true)}>Nueva orden</button></div>
-      <div className="chips" role="group" aria-label="Filtrar por etapa">{FILTERS.map((f) => <button key={f.v} className={`chip${view === f.v ? " is-on" : ""}`} aria-pressed={view === f.v} onClick={() => setView(f.v)}>{f.l}</button>)}</div>
+      <div className="chips" role="group" aria-label="Filtrar por etapa">{(role === "EMPLOYEE" ? MECH_FILTERS : FILTERS).map((f) => <button key={f.v} className={`chip${view === f.v ? " is-on" : ""}`} aria-pressed={view === f.v} onClick={() => setView(f.v)}>{f.l}</button>)}</div>
       <div className="agenda-bar">
         <label>Buscar <input type="search" value={q} placeholder="Placa, nombre, celular o N.º" onChange={(e) => setQ(e.target.value)} /></label>
         {role !== "EMPLOYEE" && mechanics.length ? <label>Mecánico <select value={mech} onChange={(e) => setMech(e.target.value)}><option value="">Todos</option>{mechanics.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}</select></label> : null}
@@ -43,7 +43,7 @@ function Inner() {
             <td><Plate plate={o.plate} kind={o.kind} /><br /><span className="field__hint">{o.label}</span></td>
             <td>{o.customerName}</td>
             <td>{o.complaint.length > 60 ? o.complaint.slice(0, 60) + "…" : o.complaint}</td>
-            <td><StatusBadge status={o.status} />{o.quoteStatus === "enviada" ? <><br /><span className="field__hint">{QUOTE_TEXT.enviada}</span></> : null}</td>
+            <td><StatusBadge status={o.status} />{o.quoteStatus !== "ninguna" && o.quoteStatus !== "aprobada" ? <><br /><span className="field__hint">Cotización: {QUOTE_TEXT[o.quoteStatus]}</span></> : o.quoteStatus === "aprobada" && !["entregado", "cancelado"].includes(o.status) ? <><br /><span className="field__hint">✅ Cliente aprobó</span></> : null}</td>
             <td>{o.mechanicName ?? <span className="field__hint">Sin asignar</span>}</td>
             {showMoney ? <td>{o.total ? formatMoney(o.total) : "—"}{o.paid !== null && o.total > o.paid && o.paid > 0 ? <><br /><span className="field__hint">Abonó {formatMoney(o.paid)}</span></> : null}</td> : null}
             <td>{dateCO(o.createdAt)}</td>

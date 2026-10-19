@@ -21,6 +21,10 @@ export const FILTERS: { v: string; l: string }[] = [
   { v: "abiertas", l: "Abiertas" }, { v: "recibido", l: "Recibidas" }, { v: "diagnostico", l: "Diagnóstico" }, { v: "cotizado", l: "Cotizadas" },
   { v: "aprobado", l: "Aprobadas" }, { v: "en_reparacion", l: "En reparación" }, { v: "listo", l: "Listas" }, { v: "cerradas", l: "Cerradas" },
 ];
+export const MECH_FILTERS: { v: string; l: string }[] = [
+  { v: "abiertas", l: "Todas mis órdenes" }, { v: "aprobado", l: "Listas para reparar" }, { v: "cotizado", l: "Esperando aprobación" },
+  { v: "en_reparacion", l: "En reparación" }, { v: "listo", l: "Terminadas" }, { v: "cerradas", l: "Entregadas" },
+];
 export const staffPhoto = (id: string) => `/api/taller/photos/${id}/file`;
 export const publicPhoto = (host: string, t: string, id: string) => `/api/public/taller-photo?host=${encodeURIComponent(host)}&t=${encodeURIComponent(t)}&id=${encodeURIComponent(id)}`;
 export const normPlate = (s: string) => s.toUpperCase().replace(/[^A-Z0-9]/g, "");

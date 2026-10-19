@@ -106,13 +106,19 @@ export function NewOrderDialog({ mechanics, canAssign, presetVehicle, onClose, o
       )}
       <div className="field"><label htmlFor="no-c">¿Qué le pasa o qué necesita?</label><textarea id="no-c" rows={2} maxLength={500} value={complaint} placeholder="Ej.: ruido al frenar, cambio de aceite" onChange={(e) => { setComplaint(e.target.value); setErr(null); }} /></div>
       <div className="field-row">
-        <div className="field"><label htmlFor="no-km">Kilometraje actual</label><input id="no-km" type="number" inputMode="numeric" min={0} value={km} onChange={(e) => setKm(e.target.value)} /></div>
+        <div className="field"><label htmlFor="no-km">Kilometraje actual</label><NumInput id="no-km" value={km} onChange={setKm} /></div>
         {canAssign ? <div className="field"><label htmlFor="no-m">Mecánico</label><select id="no-m" value={mech} onChange={(e) => setMech(e.target.value)}><option value="">Sin asignar</option>{mechanics.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}</select></div> : null}
       </div>
       <div role="alert" className="form-error-slot">{err ? <p className="form-error">{err}</p> : null}</div>
       <div className="dialog__actions"><button type="button" className="btn btn--secondary" onClick={onClose}>Cancelar</button><button type="submit" className="btn btn--primary" disabled={busy}>{busy ? "Creando…" : "Crear orden"}</button></div>
     </form>
   );
+}
+
+/** Campo de dinero o kilómetros: acepta "300.000" o "300000" y lo muestra con puntos. Guarda solo los dígitos. */
+export function NumInput({ id, value, onChange, label, ...rest }: { id: string; value: string; onChange: (digits: string) => void; label?: string } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange" | "id">) {
+  const shown = value ? Number(value).toLocaleString("es-CO") : "";
+  return <input id={id} type="text" inputMode="numeric" autoComplete="off" aria-label={label} value={shown} onChange={(e) => onChange(e.target.value.replace(/\D/g, "").slice(0, 10))} {...rest} />;
 }
 
 export function useMechanics(enabled: boolean) {

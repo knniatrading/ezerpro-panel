@@ -8,7 +8,7 @@ import { dateCO } from "@/lib/taller";
 import type { TallerMove, TallerPart } from "@/lib/types";
 import { NoAccess } from "./no-access";
 import { ConfirmDialog } from "./confirm-dialog";
-import { ALL, Dlg, errMsg, useTallerAccess } from "./taller-common";
+import { ALL, Dlg, NumInput, errMsg, useTallerAccess } from "./taller-common";
 
 function PartDialog({ item, onClose, onDone }: { item: TallerPart | null; onClose: () => void; onDone: () => void }) {
   const [f, setF] = useState({ name: item?.name ?? "", sku: item?.sku ?? "", unit: item?.unit ?? "unidad", stock: "0", minStock: String(item?.minStock ?? 2), cost: String(item?.cost ?? 0), price: String(item?.price ?? 0) });
@@ -35,8 +35,8 @@ function PartDialog({ item, onClose, onDone }: { item: TallerPart | null; onClos
         <div className="field"><label htmlFor="pp-mi">Avisar cuando queden</label><input id="pp-mi" type="number" min={0} value={f.minStock} onChange={set("minStock")} /></div>
       </div>
       <div className="field-row">
-        <div className="field"><label htmlFor="pp-c">Costo (lo que pagas)</label><input id="pp-c" type="number" min={0} value={f.cost} onChange={set("cost")} /></div>
-        <div className="field"><label htmlFor="pp-p">Precio al cliente</label><input id="pp-p" type="number" min={0} value={f.price} onChange={set("price")} /></div>
+        <div className="field"><label htmlFor="pp-c">Costo (lo que pagas)</label><NumInput id="pp-c" value={f.cost} onChange={(v) => { setF({ ...f, cost: v }); setErr(null); }} /></div>
+        <div className="field"><label htmlFor="pp-p">Precio al cliente</label><NumInput id="pp-p" value={f.price} onChange={(v) => { setF({ ...f, price: v }); setErr(null); }} /></div>
       </div>
       {item ? <label className="check"><input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} /> Disponible para cotizar</label> : null}
       <div role="alert" className="form-error-slot">{err ? <p className="form-error">{err}</p> : null}</div>

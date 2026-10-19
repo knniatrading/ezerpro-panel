@@ -9,7 +9,7 @@ import { formatMoney } from "@/lib/format";
 import { STATUS_TEXT, VEHICLE_KINDS, dateCO, niceDate, waLink } from "@/lib/taller";
 import type { TallerVehicleDetail, TallerVehicleRow } from "@/lib/types";
 import { NoAccess } from "./no-access";
-import { ALL, Dlg, NewOrderDialog, Plate, StatusBadge, errMsg, useMechanics, useTallerAccess } from "./taller-common";
+import { ALL, Dlg, NewOrderDialog, NumInput, Plate, StatusBadge, errMsg, useMechanics, useTallerAccess } from "./taller-common";
 
 /** Buscador por placa: el "historial clínico" del vehículo. */
 export function TallerVehiclesView() {
@@ -74,7 +74,7 @@ function EditDialog({ d, canOwner, onClose, onDone }: { d: TallerVehicleDetail; 
       ) : null}
       <div className="field-row">
         <div className="field"><label htmlFor="ev-oil">Aceite que usa</label><input id="ev-oil" type="text" maxLength={80} value={f.oil} placeholder="Ej.: 10W-40 semisintético" onChange={set("oil")} /></div>
-        <div className="field"><label htmlFor="ev-km">Kilometraje</label><input id="ev-km" type="number" min={0} value={f.km} onChange={set("km")} /></div>
+        <div className="field"><label htmlFor="ev-km">Kilometraje</label><NumInput id="ev-km" value={f.km} onChange={(v) => { setF({ ...f, km: v }); setErr(null); }} /></div>
       </div>
       <div className="field"><label htmlFor="ev-notes">Notas del vehículo</label><textarea id="ev-notes" rows={2} maxLength={500} value={f.notes} onChange={set("notes")} /></div>
       {canOwner ? (
