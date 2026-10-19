@@ -91,7 +91,7 @@ function ItemForm({
   const [priceTxt, setPriceTxt] = useState(item ? String(item.price) : "");
   const [cat, setCat] = useState(item ? (item.categoryId ?? "") : (categoryId ?? ""));
   const { state: sess } = useSession();
-  const vet = sess.status === "in" && !!sess.user.tenant?.modules?.includes("veterinaria");
+  const vet = sess.status === "in" && !!(sess.user.tenant?.modules?.includes("veterinaria") || sess.user.tenant?.modules?.includes("gimnasio"));
   const [stockTxt, setStockTxt] = useState(item?.stock === null || item?.stock === undefined ? "" : String(item.stock));
   const [minTxt, setMinTxt] = useState(item?.stockMin === null || item?.stockMin === undefined ? "" : String(item.stockMin));
   const [err, setErr] = useState<string | null>(null);
@@ -216,7 +216,7 @@ function ItemForm({
 export function MenuView() {
   const { state } = useSession();
   const isAdmin = state.status === "in" && state.user.role === "TENANT_ADMIN";
-  const isVet = state.status === "in" && !!state.user.tenant?.modules?.includes("veterinaria");
+  const isVet = state.status === "in" && !!(state.user.tenant?.modules?.includes("veterinaria") || state.user.tenant?.modules?.includes("gimnasio"));
   const { data, error, loading, reload } = useResource<MenuResponse>(isAdmin ? "/menu" : null);
   const [dlg, setDlg] = useState<Dlg>(null);
   const [busy, setBusy] = useState(false);
@@ -268,7 +268,7 @@ export function MenuView() {
       <header className="page-head">
         <div>
           <h1>{isVet ? "Productos" : "Menú"}</h1>
-          <p className="lede">{isVet ? "Alimentos, medicamentos y accesorios que tus clientes ven y piden en tu tienda. Controla tus existencias." : "Lo que tus clientes ven y piden en tu página."}</p>
+          <p className="lede">{isVet ? "Lo que vendes en tu tienda, con sus existencias. Te avisamos cuando queda poco." : "Lo que tus clientes ven y piden en tu página."}</p>
         </div>
         <div className="actions-cell">
           <button type="button" className="btn btn--secondary" onClick={() => setDlg({ kind: "cat", cat: null })}>

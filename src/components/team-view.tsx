@@ -15,6 +15,7 @@ const ROLES: { value: Role; label: string; hint: string }[] = [
   { value: "CASHIER", label: "Cajero", hint: "Ve y gestiona pedidos y la caja." },
   { value: "WAITER", label: "Mesero", hint: "Toma y atiende pedidos." },
   { value: "DRIVER", label: "Domiciliario", hint: "Solo ve sus entregas." },
+  { value: "EMPLOYEE", label: "Entrenador", hint: "Crea rutinas para los socios y ve las clases." },
 ];
 
 type Dlg =
@@ -46,6 +47,9 @@ function EmployeeForm({ emp, onSaved, onCreated, onClose }: { emp: Employee | nu
   const [name, setName] = useState(emp?.name ?? "");
   const [email, setEmail] = useState(emp?.email ?? "");
   const [phone, setPhone] = useState(emp?.phone ?? "");
+  const sessG = useSession();
+  const isGym = sessG.state.status === "in" && !!sessG.state.user.tenant?.modules?.includes("gimnasio");
+  const roleList = ROLES.filter((r) => r.value !== "EMPLOYEE" || isGym).filter((r) => !isGym || r.value !== "WAITER" && r.value !== "DRIVER");
   const [role, setRole] = useState<Role>(emp?.role ?? "CASHIER");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
@@ -95,7 +99,7 @@ function EmployeeForm({ emp, onSaved, onCreated, onClose }: { emp: Employee | nu
         <div className="field">
           <label htmlFor="e-role">Rol</label>
           <select id="e-role" value={role} onChange={(e) => setRole(e.target.value as Role)}>
-            {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
+            {roleList.map((r) => <option key={r.value} value={r.value}>{isGym && r.value === "CASHIER" ? "Recepción" : r.label}</option>)}
           </select>
         </div>
       </div>

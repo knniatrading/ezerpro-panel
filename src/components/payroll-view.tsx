@@ -13,8 +13,8 @@ import { useSession } from "./session";
 import { NoAccess } from "./no-access";
 import type { PayrollDetail, PayrollResponse, PayrollRow, PayType } from "@/lib/types";
 
-const TYPE_TEXT: Record<PayType, string> = { hora: "por hora", dia: "por día", domicilio: "por domicilio" };
-const UNIT_TEXT: Record<PayType, string> = { hora: "h", dia: "días", domicilio: "entregas" };
+const TYPE_TEXT: Record<PayType, string> = { hora: "por hora", dia: "por día", domicilio: "por domicilio", rutina: "por rutina" };
+const UNIT_TEXT: Record<PayType, string> = { hora: "h", dia: "días", domicilio: "entregas", rutina: "rutinas" };
 const METHOD_LABEL: Record<string, string> = { efectivo: "Efectivo", transferencia: "Transferencia", otro: "Otro" };
 
 function rateText(r: { payType: PayType | null; payRate: number }) {
@@ -65,11 +65,12 @@ function ConfigForm({ row, onClose, onSaved }: { row: PayrollRow; onClose: () =>
           <option value="hora">Por hora</option>
           <option value="dia">Por día</option>
           {isDriver ? <option value="domicilio">Por domicilio entregado</option> : null}
+          {row.role === "EMPLOYEE" ? <option value="rutina">Por rutina asignada</option> : null}
         </select>
       </div>
       {type ? (
         <div className="field">
-          <label htmlFor="pc-rate">Valor {type === "hora" ? "de cada hora" : type === "dia" ? "de cada día" : "de cada domicilio"} (pesos)</label>
+          <label htmlFor="pc-rate">Valor {type === "hora" ? "de cada hora" : type === "dia" ? "de cada día" : type === "rutina" ? "de cada rutina asignada" : "de cada domicilio"} (pesos)</label>
           <input id="pc-rate" inputMode="numeric" value={rate} onChange={(e) => setRate(e.target.value)} />
           <p className="field__hint">Si después cambias el valor, lo ya registrado se queda como estaba.</p>
         </div>
@@ -237,6 +238,16 @@ function Detail({ row, range, onChanged, onClose }: { row: PayrollRow; range: Ra
                     <strong>{formatMoney(w.amount)}</strong>
                     <button type="button" className="btn btn--danger-ghost btn--sm" onClick={() => setConfirm({ kind: "work", id: w.id, text: "Se borrará este registro de trabajo." })}>Borrar</button>
                   </li>
+                ))}
+              </ul>
+            </>
+          ) : null}
+          {data.routines && data.routines.length > 0 ? (
+            <>
+              <h3 className="section-title">Rutinas asignadas</h3>
+              <ul className="ledger">
+                {data.routines.map((x) => (
+                  <li key={x.id}><span>{stampCO(x.createdAt)} · {x.title}{x.memberName ? ` · ${x.memberName}` : ""}</span><strong>{formatMoney(x.pay)}</strong><span /></li>
                 ))}
               </ul>
             </>

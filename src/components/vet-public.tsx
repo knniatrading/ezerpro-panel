@@ -106,6 +106,14 @@ export function BookingForm({ host, services, ownerToken, pets, onClose, onDone 
   );
 }
 
+
+const ICON_SHOP = (
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12z" /><path d="M6 6 5 3H2" /><circle cx="9" cy="20" r="1.5" /><circle cx="18" cy="20" r="1.5" /></svg>
+);
+const ICON_PAW = (
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><ellipse cx="5.5" cy="11" rx="2" ry="2.6" /><ellipse cx="9.5" cy="6.5" rx="2" ry="2.6" /><ellipse cx="14.5" cy="6.5" rx="2" ry="2.6" /><ellipse cx="18.5" cy="11" rx="2" ry="2.6" /><path d="M12 11.5c-3 0-5.5 2.7-5.5 5.2 0 1.8 1.4 2.8 3 2.8 1 0 1.6-.4 2.5-.4s1.5.4 2.5.4c1.6 0 3-1 3-2.8 0-2.5-2.5-5.2-5.5-5.2z" /></svg>
+);
+
 /** Página pública de la clínica: llamar, pedir cita, tienda, portal del dueño. */
 export function VetPublic({ tenant }: { tenant: PublicTenant }) {
   const host = typeof window === "undefined" ? "" : window.location.hostname;
@@ -141,8 +149,8 @@ export function VetPublic({ tenant }: { tenant: PublicTenant }) {
         {hasSvc ? <button type="button" className="btn btn--primary tech__big" onClick={() => setBook(true)}>Pedir una cita</button> : null}
         {phone ? <a className="btn btn--secondary tech__big" href={`tel:${phone}`}>Llamar<small>{formatPhone(phone)}</small></a> : null}
         {phone ? <a className="btn btn--secondary tech__big tech__big--wa" href={`https://wa.me/${waNumber(phone)}?text=${encodeURIComponent("Hola, quisiera información.")}`} target="_blank" rel="noreferrer">WhatsApp</a> : null}
-        {d.shop ? <Link className="btn btn--secondary tech__big" href="/tienda">Tienda y domicilios</Link> : null}
-        {token ? <Link className="btn btn--secondary tech__big" href={`/portal?t=${token}`}>Mis mascotas y su carnet</Link> : <Link className="btn btn--secondary" href="/portal">Ya soy cliente: entrar a mi portal</Link>}
+        {d.shop ? <Link className="btn tech__big vet-cta vet-cta--shop" href="/tienda"><span className="vet-cta__row">{ICON_SHOP}Tienda y domicilios</span><small>Productos con domicilio o recogida</small></Link> : null}
+        {token ? <Link className="btn tech__big vet-cta vet-cta--portal" href={`/portal?t=${token}`}><span className="vet-cta__row">{ICON_PAW}Mis mascotas y su carnet</span><small>Vacunas, historial y citas</small></Link> : <Link className="btn tech__big vet-cta vet-cta--portal" href="/portal"><span className="vet-cta__row">{ICON_PAW}Mis mascotas y su carnet</span><small>Ya soy cliente: entrar a mi portal</small></Link>}
         {phone ? <button type="button" className="btn btn--secondary" onClick={saveContact}>Guardar contacto en tu celular</button> : null}
       </section>
       {hasSvc ? (

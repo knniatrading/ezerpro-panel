@@ -9,6 +9,7 @@ import { Storefront } from "./storefront";
 import { DriverCardPublic } from "./driver-public";
 import { TechPublic } from "./tech-public";
 import { VetPublic } from "./vet-public";
+import { GymPublic } from "./gym-public";
 
 type View =
   | { kind: "loading" }
@@ -46,6 +47,18 @@ export function TenantLanding() {
         <Logo tone="light" />
         <span className="boot__text">Cargando…</span>
       </div>
+    );
+  }
+
+  if (
+    view.kind === "ok" &&
+    view.tenant.status !== "suspended" &&
+    view.tenant.modules?.includes("gimnasio")
+  ) {
+    return (
+      <main id="contenido">
+        <GymPublic tenant={view.tenant} />
+      </main>
     );
   }
 

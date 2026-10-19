@@ -35,7 +35,7 @@ export function roleLabel(role: Role): string {
     case "TENANT_ADMIN":
       return "Administrador de negocio";
     case "EMPLOYEE":
-      return "Empleado";
+      return "Entrenador";
     case "CASHIER":
       return "Cajero";
     case "WAITER":

@@ -1514,3 +1514,51 @@ button {
 .timeline p { margin: 2px 0; font-size: 14px; }
 .vetpage { max-width: 640px; margin: 0 auto; padding: 16px; }
 .vetpage .dcard__hero { text-align: center; }
+.vet-cta { color: #fff; border: 0; }
+.vet-cta__row { display: inline-flex; align-items: center; gap: 10px; }
+.vet-cta--shop { background: linear-gradient(135deg, #ff8a00, #ff5e3a); }
+.vet-cta--portal { background: linear-gradient(135deg, #7c4dff, #4f6bff); }
+.vet-cta:hover { filter: brightness(1.07); color: #fff; }
+.vet-cta small { white-space: normal; overflow-wrap: anywhere; }
+.vet-cta { min-width: 0; box-sizing: border-box; max-width: 100%; }
+
+/* ---------- Gimnasios ---------- */
+.scanner { margin: 16px 0 24px; }
+.scanner__box { position: relative; width: 100%; max-width: 420px; aspect-ratio: 4 / 3; background: #0f1220; border-radius: 16px; overflow: hidden; display: grid; place-items: center; }
+.scanner__box video { width: 100%; height: 100%; object-fit: cover; display: none; }
+.scanner__box.is-on video { display: block; }
+.scanner__box.is-on::after { content: ""; position: absolute; inset: 18%; border: 3px solid rgba(255, 255, 255, .85); border-radius: 14px; pointer-events: none; }
+.scanner__hint { color: #c9cde0; margin: 0; }
+.scanner .actions-cell { margin-top: 10px; }
+.access { border-radius: 18px; padding: 20px; margin: 0 0 20px; color: #fff; display: grid; gap: 14px; }
+.access--green { background: linear-gradient(135deg, #12a150, #0b7a3b); }
+.access--red { background: linear-gradient(135deg, #e5393d, #b3171f); }
+.access__who { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.access__who h2 { margin: 0; color: #fff; }
+.access__who p { margin: 2px 0; }
+.access__msg { font-size: 1.5rem; font-weight: 800; }
+.access .btn--secondary { background: #fff; color: #222; }
+.kpi--warn .kpi__value { color: #b25e00; }
+.badge--danger { background: #fde8e8; color: #a11218; }
+.pick-list { list-style: none; margin: 0 0 8px; padding: 0; max-height: 260px; overflow: auto; }
+.pick-list__row { display: flex; gap: 10px; align-items: center; padding: 6px 0; }
+.routine-list { list-style: none; margin: 0 0 20px; padding: 0; display: grid; gap: 12px; }
+.routine { display: flex; gap: 12px; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; border: 1px solid var(--line, #e3e5ee); border-radius: 12px; padding: 12px 14px; }
+.routine pre, .routine--portal pre { white-space: pre-wrap; font: inherit; margin: 6px 0 0; }
+.routine--portal { display: block; margin-bottom: 12px; }
+.routine__video { width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 12px; margin-top: 10px; }
+.sessions { list-style: none; margin: 12px 0 24px; padding: 0; display: grid; gap: 12px; }
+.session { border: 1px solid var(--line, #e3e5ee); border-radius: 12px; padding: 12px 14px; display: grid; gap: 8px; }
+.session__head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+.session__head p { margin: 2px 0 0; }
+.session__people { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.session__people li { background: #f1f2f8; border-radius: 999px; padding: 3px 10px; display: inline-flex; gap: 8px; align-items: center; }
+.link-btn { background: none; border: 0; color: #a11218; cursor: pointer; padding: 0; font: inherit; text-decoration: underline; }
+.passcard { border-radius: 18px; padding: 18px; text-align: center; margin: 0 0 18px; border: 3px solid #c9cde0; background: #fff; }
+.passcard--ok { border-color: #12a150; }
+.passcard--warn { border-color: #f0a000; }
+.passcard--danger { border-color: #e5393d; }
+.passcard__qr { display: block; margin: 12px auto; max-width: 100%; height: auto; border-radius: 8px; }
+.check { display: flex; gap: 8px; align-items: center; margin: 8px 0; }
+.page .dcard__sec { margin-bottom: 16px; }
+.page > p.actions-cell { margin-top: 12px; }

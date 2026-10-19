@@ -319,7 +319,7 @@ export interface MetricsResponse {
   topDishes: { name: string; quantity: number; revenue: number }[];
 }
 
-export type PayType = "hora" | "dia" | "domicilio";
+export type PayType = "hora" | "dia" | "domicilio" | "rutina";
 
 export interface PayrollRow {
   id: string;
@@ -344,6 +344,7 @@ export interface PayrollDetail {
   user: { id: string; name: string | null; email: string; role: Role; payType: PayType | null; payRate: number };
   work: { id: string; workDate: string; units: number; rate: number; amount: number; note: string | null }[];
   deliveries: { id: string; number: number; deliveredAt: string; driverPay: number }[];
+  routines?: { id: string; title: string; createdAt: string; pay: number; memberName: string | null }[];
   payments: { id: string; amount: number; method: string | null; note: string | null; paidAt: string }[];
   balance: number;
 }
@@ -694,4 +695,51 @@ export interface PublicPetId {
   lost?: boolean;
   clinic?: { name: string; phone: string | null; address: string | null };
   owner?: { name: string; phone: string } | null;
+}
+
+// ---------- Nicho gimnasios ----------
+export type GymState = "al_dia" | "por_vencer" | "vencido" | "sin_plan";
+export interface GymProfile { id: string; gymName: string; phone: string | null; address: string | null; bio: string | null; reminderDays: number; graceDays: number }
+export interface GymPlanItem { id: string; name: string; description: string | null; price: number; days: number; active: boolean }
+export interface GymProfileData { profile: GymProfile; plans: GymPlanItem[]; host: string }
+export interface GymMember {
+  id: string; code: string; name: string; phone: string; email: string | null; document: string | null; notes: string | null;
+  planId: string | null; planName: string | null; paidUntil: string | null; archived: boolean; createdAt: string;
+  state: GymState; daysLeft: number | null; img: number | null; lastCheckin: string | null; portalUrl: string;
+}
+export interface GymPay { id: string; memberName: string; planName: string; amount: number; method: string; days: number; periodStart: string; periodEnd: string; note: string | null; paidAt: string }
+export interface GymCheckin { id: string; at: string; ok: boolean; status: string }
+export interface GymRoutine { id: string; memberId: string | null; title: string; body: string; videoUrl: string | null; trainerName: string | null; trainerId: string | null; trainerPay: number | null; createdAt: string }
+export interface GymMemberDetail { member: GymMember; payments: GymPay[]; checkins: GymCheckin[]; routines: GymRoutine[] }
+export interface GymAccessResult {
+  result: "ok" | "vencido" | "sin_plan" | "baja" | "invalido"; color: "green" | "red"; message: string; repeated?: boolean;
+  member?: { id: string; name: string; code: string; planName: string | null; paidUntil: string | null; daysLeft: number | null; img: number | null; phone: string; routines: number; lastVisit: string | null };
+}
+export interface GymCheckinRow { id: string; at: string; ok: boolean; status: string; member: { id: string; name: string; planName: string | null; code: string } }
+export interface GymDashboard {
+  today: { income: number; memberships: number; store: number; visits: number; uniqueVisitors: number };
+  members: { total: number; active: number; expiring: number; overdue: number; noPlan: number; inactive: number };
+  days: { date: string; income: number; memberships: number; store: number; visits: number }[];
+  expiring: { id: string; name: string; phone: string; planName: string | null; paidUntil: string; daysLeft: number }[];
+  lowStock: { id: string; name: string; stock: number; min: number }[];
+  recent: { id: string; at: string; ok: boolean; status: string; name: string; memberId: string }[];
+}
+export interface GymClassItem { id: string; name: string; instructor: string | null; description: string | null; weekday: number; startMin: number; minutes: number; capacity: number; active: boolean }
+export interface GymSession {
+  classId: string; date: string; name: string; instructor: string | null; description: string | null; startMin: number; minutes: number; capacity: number; booked: number; full: boolean; mineId: string | null; started?: boolean;
+  attendees?: { bookingId: string; memberId: string; name: string; status: string }[];
+}
+export interface PublicGym {
+  suspended: boolean; name: string; phone?: string | null; address?: string | null; bio?: string | null;
+  plans?: { id: string; name: string; description: string | null; price: number; days: number }[];
+  classes?: { id: string; name: string; instructor: string | null; weekday: number; startMin: number; minutes: number }[];
+  demoPortalUrl?: string | null;
+}
+export interface GymPortal {
+  suspended: boolean; name?: string; gym?: { name: string; phone: string | null; address: string | null };
+  member?: { name: string; code: string; planName: string | null; paidUntil: string | null; img: number | null; state: GymState; daysLeft: number | null };
+  visits30?: number;
+  routines?: { id: string; title: string; body: string; videoUrl: string | null; trainerName: string | null; createdAt: string }[];
+  payments?: { id: string; planName: string; amount: number; periodStart: string; periodEnd: string; paidAt: string }[];
+  bookings?: { id: string; date: string; classId: string; name: string; startMin: number; minutes: number; instructor: string | null }[];
 }
