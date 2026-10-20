@@ -57,6 +57,7 @@ export interface Tenant {
   status: string;
   createdAt: string;
   address: string;
+  niche?: string;
   distributor: { domain: string; companyName: string };
   _count: { users: number };
   paidUntil: string | null;

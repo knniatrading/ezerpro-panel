@@ -9,6 +9,7 @@ import { PaymentDialog, tenantTarget } from "./payment-dialog";
 import { PayCell } from "./pay-cell";
 import { PaymentHistoryDialog } from "./payment-history-dialog";
 import { StatusDialog, type StatusTarget } from "./status-dialog";
+import { PresidentDialog } from "./president-dialog";
 import { IconPlus, IconRefresh } from "./icons";
 import { useResource } from "@/lib/use-resource";
 import type { Tenant } from "@/lib/types";
@@ -23,6 +24,7 @@ export function TenantsView() {
   const [open, setOpen] = useState(false);
   const [adminFor, setAdminFor] = useState<Tenant | null>(null);
   const [payFor, setPayFor] = useState<Tenant | null>(null);
+  const [presFor, setPresFor] = useState<Tenant | null>(null);
   const [historyFor, setHistoryFor] = useState<Tenant | null>(null);
   const [statusTarget, setStatusTarget] = useState<StatusTarget | null>(null);
 
@@ -155,6 +157,11 @@ export function TenantsView() {
                       >
                         Pagos
                       </button>
+                      {t.niche === "residencial" ? (
+                        <button type="button" className="btn btn--secondary btn--sm" onClick={() => setPresFor(t)}>
+                          Presidente
+                        </button>
+                      ) : null}
                       {t.status === "suspended" ? (
                         <button
                           type="button"
@@ -187,6 +194,7 @@ export function TenantsView() {
 
       <PaymentDialog target={payFor && tenantTarget(payFor)} onClose={() => setPayFor(null)} onDone={reload} />
       <PaymentHistoryDialog target={historyFor && tenantTarget(historyFor)} onClose={() => setHistoryFor(null)} />
+      <PresidentDialog tenant={presFor} onClose={() => setPresFor(null)} />
       <StatusDialog target={statusTarget} onClose={() => setStatusTarget(null)} onDone={reload} />
 
       {isDist ? (
