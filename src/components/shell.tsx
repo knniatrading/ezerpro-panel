@@ -64,6 +64,33 @@ function tenantNav(modules: string[] | undefined, role: string) {
     nav.push({ href: "/cuenta", label: "Mi cuenta", icon: IconUser });
     return nav;
   }
+  if (mods.includes("belleza")) {
+    if (role === "TENANT_ADMIN") {
+      nav.push({ href: "/salon-agenda", label: "Agenda", icon: IconReceipt });
+      nav.push({ href: "/salon-clientes", label: "Clientes", icon: IconTeam });
+      nav.push({ href: "/salon-caja", label: "Caja", icon: IconPos });
+      nav.push({ href: "/salon-ventas", label: "Ventas", icon: IconCard });
+      nav.push({ href: "/salon-comisiones", label: "Comisiones", icon: IconChart });
+      nav.push({ href: "/salon-productos", label: "Productos", icon: IconBag });
+      nav.push({ href: "/salon-equipo", label: "Profesionales y servicios", icon: IconTag });
+      nav.push({ href: "/equipo", label: "Equipo", icon: IconTeam });
+      nav.push({ href: "/mi-salon", label: "Mi salón y QR", icon: IconIdCard });
+      nav.push({ href: "/marca", label: "Marca", icon: IconPalette });
+      nav.push({ href: "/actividad", label: "Actividad", icon: IconShield });
+    } else if (role === "CASHIER") {
+      nav.push({ href: "/salon-agenda", label: "Agenda", icon: IconReceipt });
+      nav.push({ href: "/salon-clientes", label: "Clientes", icon: IconTeam });
+      nav.push({ href: "/salon-caja", label: "Caja", icon: IconPos });
+      nav.push({ href: "/salon-ventas", label: "Mis ventas", icon: IconCard });
+      nav.push({ href: "/salon-productos", label: "Productos", icon: IconBag });
+    } else if (role === "EMPLOYEE") {
+      nav.push({ href: "/salon-agenda", label: "Mi agenda", icon: IconReceipt });
+      nav.push({ href: "/salon-clientes", label: "Clientes", icon: IconTeam });
+      nav.push({ href: "/salon-comisiones", label: "Mis comisiones", icon: IconChart });
+    }
+    nav.push({ href: "/cuenta", label: "Mi cuenta", icon: IconUser });
+    return nav;
+  }
   if (mods.includes("clinica")) {
     if (role === "TENANT_ADMIN") {
       nav.push({ href: "/agenda", label: "Agenda", icon: IconReceipt });

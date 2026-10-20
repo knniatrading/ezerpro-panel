@@ -32,9 +32,10 @@ export function setRoleContext(modules: string[] | undefined) { roleModules = mo
 
 export function roleLabel(role: Role): string {
   if (role === "EMPLOYEE" && roleModules.includes("clinica")) return "Doctor";
+  if (role === "EMPLOYEE" && roleModules.includes("belleza")) return "Estilista";
   if (role === "EMPLOYEE" && roleModules.includes("taller")) return "Mecánico";
   if (role === "CASHIER" && roleModules.includes("ferreteria")) return "Vendedor";
-  if (role === "CASHIER" && (roleModules.includes("clinica") || roleModules.includes("gimnasio") || roleModules.includes("taller"))) return "Recepción";
+  if (role === "CASHIER" && (roleModules.includes("clinica") || roleModules.includes("gimnasio") || roleModules.includes("taller") || roleModules.includes("belleza"))) return "Recepción";
   switch (role) {
     case "SUPER_ADMIN":
       return "Super Admin";

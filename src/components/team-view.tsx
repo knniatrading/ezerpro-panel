@@ -52,8 +52,9 @@ function EmployeeForm({ emp, onSaved, onCreated, onClose }: { emp: Employee | nu
   const isClinic = mods.includes("clinica");
   const isTaller = mods.includes("taller");
   const isFerre = mods.includes("ferreteria");
-  const isGym = mods.includes("gimnasio") || isClinic || isTaller;
-  const roleList = ROLES.filter((r) => !isFerre || r.value === "TENANT_ADMIN" || r.value === "CASHIER").map((r) => (isFerre && r.value === "CASHIER" ? { ...r, label: "Vendedor", hint: "Vende en el mostrador y despacha pedidos. No cambia precios, no anula ventas ni ve las ganancias." } : r)).filter((r) => r.value !== "EMPLOYEE" || isGym).filter((r) => !isGym || r.value !== "WAITER" && r.value !== "DRIVER").map((r) => (isClinic && r.value === "EMPLOYEE" ? { ...r, label: "Doctor", hint: "Ve la agenda, la historia clínica, el odontograma, las recetas y los consentimientos." } : isTaller && r.value === "EMPLOYEE" ? { ...r, label: "Mecánico", hint: "Ve sus órdenes, sube fotos del diagnóstico, cotiza repuestos y marca el avance." } : r));
+  const isBelleza = mods.includes("belleza");
+  const isGym = mods.includes("gimnasio") || isClinic || isTaller || isBelleza;
+  const roleList = ROLES.filter((r) => !isFerre || r.value === "TENANT_ADMIN" || r.value === "CASHIER").map((r) => (isFerre && r.value === "CASHIER" ? { ...r, label: "Vendedor", hint: "Vende en el mostrador y despacha pedidos. No cambia precios, no anula ventas ni ve las ganancias." } : r)).filter((r) => r.value !== "EMPLOYEE" || isGym).filter((r) => !isGym || r.value !== "WAITER" && r.value !== "DRIVER").map((r) => (isBelleza && r.value === "EMPLOYEE" ? { ...r, label: "Estilista", hint: "Ve su propia agenda, las fichas de sus clientes y sus comisiones." } : isClinic && r.value === "EMPLOYEE" ? { ...r, label: "Doctor", hint: "Ve la agenda, la historia clínica, el odontograma, las recetas y los consentimientos." } : isTaller && r.value === "EMPLOYEE" ? { ...r, label: "Mecánico", hint: "Ve sus órdenes, sube fotos del diagnóstico, cotiza repuestos y marca el avance." } : r));
   const [role, setRole] = useState<Role>(emp?.role ?? "CASHIER");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);

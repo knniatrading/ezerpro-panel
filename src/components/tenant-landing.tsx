@@ -9,6 +9,7 @@ import { Storefront } from "./storefront";
 import { DriverCardPublic } from "./driver-public";
 import { TechPublic } from "./tech-public";
 import { VetPublic } from "./vet-public";
+import { SalonPublic } from "./salon-public";
 import { ClinicPublic } from "./clinic-public";
 import { TallerPublic } from "./taller-public";
 import { FerrePublic } from "./ferre-public";
@@ -85,6 +86,18 @@ export function TenantLanding() {
     return (
       <main id="contenido">
         <TallerPublic tenant={view.tenant} />
+      </main>
+    );
+  }
+
+  if (
+    view.kind === "ok" &&
+    view.tenant.status !== "suspended" &&
+    view.tenant.modules?.includes("belleza")
+  ) {
+    return (
+      <main id="contenido">
+        <SalonPublic tenant={view.tenant} />
       </main>
     );
   }
