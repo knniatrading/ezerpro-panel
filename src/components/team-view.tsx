@@ -53,8 +53,9 @@ function EmployeeForm({ emp, onSaved, onCreated, onClose }: { emp: Employee | nu
   const isTaller = mods.includes("taller");
   const isFerre = mods.includes("ferreteria");
   const isBelleza = mods.includes("belleza");
-  const isGym = mods.includes("gimnasio") || isClinic || isTaller || isBelleza;
-  const roleList = ROLES.filter((r) => !isFerre || r.value === "TENANT_ADMIN" || r.value === "CASHIER").map((r) => (isFerre && r.value === "CASHIER" ? { ...r, label: "Vendedor", hint: "Vende en el mostrador y despacha pedidos. No cambia precios, no anula ventas ni ve las ganancias." } : r)).filter((r) => r.value !== "EMPLOYEE" || isGym).filter((r) => !isGym || r.value !== "WAITER" && r.value !== "DRIVER").map((r) => (isBelleza && r.value === "EMPLOYEE" ? { ...r, label: "Estilista", hint: "Ve su propia agenda, las fichas de sus clientes y sus comisiones." } : isClinic && r.value === "EMPLOYEE" ? { ...r, label: "Doctor", hint: "Ve la agenda, la historia clínica, el odontograma, las recetas y los consentimientos." } : isTaller && r.value === "EMPLOYEE" ? { ...r, label: "Mecánico", hint: "Ve sus órdenes, sube fotos del diagnóstico, cotiza repuestos y marca el avance." } : r));
+  const isRes = mods.includes("residencial");
+  const isGym = mods.includes("gimnasio") || isClinic || isTaller || isBelleza || isRes;
+  const roleList = ROLES.filter((r) => !isFerre || r.value === "TENANT_ADMIN" || r.value === "CASHIER").map((r) => (isFerre && r.value === "CASHIER" ? { ...r, label: "Vendedor", hint: "Vende en el mostrador y despacha pedidos. No cambia precios, no anula ventas ni ve las ganancias." } : r)).filter((r) => r.value !== "EMPLOYEE" || isGym).filter((r) => !isGym || r.value !== "WAITER" && r.value !== "DRIVER").map((r) => (isRes && r.value === "CASHIER" ? { ...r, label: "Portería", hint: "Escanea visitas, registra paquetes, busca placas y registra la asistencia a las asambleas. No ve cartera." } : isRes && r.value === "EMPLOYEE" ? { ...r, label: "Consejo", hint: "Ve la cartera en modo consulta, atiende PQRS, publica en la cartelera y maneja las asambleas." } : isBelleza && r.value === "EMPLOYEE" ? { ...r, label: "Estilista", hint: "Ve su propia agenda, las fichas de sus clientes y sus comisiones." } : isClinic && r.value === "EMPLOYEE" ? { ...r, label: "Doctor", hint: "Ve la agenda, la historia clínica, el odontograma, las recetas y los consentimientos." } : isTaller && r.value === "EMPLOYEE" ? { ...r, label: "Mecánico", hint: "Ve sus órdenes, sube fotos del diagnóstico, cotiza repuestos y marca el avance." } : r));
   const [role, setRole] = useState<Role>(emp?.role ?? "CASHIER");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
@@ -104,7 +105,7 @@ function EmployeeForm({ emp, onSaved, onCreated, onClose }: { emp: Employee | nu
         <div className="field">
           <label htmlFor="e-role">Rol</label>
           <select id="e-role" value={role} onChange={(e) => setRole(e.target.value as Role)}>
-            {roleList.map((r) => <option key={r.value} value={r.value}>{isGym && r.value === "CASHIER" ? "Recepción" : r.label}</option>)}
+            {roleList.map((r) => <option key={r.value} value={r.value}>{isGym && r.value === "CASHIER" ? (isRes ? "Portería" : "Recepción") : r.label}</option>)}
           </select>
         </div>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { SalonHome } from "./salon-home";
+import { ResHome } from "./res-home";
 import { DriverHome } from "./driver-home";
 import { TechHome } from "./tech-home";
 
@@ -377,6 +378,7 @@ export function OverviewView() {
       />
     );
   }
+  if (state.user.tenant?.modules?.includes("residencial")) return <ResHome />;
   if (state.user.tenant?.modules?.includes("belleza")) return <SalonHome />;
   if (state.user.tenant?.modules?.includes("gimnasio")) {
     if (state.user.role === "TENANT_ADMIN") return <GymHome />;

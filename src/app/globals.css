@@ -1774,3 +1774,28 @@ button {
 .fe-steps{display:flex;gap:6px;list-style:none;padding:0;margin:12px 0}
 .fe-steps li{flex:1;text-align:center;padding:8px 4px;border-radius:8px;background:rgba(127,127,127,.15);font-size:.85rem}
 .fe-steps li.is-done{background:#16a34a;color:#fff;font-weight:600}
+
+/* ---------- Conjuntos residenciales ---------- */
+.res-big { font-size: 44px; font-weight: 800; line-height: 1; margin: 4px 0 10px; }
+.res-bar { position: relative; height: 14px; border-radius: 999px; background: var(--line-strong); overflow: visible; margin: 6px 0 10px; flex: 1; }
+.res-bar i { display: block; height: 100%; border-radius: 999px; background: var(--ink); min-width: 2px; transition: width .4s; }
+.res-bar b { position: absolute; top: -4px; width: 3px; height: 22px; background: var(--text); border-radius: 2px; transform: translateX(-1px); }
+.res-tally { display: grid; grid-template-columns: 110px 1fr auto; align-items: center; gap: 10px; margin: 4px 0; }
+.res-tally .res-bar { margin: 0; }
+.res-vote { border-width: 2px; border-color: var(--ink); }
+.res-vote__unit { padding: 10px 0; border-top: 1px solid var(--line-strong); }
+.res-doc { max-width: 780px; margin: 18px auto; padding: 28px 32px; background: #fff; color: #111; border: 1px solid var(--line-strong); border-radius: 8px; font-family: Georgia, "Times New Roman", serif; }
+.res-doc h1 { text-align: center; font-size: 20px; margin: 0; }
+.res-doc__sub { text-align: center; margin: 2px 0 18px; font-size: 13px; color: #444; }
+.res-doc pre { white-space: pre-wrap; font: inherit; line-height: 1.55; margin: 0; }
+.res-sign { display: flex; gap: 40px; flex-wrap: wrap; margin-top: 36px; }
+.res-sign > div { min-width: 220px; }
+.res-sign__line { border-top: 1px solid #000; margin-bottom: 4px; width: 220px; }
+.res-doc--print-only { display: none; }
+.res-portal .chips { position: sticky; top: 0; z-index: 2; background: var(--bg, #fff); padding: 8px 0; overflow-x: auto; flex-wrap: nowrap; }
+.res-portal .chips button { white-space: nowrap; }
+@media print {
+  .res-doc { border: 0; box-shadow: none; max-width: none; padding: 0; margin: 0; display: block !important; }
+  .res-doc--print-only { display: block !important; }
+  .page > :not(.res-doc) { }
+}

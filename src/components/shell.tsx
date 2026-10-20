@@ -64,6 +64,37 @@ function tenantNav(modules: string[] | undefined, role: string) {
     nav.push({ href: "/cuenta", label: "Mi cuenta", icon: IconUser });
     return nav;
   }
+  if (mods.includes("residencial")) {
+    if (role === "TENANT_ADMIN") {
+      nav.push({ href: "/porteria", label: "Portería", icon: IconShield });
+      nav.push({ href: "/cj-unidades", label: "Unidades y propietarios", icon: IconTeam });
+      nav.push({ href: "/cj-cartera", label: "Cartera y cuotas", icon: IconCard });
+      nav.push({ href: "/cj-areas", label: "Áreas comunes", icon: IconTable });
+      nav.push({ href: "/cj-asambleas", label: "Asambleas", icon: IconChart });
+      nav.push({ href: "/cj-cartelera", label: "Cartelera", icon: IconTag });
+      nav.push({ href: "/cj-pqrs", label: "PQRS", icon: IconInbox });
+      nav.push({ href: "/cj-censo", label: "Vehículos y mascotas", icon: IconBike });
+      nav.push({ href: "/equipo", label: "Equipo", icon: IconTeam });
+      nav.push({ href: "/mi-conjunto", label: "Mi conjunto y QR", icon: IconIdCard });
+      nav.push({ href: "/marca", label: "Marca", icon: IconPalette });
+      nav.push({ href: "/actividad", label: "Actividad", icon: IconShield });
+    } else if (role === "CASHIER") {
+      nav.push({ href: "/porteria", label: "Portería", icon: IconShield });
+      nav.push({ href: "/cj-asambleas", label: "Asambleas", icon: IconChart });
+      nav.push({ href: "/cj-areas", label: "Áreas comunes", icon: IconTable });
+      nav.push({ href: "/cj-censo", label: "Vehículos y mascotas", icon: IconBike });
+      nav.push({ href: "/cj-cartelera", label: "Cartelera", icon: IconTag });
+    } else if (role === "EMPLOYEE") {
+      nav.push({ href: "/cj-asambleas", label: "Asambleas", icon: IconChart });
+      nav.push({ href: "/cj-cartera", label: "Cartera (consulta)", icon: IconCard });
+      nav.push({ href: "/cj-unidades", label: "Unidades y propietarios", icon: IconTeam });
+      nav.push({ href: "/cj-pqrs", label: "PQRS", icon: IconInbox });
+      nav.push({ href: "/cj-cartelera", label: "Cartelera", icon: IconTag });
+      nav.push({ href: "/cj-areas", label: "Áreas comunes", icon: IconTable });
+    }
+    nav.push({ href: "/cuenta", label: "Mi cuenta", icon: IconUser });
+    return nav;
+  }
   if (mods.includes("belleza")) {
     if (role === "TENANT_ADMIN") {
       nav.push({ href: "/salon-agenda", label: "Agenda", icon: IconReceipt });

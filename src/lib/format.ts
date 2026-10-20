@@ -31,6 +31,8 @@ let roleModules: string[] = [];
 export function setRoleContext(modules: string[] | undefined) { roleModules = modules ?? []; }
 
 export function roleLabel(role: Role): string {
+  if (role === "EMPLOYEE" && roleModules.includes("residencial")) return "Consejo";
+  if (role === "CASHIER" && roleModules.includes("residencial")) return "Portería";
   if (role === "EMPLOYEE" && roleModules.includes("clinica")) return "Doctor";
   if (role === "EMPLOYEE" && roleModules.includes("belleza")) return "Estilista";
   if (role === "EMPLOYEE" && roleModules.includes("taller")) return "Mecánico";
