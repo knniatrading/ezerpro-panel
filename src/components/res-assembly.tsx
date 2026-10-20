@@ -332,7 +332,7 @@ function Minutes({ id, live, canEdit, reload }: { id: string; live: ResLive; can
 
 // ---------- Pantalla principal ----------
 export function ResAssemblyView({ id }: { id: string }) {
-  const { state, allowed, role } = useResAccess(ALL);
+  const { state, allowed, role } = useResAccess(ADMIN_BOARD);
   const canEdit = role === "TENANT_ADMIN" || role === "EMPLOYEE";
   const live = useResource<ResLive>(allowed ? `/residential/assemblies/${id}/live` : null);
   const [tab, setTab] = useState<"live" | "conv" | "votes" | "minutes">("live");

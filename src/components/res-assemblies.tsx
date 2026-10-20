@@ -8,7 +8,7 @@ import { todayISO } from "@/lib/format";
 import { ASM_KINDS, ASM_STATUS, MINUTES_STATUS, MODES, MODE_TEXT, addDays, coIso, coParts, dateLongCO } from "@/lib/residential";
 import type { ResAssemblyRow, ResLive } from "@/lib/residential";
 import { NoAccess } from "./no-access";
-import { ALL, Dlg, Empty, Err, Pill, errMsg, useResAccess } from "./res-common";
+import { ADMIN_BOARD, Dlg, Empty, Err, Pill, errMsg, useResAccess } from "./res-common";
 
 export function AssemblyForm({ item, onClose, onDone }: { item?: ResLive["assembly"]; onClose: () => void; onDone: (id: string) => void }) {
   const p = item ? coParts(item.startsAt) : null;
@@ -50,7 +50,7 @@ export function AssemblyForm({ item, onClose, onDone }: { item?: ResLive["assemb
 }
 
 export function ResAssembliesView() {
-  const { state, allowed, role } = useResAccess(ALL);
+  const { state, allowed, role } = useResAccess(ADMIN_BOARD);
   const canCreate = role !== "CASHIER";
   const list = useResource<ResAssemblyRow[]>(allowed ? "/residential/assemblies" : null);
   const [open, setOpen] = useState(false);

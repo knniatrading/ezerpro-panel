@@ -21,6 +21,7 @@ export interface Me {
     slug: string;
     status: string;
     modules?: string[];
+    presidentId?: string | null;
     host?: string;
     brandColor?: string | null;
     logo?: string | null;
@@ -204,6 +205,8 @@ export interface Employee {
   role: Role;
   status: string;
   createdAt: string;
+  canManage?: boolean;
+  isPresident?: boolean;
 }
 
 export interface Brand {

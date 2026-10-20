@@ -29,7 +29,7 @@ const DIST_NAV = [
   { href: "/cuenta", label: "Mi cuenta", icon: IconUser },
 ];
 // Motor de módulos: el menú del negocio depende de los módulos de su nicho.
-function tenantNav(modules: string[] | undefined, role: string) {
+function tenantNav(modules: string[] | undefined, role: string, isPresident = false) {
   const mods = modules ?? [];
   const nav = [{ href: "/", label: "Inicio", icon: IconOverview }];
   const staff = role === "TENANT_ADMIN" || role === "CASHIER" || role === "WAITER";
@@ -80,7 +80,6 @@ function tenantNav(modules: string[] | undefined, role: string) {
       nav.push({ href: "/actividad", label: "Actividad", icon: IconShield });
     } else if (role === "CASHIER") {
       nav.push({ href: "/porteria", label: "Portería", icon: IconShield });
-      nav.push({ href: "/cj-asambleas", label: "Asambleas", icon: IconChart });
       nav.push({ href: "/cj-areas", label: "Áreas comunes", icon: IconTable });
       nav.push({ href: "/cj-censo", label: "Vehículos y mascotas", icon: IconBike });
       nav.push({ href: "/cj-cartelera", label: "Cartelera", icon: IconTag });
@@ -91,6 +90,7 @@ function tenantNav(modules: string[] | undefined, role: string) {
       nav.push({ href: "/cj-pqrs", label: "PQRS", icon: IconInbox });
       nav.push({ href: "/cj-cartelera", label: "Cartelera", icon: IconTag });
       nav.push({ href: "/cj-areas", label: "Áreas comunes", icon: IconTable });
+      if (isPresident) nav.push({ href: "/equipo", label: "Equipo (presidencia)", icon: IconTeam });
     }
     nav.push({ href: "/cuenta", label: "Mi cuenta", icon: IconUser });
     return nav;
@@ -291,7 +291,7 @@ export function Shell({ children }: { children: ReactNode }) {
       ? SUPER_NAV
       : user.role === "DISTRIBUTOR_ADMIN"
         ? DIST_NAV
-        : tenantNav(user.tenant?.modules, user.role);
+        : tenantNav(user.tenant?.modules, user.role, !!user.tenant?.presidentId && user.tenant.presidentId === user.id);
   // En una sesión de demo no se muestra la gestión de demos.
   const nav = user.demo ? nav0.filter((i) => i.href !== "/demos") : nav0;
   const displayName = user.distributor?.companyName ?? user.tenant?.name ?? user.email;
