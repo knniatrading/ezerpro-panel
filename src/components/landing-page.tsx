@@ -24,18 +24,50 @@ interface Showcase {
   niches: Niche[];
 }
 
+
+/** Iconos de línea (estilo Lucide) para toda la página. */
+const PATHS: Record<string, React.ReactNode> = {
+  palette: (<><circle cx="13.5" cy="6.5" r=".6" /><circle cx="17.5" cy="10.5" r=".6" /><circle cx="8.5" cy="7.5" r=".6" /><circle cx="6.5" cy="12.5" r=".6" /><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.84-.44-1.13-.29-.29-.44-.65-.44-1.13a1.64 1.64 0 0 1 1.67-1.67h2c3.05 0 5.55-2.5 5.55-5.55C21.97 6.01 17.46 2 12 2z" /></>),
+  receipt: (<><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z" /><path d="M14 8H8" /><path d="M16 12H8" /><path d="M13 16H8" /></>),
+  card: (<><rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" /><path d="M6 15h4" /></>),
+  chat: (<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />),
+  phone: (<><rect width="14" height="20" x="5" y="2" rx="2" /><path d="M12 18h.01" /></>),
+  users: (<><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></>),
+  chart: (<><path d="M3 3v18h18" /><path d="M18 17V9" /><path d="M13 17V5" /><path d="M8 17v-3" /></>),
+  shield: (<><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></>),
+  check: (<path d="m5 12 5 5L20 7" />),
+  utensils: (<><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" /><path d="M7 2v20" /><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" /></>),
+  car: (<><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2" /><circle cx="7" cy="17" r="2" /><path d="M9 17h6" /><circle cx="17" cy="17" r="2" /></>),
+  zap: (<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />),
+  paw: (<><circle cx="11" cy="4" r="2" /><circle cx="18" cy="8" r="2" /><circle cx="20" cy="16" r="2" /><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.05Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z" /></>),
+  dumbbell: (<><path d="M6.5 6.5v11" /><path d="M17.5 6.5v11" /><path d="M3 9v6" /><path d="M21 9v6" /><path d="M6.5 12h11" /></>),
+  steth: (<><path d="M11 2v2" /><path d="M5 2v2" /><path d="M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1" /><path d="M8 15a6 6 0 0 0 12 0v-3" /><circle cx="20" cy="10" r="2" /></>),
+  wrench: (<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />),
+  hammer: (<><path d="m15 12-8.37 8.37a1 1 0 1 1-3-3L12 9" /><path d="m18 15 4-4" /><path d="m21.5 11.5-1.91-1.91A2 2 0 0 1 19 8.17V7l-2.26-2.26a6 6 0 0 0-4.2-1.76L9 2.96l.92.82A6.18 6.18 0 0 1 12 8.4V10l2 2h1.17a2 2 0 0 1 1.41.59L18.5 14.5" /></>),
+  scissors: (<><circle cx="6" cy="6" r="3" /><path d="M8.12 8.12 12 12" /><path d="M20 4 8.12 15.88" /><circle cx="6" cy="18" r="3" /><path d="M14.8 14.8 20 20" /></>),
+  building: (<><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" /><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" /><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2" /><path d="M10 6h4" /><path d="M10 10h4" /><path d="M10 14h4" /><path d="M10 18h4" /></>),
+  sparkle: (<path d="m12 3 1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3Z" />),
+};
+function Ico({ n, size = 22 }: { n: string; size?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+      {PATHS[n] ?? PATHS.sparkle}
+    </svg>
+  );
+}
+
 /** Iconos y nombres cortos de cada nicho (los textos largos vienen del servidor). */
 const META: Record<string, { icon: string; short: string }> = {
-  comidas_rapidas: { icon: "🍔", short: "Comidas rápidas" },
-  conductores: { icon: "🚕", short: "Conductores" },
-  tecnicos: { icon: "🔧", short: "Técnicos del hogar" },
-  veterinarias: { icon: "🐾", short: "Veterinarias" },
-  gimnasios: { icon: "🏋️", short: "Gimnasios" },
-  clinicas: { icon: "🦷", short: "Clínicas" },
-  talleres: { icon: "🚗", short: "Talleres" },
-  ferreterias: { icon: "🧱", short: "Ferreterías" },
-  belleza: { icon: "✂️", short: "Belleza y barberías" },
-  residencial: { icon: "🏢", short: "Conjuntos" },
+  comidas_rapidas: { icon: "utensils", short: "Comidas rápidas" },
+  conductores: { icon: "car", short: "Conductores" },
+  tecnicos: { icon: "zap", short: "Técnicos del hogar" },
+  veterinarias: { icon: "paw", short: "Veterinarias" },
+  gimnasios: { icon: "dumbbell", short: "Gimnasios" },
+  clinicas: { icon: "steth", short: "Clínicas" },
+  talleres: { icon: "wrench", short: "Talleres" },
+  ferreterias: { icon: "hammer", short: "Ferreterías" },
+  belleza: { icon: "scissors", short: "Belleza y barberías" },
+  residencial: { icon: "building", short: "Conjuntos" },
 };
 const ORDER = ["comidas_rapidas", "belleza", "clinicas", "gimnasios", "ferreterias", "talleres", "veterinarias", "residencial", "conductores", "tecnicos"];
 const HERO = ["comidas_rapidas", "belleza", "gimnasios", "ferreterias", "residencial", "clinicas"];
@@ -45,7 +77,7 @@ const FAQ: [string, string][] = [
   ["¿Puedo usar mi logo, mis colores y mi dirección web?", "Sí. Cada negocio queda con su logo, sus colores y su propia dirección, por ejemplo tunegocio.tudominio.com."],
   ["¿Mis clientes tienen que descargar una app?", "No. Abren un enlace o escanean un código QR desde el celular y listo: piden, reservan, ven su cuenta o su turno."],
   ["¿Los demos son reales?", "Son la plataforma de verdad con datos de ejemplo. Entras sin contraseña, tocas todo y cada noche vuelven a su estado inicial."],
-  ["¿Cuánto cuesta?", "Depende del tipo de negocio y de cuántos clientes vas a manejar. Escríbenos por WhatsApp y te cotizamos sin compromiso."],
+  ["¿Cuánto cuesta?", "La activación cuesta US$ 27 (se paga una sola vez) y la mensualidad es de US$ 12. Si quieres revenderlo como distribuidor, escríbenos por WhatsApp y te contamos."],
   ["¿Y si quiero venderlo yo con mi marca?", "Para eso existe el panel de distribuidor: creas a tus clientes, registras sus pagos y los suspendes o reactivas desde tu propio panel."],
 ];
 
@@ -140,6 +172,7 @@ export function LandingPage() {
             <a href="#como" onClick={() => setMenu(false)}>Cómo funciona</a>
             <a href="#nichos" onClick={() => setMenu(false)}>Nichos y demos</a>
             <a href="#incluye" onClick={() => setMenu(false)}>Qué incluye</a>
+            <a href="#precios" onClick={() => setMenu(false)}>Precios</a>
             <a href="#distribuidores" onClick={() => setMenu(false)}>Distribuidores</a>
             <a href="#preguntas" onClick={() => setMenu(false)}>Preguntas</a>
           </nav>
@@ -189,8 +222,8 @@ export function LandingPage() {
                   <Phone src={`/landing/${k}-cliente.webp`} alt={`Lo que ve el cliente de ${META[k]?.short ?? k}`} />
                 </div>
               ))}
-              <span className="lp-chip lp-chip--a">{META[hk]?.icon} {META[hk]?.short}</span>
-              <span className="lp-chip lp-chip--b">✅ Todo en tu celular</span>
+              <span className="lp-chip lp-chip--a"><Ico n={META[hk]?.icon ?? "sparkle"} size={18} />{META[hk]?.short}</span>
+              <span className="lp-chip lp-chip--b"><Ico n="phone" size={18} />Todo en tu celular</span>
               <div className="lp-dots" role="tablist" aria-label="Ejemplos">
                 {HERO.map((k, i) => (
                   <button key={k} type="button" role="tab" aria-selected={i === heroI} aria-label={META[k]?.short} className={i === heroI ? "is-on" : ""} onClick={() => setHeroI(i)} />
@@ -202,7 +235,7 @@ export function LandingPage() {
           <ul className="lp-facts">
             <li><b>{niches.length || 10}</b> tipos de negocio listos</li>
             <li><b>Demos reales</b> sin contraseña</li>
-            <li><b>Tu marca</b> y tu dirección web</li>
+            <li><b>US$ 12 al mes</b> + US$ 27 de activación</li>
             <li><b>Soporte</b> por WhatsApp</li>
           </ul>
         </section>
@@ -242,7 +275,7 @@ export function LandingPage() {
             <div className="lp-tabs" role="tablist" aria-label="Tipos de negocio">
               {niches.map((n) => (
                 <button key={n.key} type="button" role="tab" aria-selected={cur?.key === n.key} className={cur?.key === n.key ? "is-on" : ""} onClick={() => setSel(n.key)}>
-                  <span aria-hidden="true">{META[n.key]?.icon ?? "✨"}</span>
+                  <Ico n={META[n.key]?.icon ?? "sparkle"} size={20} />
                   {META[n.key]?.short ?? n.label}
                 </button>
               ))}
@@ -303,22 +336,54 @@ export function LandingPage() {
             <h2 id="inc-h">Todo lo que necesitas en una sola plataforma</h2>
             <ul className="lp-grid">
               {[
-                ["🎨", "Tu marca, tu dirección", "Logo, colores y una dirección propia para cada negocio: tunegocio.tudominio.com."],
-                ["🧾", "Pedidos, citas y ventas", "Según tu nicho: carta y domicilios, agenda, caja, inventario, órdenes de trabajo, asambleas y más."],
-                ["💳", "Cobros y cartera", "Quién pagó, quién debe y cuánto. Recordatorios para cobrar sin perseguir a nadie."],
-                ["💬", "Avisos por WhatsApp", "Citas, vencimientos, paquetes o pedidos listos: un clic y el mensaje sale con los datos."],
-                ["📱", "Funciona en el celular", "Tus clientes abren un enlace o escanean un QR. Sin descargar aplicaciones."],
-                ["👥", "Equipo con permisos", "Cada persona ve solo lo suyo: administrador, caja, profesionales, portería…"],
-                ["📊", "Reportes claros", "Ventas, ingresos y métricas del día, de la semana y del mes, sin hojas de cálculo."],
-                ["🛡️", "Seguridad y respaldos", "EzerPro mantiene los servidores, las copias de respaldo y las actualizaciones por ti."],
+                ["palette", "Tu marca, tu dirección", "Logo, colores y una dirección propia para cada negocio: tunegocio.tudominio.com."],
+                ["receipt", "Pedidos, citas y ventas", "Según tu nicho: carta y domicilios, agenda, caja, inventario, órdenes de trabajo, asambleas y más."],
+                ["card", "Cobros y cartera", "Quién pagó, quién debe y cuánto. Recordatorios para cobrar sin perseguir a nadie."],
+                ["chat", "Avisos por WhatsApp", "Citas, vencimientos, paquetes o pedidos listos: un clic y el mensaje sale con los datos."],
+                ["phone", "Funciona en el celular", "Tus clientes abren un enlace o escanean un QR. Sin descargar aplicaciones."],
+                ["users", "Equipo con permisos", "Cada persona ve solo lo suyo: administrador, caja, profesionales, portería…"],
+                ["chart", "Reportes claros", "Ventas, ingresos y métricas del día, de la semana y del mes, sin hojas de cálculo."],
+                ["shield", "Seguridad y respaldos", "EzerPro mantiene los servidores, las copias de respaldo y las actualizaciones por ti."],
               ].map(([i, t, d]) => (
                 <li key={t}>
-                  <span aria-hidden="true">{i}</span>
+                  <span aria-hidden="true"><Ico n={i} size={26} /></span>
                   <h3>{t}</h3>
                   <p>{d}</p>
                 </li>
               ))}
             </ul>
+          </div>
+        </section>
+
+        <section className="lp-sec lp-sec--tint" id="precios" aria-labelledby="pre-h">
+          <div className="lp-wrap">
+            <p className="lp-eyebrow">Precios</p>
+            <h2 id="pre-h">Un precio simple, sin sorpresas</h2>
+            <p className="lp-sub">Pagas la activación una sola vez y después una mensualidad. Sin contratos largos ni costos escondidos.</p>
+            <div className="lp-price">
+              <div className="lp-price__nums">
+                <div>
+                  <span>Activación</span>
+                  <b><small>US$</small>27</b>
+                  <em>pago único</em>
+                </div>
+                <i aria-hidden="true">+</i>
+                <div>
+                  <span>Mensualidad</span>
+                  <b><small>US$</small>12</b>
+                  <em>por mes</em>
+                </div>
+              </div>
+              <ul className="lp-price__list">
+                {["Todo lo de tu tipo de negocio, listo para usar", "Tu logo, tus colores y tu dirección web", "Funciona en el celular, sin descargar apps", "Servidores, respaldos y actualizaciones incluidos", "Atención por WhatsApp"].map((t) => (
+                  <li key={t}><Ico n="check" size={18} />{t}</li>
+                ))}
+              </ul>
+              <div className="lp-price__cta">
+                <WaBtn href={wa("Hola, quiero activar EzerPro para mi negocio.")} cls="lp-btn--lg">Quiero activar mi negocio</WaBtn>
+                <a className="lp-btn lp-btn--line lp-btn--lg" href="#nichos">Probar un demo primero</a>
+              </div>
+            </div>
           </div>
         </section>
 
